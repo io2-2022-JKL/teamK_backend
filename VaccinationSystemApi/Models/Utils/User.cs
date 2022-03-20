@@ -1,14 +1,19 @@
-﻿namespace K_VaccinationSystem_backend.Models
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace VaccinationSystemApi.Models.Utils
 {
     public abstract class User
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Pesel { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public DateOnly DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         public string EMail { get; set; }
         public string Password { get; set; }
         public string PhoneNumber { get; set; }
-        }
+    }
 }
