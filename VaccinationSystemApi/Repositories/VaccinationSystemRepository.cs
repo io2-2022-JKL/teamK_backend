@@ -157,6 +157,8 @@ namespace VaccinationSystemApi.Repositories
 
         };
 
+        private List<Appointment> appointments = new();
+
         public Patient GetPatient(Guid id)
         {
             return patients.Where(x => x.Id == id).FirstOrDefault();
@@ -198,6 +200,22 @@ namespace VaccinationSystemApi.Repositories
         public IEnumerable<TimeSlot> GetTimeSlots()
         {
             return timeSlots;
+        }
+
+        public Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
+        {
+            Guid createdId = Guid.NewGuid();
+            appointments.Add(new Appointment
+            {
+                Id = createdId,
+                Status = AppointmentStatus.Planned,
+                PatientId = patientId,
+                TimeSlotId = timeSlotId,
+                VaccineBatchNumber = "batch1",
+                VaccineId = vaccineId,
+                WhichDose = 1
+            });
+            return createdId;
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using VaccinationSystemApi.Models.Utils;
 
 namespace VaccinationSystemApi.Models
 {
@@ -12,7 +10,7 @@ namespace VaccinationSystemApi.Models
         public Guid TimeSlotId { get; set; }
         public Guid PatientId { get; set; }
         public Guid VaccineId { get; set; }
-        public bool Completed { get; set; }
+        public AppointmentStatus Status { get; set; }
         public string VaccineBatchNumber { get; set; }
     }
 }
