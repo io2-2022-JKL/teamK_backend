@@ -215,6 +215,7 @@ namespace VaccinationSystemApi.Repositories
                 VaccineId = vaccineId,
                 WhichDose = 1
             });
+            patients.Where(x => x.Id == patientId).ToList().ForEach(s => s.Appointments.Add(createdId));
             return createdId;
         }
 

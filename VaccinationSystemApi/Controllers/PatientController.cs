@@ -2,9 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using VaccinationSystemApi.Models;
 using VaccinationSystemApi.Repositories.Interfaces;
+using VaccinationSystemApi.Dtos.Patients;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -13,41 +13,49 @@ namespace VaccinationSystemApi.Controllers
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
 
-        public PatientController(IVaccinationSystemRepository repo) => _vaccinationService = repo;
-
-        [HttpGet("patients")]
-        
-        public IEnumerable<Patient> GetPatients()
-        {
-            return _vaccinationService.GetPatients();
-        }
-
-        [HttpGet("patients/{id}")]
-        public Patient GetPatient(Guid id)
-        {
-            return _vaccinationService.GetPatient(id);
-        }
+        public PatientController(IVaccinationSystemRepository repo) => _vaccinationService = repo;     
 
         [HttpGet("centers/{city}")]
-
-        public IEnumerable<VaccinationCenter> BrowseVaccinationCenters(string city)
+        public IEnumerable<BrowseVaccinationCentersResponse> BrowseVaccinationCenters(string city)
         {
-            return _vaccinationService.GetCenters().Where(x => x.City == city);
+            List<BrowseVaccinationCentersResponse> centers = new List<BrowseVaccinationCentersResponse>();
+            foreach(var s in _vaccinationService.GetCenters().Where(x => x.City == city))
+            {
+                centers.Add(new BrowseVaccinationCentersResponse
+                {
+                    Active = s.Active,
+                    Address = s.Address,
+                    AvailableVaccines = s.AvailableVaccines,
+                    City = s.City,
+                    ClosingHours = s.ClosingHours,
+                    Doctors = s.Doctors,
+                    Id = s.Id,
+                    Name = s.Name,
+                    OpeningHours = s.OpeningHours
+                });
+            };
+
+            return centers;
         }
 
         [HttpGet("timeSlots/{id}")]
-        public IEnumerable<TimeSlot> GetTimeSlots(Guid id, DateTime date)
+        public IEnumerable<TimeHoursResponse> GetTimeSlots(Guid id, DateTime date)
         {
             var slotsFromDb = _vaccinationService.GetTimeSlots();
-            List<TimeSlot> searched = new List<TimeSlot>();
+            List<TimeHoursResponse> searched = new List<TimeHoursResponse>();
 
             foreach(var slot in slotsFromDb)
             {
                 var center = _vaccinationService.GetCenterOfDoctor(slot.DoctorId);
                 var slotDate = slot.From.Date;
                 if (DateTime.Compare(date, slotDate) == 0 && center.Id == id)
-                    searched.Add(slot);
-            }
+                    searched.Add(new TimeHoursResponse
+                    {
+                        Id = slot.Id,
+                        From = slot.From,
+                        To = slot.To,
+                    });
+            };
 
             return searched;
         }
