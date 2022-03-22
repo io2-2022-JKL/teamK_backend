@@ -28,7 +28,7 @@ namespace VaccinationSystemApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IPatientRepository, PatientRepository>();
+            services.AddSingleton<IVaccinationSystemRepository, VaccinationSystemRepository>();
             
             services.AddControllers();
             services.AddSwaggerGen(c =>

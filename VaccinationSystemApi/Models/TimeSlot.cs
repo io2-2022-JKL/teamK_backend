@@ -7,7 +7,7 @@ namespace VaccinationSystemApi.Models
         public Guid Id { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }
-        public Doctor Doctor_ { get; set; }
+        public Guid DoctorId { get; set; }
         public bool IsFree { get; set; }
         public bool Active { get; set; }
     }
