@@ -18,5 +18,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         VaccinationCenter GetCenterOfDoctor(Guid doctorId);
         IEnumerable<TimeSlot> GetTimeSlots();
         Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId);
+        Appointment GetAppointment(Guid id);
+        void CancelAppointment(Guid id);
     }
 }

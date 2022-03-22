@@ -58,5 +58,14 @@ namespace VaccinationSystemApi.Controllers
             return _vaccinationService.CreateAppointment(patientId, timeSlotId, vaccineId);
         }
 
+        [HttpPost("appointments/cancel/{id}")]
+        public void CancelAppointment(Guid id)
+        {
+            var appointmentFromDb = _vaccinationService.GetAppointment(id);
+            if (appointmentFromDb is null) return;
+
+            _vaccinationService.CancelAppointment(id);
+        }
+
     }
 }

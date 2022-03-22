@@ -217,5 +217,15 @@ namespace VaccinationSystemApi.Repositories
             });
             return createdId;
         }
+
+        public Appointment GetAppointment(Guid id)
+        {
+            return appointments.Where(x => x.Id == id).SingleOrDefault();
+        }
+
+        public void CancelAppointment(Guid id)
+        {
+            appointments.Where(x => x.Id == id).ToList().ForEach(s => s.Status = AppointmentStatus.Cancelled);
+        }
     }
 }
