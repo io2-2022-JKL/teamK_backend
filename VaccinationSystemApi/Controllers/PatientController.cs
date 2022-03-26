@@ -27,12 +27,11 @@ namespace VaccinationSystemApi.Controllers
                     Address = s.Address,
                     AvailableVaccines = s.AvailableVaccines,
                     City = s.City,
-                    ClosingHours = s.ClosingHours,
                     Doctors = s.Doctors,
                     Id = s.Id,
                     Name = s.Name,
-                    OpeningHours = s.OpeningHours
-                });
+                    OpeningHours = null
+                }) ;
             };
 
             return centers;

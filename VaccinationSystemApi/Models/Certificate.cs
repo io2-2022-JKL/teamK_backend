@@ -9,6 +9,6 @@ namespace VaccinationSystemApi.Models
     {
         public Guid Id { get; set; }
         public string Url { get; set; }
-        public Guid PatientId { get; set; }
+        public Patient Owner { get; set; }
     }
 }

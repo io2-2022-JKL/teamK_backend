@@ -10,14 +10,9 @@ namespace VaccinationSystemApi.Models
         public string Name { get; set; }
         public string City { get; set; }
         public string Address { get; set; }
-        //available vaccines:
         public ICollection<Vaccine> AvailableVaccines { get; set; }
-
-        public TimeHours[] OpeningHours { get; set; }
-        public TimeHours[] ClosingHours { get; set; }
-        //doctors:
+        public OpeningHours OpeningHours_ { get; set; }
         public ICollection<Doctor> Doctors { get; set; }
-
         public bool Active { get; set; }
 
     }

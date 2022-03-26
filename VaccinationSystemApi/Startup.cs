@@ -14,6 +14,9 @@ using System.Threading.Tasks;
 using VaccinationSystemApi.Repositories;
 using VaccinationSystemApi.Repositories.Interfaces;
 
+using VaccinationSystemApi.Data;
+using Microsoft.EntityFrameworkCore;
+
 namespace VaccinationSystemApi
 {
     public class Startup
@@ -35,6 +38,10 @@ namespace VaccinationSystemApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "VaccinationSystemApi", Version = "v1" });
             });
+
+            var config =
+            services.AddDbContext<VaccinationContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
