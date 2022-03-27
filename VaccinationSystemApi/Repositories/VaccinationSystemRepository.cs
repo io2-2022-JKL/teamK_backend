@@ -5,12 +5,28 @@ using System.Threading.Tasks;
 using VaccinationSystemApi.Models;
 using VaccinationSystemApi.Models.Utils;
 using VaccinationSystemApi.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using VaccinationSystemApi.Data;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace VaccinationSystemApi.Repositories
 {
     public class VaccinationSystemRepository : IVaccinationSystemRepository
     {
-        private readonly List<VaccinationCenter> centers = new()
+        private readonly VaccinationContext _db;
+
+        private readonly List<VaccinationCenter> centers;
+        private readonly List<Patient> patients;
+        private readonly List<Doctor> doctors;
+        private List<TimeSlot> timeSlots;
+        private List<Appointment> appointments;
+        private List<Virus> viruses;
+        private List<Vaccine> vaccines;
+
+
+
+        /*private readonly List<VaccinationCenter> centers = new()
         {
             new VaccinationCenter
             {
@@ -159,6 +175,33 @@ namespace VaccinationSystemApi.Repositories
 
         private List<Appointment> appointments = new();
 
+        var v1 = new Virus()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Coronavirus"
+        };
+
+        private List<Virus> viruses = new List<Virus>()
+        {
+            
+        };
+
+        private List<Vaccine> vaccines = new List<Vaccine>() {
+            new Vaccine() {
+            Id = Guid.NewGuid(),
+            Company = "Pfizer",
+            MaxDaysBetweenDoses = 28,
+            MaxPatientAge = 73,
+            MinDaysBetweenDoses = 21,
+            MinPatientAge = 15,
+            Name = "Pfizer Vaccine Google Chrome",
+            NumberOfDoses = 3,
+            Used = true,
+            Virus_ = viruses[0]
+            }
+        };*/
+
+
         public Patient GetPatient(Guid id)
         {
             return patients.Where(x => x.Id == id).FirstOrDefault();
@@ -191,11 +234,11 @@ namespace VaccinationSystemApi.Repositories
 
         public VaccinationCenter GetCenterOfDoctor(Guid doctorId)
         {
-            var doctorFromDb = GetDoctor(doctorId);
+            var doctorFromDb = doctors.Where(x => x.Id == doctorId).SingleOrDefault();
 
             if (doctorFromDb is null) return null;
 
-            return GetCenter(doctorFromDb.VaccinationCenterId);
+            return doctorFromDb.VaccinationCenter_;
         }
         public IEnumerable<TimeSlot> GetTimeSlots()
         {
@@ -209,13 +252,13 @@ namespace VaccinationSystemApi.Repositories
             {
                 Id = createdId,
                 Status = AppointmentStatus.Planned,
-                PatientId = patientId,
-                TimeSlotId = timeSlotId,
+                Patient_ = patients.Where(x => x.Id == patientId).SingleOrDefault(),
+                TimeSlot_ = timeSlots.Where(t => t.Id == timeSlotId).SingleOrDefault(),
                 VaccineBatchNumber = "batch1",
-                VaccineId = vaccineId,
+                Vaccine_ = new Vaccine(),
                 WhichDose = 1
             });
-            patients.Where(x => x.Id == patientId).ToList().ForEach(s => s.Appointments.Add(createdId));
+            
             return createdId;
         }
 

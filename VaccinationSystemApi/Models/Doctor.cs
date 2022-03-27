@@ -5,12 +5,11 @@ using VaccinationSystemApi.Models.Utils;
 namespace VaccinationSystemApi.Models
 {
     public class Doctor : User
-    {
-        public Guid VaccinationCenterId { get; set; }
-        //vacc archive
-        //future vacc:
+    { 
+        public VaccinationCenter VaccinationCenter_ { get; set; }
         ICollection<Appointment> Appointments { get; set; }
         public Guid PatientAccountId { get; set; }
+        public Patient PatientAccount { get; set; }
         public bool Active { get; set; }
     }
 }

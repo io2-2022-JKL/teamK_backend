@@ -7,9 +7,9 @@ namespace VaccinationSystemApi.Models
     {
         public Guid Id { get; set; }
         public int WhichDose { get; set; }
-        public Guid TimeSlotId { get; set; }
-        public Guid PatientId { get; set; }
-        public Guid VaccineId { get; set; }
+        public TimeSlot TimeSlot_ { get; set; }
+        public Patient Patient_ { get; set; }
+        public Vaccine Vaccine_ { get; set; }
         public AppointmentStatus Status { get; set; }
         public string VaccineBatchNumber { get; set; }
     }

@@ -7,6 +7,7 @@ namespace VaccinationSystemApi.Models.Utils
 {
     public class TimeHours
     {
+        public Guid Id { get; set; }
         public int Hour { get; set; }
         public int Minutes { get; set; }
 

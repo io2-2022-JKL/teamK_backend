@@ -8,6 +8,6 @@ namespace VaccinationSystemApi.Models
     public class Virus
     {
         public Guid Id { get; set; }
-        public string Names { get; set; }
+        public string Name { get; set; }
     }
 }
