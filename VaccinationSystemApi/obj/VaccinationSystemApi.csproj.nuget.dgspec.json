@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\A4BEE\\Desktop\\VaccinationSystem\\VaccinationSystemApi\\VaccinationSystemApi.csproj": {}
+    "C:\\Users\\Paweu\\Source\\Repos\\K_VaccinationSystem_net5\\VaccinationSystemApi\\VaccinationSystemApi.csproj": {}
   },
   "projects": {
-    "C:\\Users\\A4BEE\\Desktop\\VaccinationSystem\\VaccinationSystemApi\\VaccinationSystemApi.csproj": {
+    "C:\\Users\\Paweu\\Source\\Repos\\K_VaccinationSystem_net5\\VaccinationSystemApi\\VaccinationSystemApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\A4BEE\\Desktop\\VaccinationSystem\\VaccinationSystemApi\\VaccinationSystemApi.csproj",
+        "projectUniqueName": "C:\\Users\\Paweu\\Source\\Repos\\K_VaccinationSystem_net5\\VaccinationSystemApi\\VaccinationSystemApi.csproj",
         "projectName": "VaccinationSystemApi",
-        "projectPath": "C:\\Users\\A4BEE\\Desktop\\VaccinationSystem\\VaccinationSystemApi\\VaccinationSystemApi.csproj",
-        "packagesPath": "C:\\Users\\A4BEE\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\A4BEE\\Desktop\\VaccinationSystem\\VaccinationSystemApi\\obj\\",
+        "projectPath": "C:\\Users\\Paweu\\Source\\Repos\\K_VaccinationSystem_net5\\VaccinationSystemApi\\VaccinationSystemApi.csproj",
+        "packagesPath": "C:\\Users\\Paweu\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Paweu\\Source\\Repos\\K_VaccinationSystem_net5\\VaccinationSystemApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\A4BEE\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Paweu\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -69,6 +69,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[5.0.13, 5.0.13]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -77,7 +83,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.402\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }

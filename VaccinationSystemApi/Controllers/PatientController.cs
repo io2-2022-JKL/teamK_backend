@@ -45,7 +45,7 @@ namespace VaccinationSystemApi.Controllers
 
             foreach(var slot in slotsFromDb)
             {
-                var center = _vaccinationService.GetCenterOfDoctor(slot.DoctorId);
+                var center = _vaccinationService.GetCenterOfDoctor(slot.AssignedDoctorId);
                 var slotDate = slot.From.Date;
                 if (DateTime.Compare(date, slotDate) == 0 && center.Id == id)
                     searched.Add(new TimeHoursResponse
@@ -74,5 +74,22 @@ namespace VaccinationSystemApi.Controllers
             _vaccinationService.CancelAppointment(id);
         }
 
+        [HttpGet("appointments/incomingAppointments/{patientId}")]
+        public void GetIncomingAppointments(Guid patientId)
+        {
+            var incomingAppointments = _vaccinationService.GetIncomingAppointments(patientId);
+        }
+
+        [HttpGet("appointments/formerAppointments/{patientId}")]
+        public void GetFormerAppointments(Guid patientId)
+        {
+
+        }
+
+        [HttpGet("/patient/timeSlots/Filter")]
+        public void FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
+        {
+
+        }
     }
 }
