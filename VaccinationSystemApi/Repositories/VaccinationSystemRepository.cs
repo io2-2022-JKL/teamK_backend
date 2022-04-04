@@ -271,5 +271,28 @@ namespace VaccinationSystemApi.Repositories
         {
             appointments.Where(x => x.Id == id).ToList().ForEach(s => s.Status = AppointmentStatus.Cancelled);
         }
+
+        public void CreateTimeSlot(TimeSlot timeSlot)
+        {
+            timeSlots.Add(timeSlot);
+        }
+
+        public void DeleteTimeSlot(Guid id)
+        {
+            timeSlots.Where(x => x.Id == id).ToList().ForEach(s => s.IsFree = false);
+        }
+
+        public Doctor GetDoctorByTimeSlot(Guid id)
+        {
+            var slotFromDb = timeSlots.Where(x => x.Id == id).SingleOrDefault();
+            if (slotFromDb is null) return null;
+            return this.GetDoctor(slotFromDb.DoctorId);
+        }
+        public void ModifyTimeSlot(Guid timeSlotId, DateTime from, DateTime to)
+        {
+            timeSlots.Where(x => x.Id == timeSlotId).ToList().ForEach(s => { s.From = from; s.To = to; });
+        }
+
+
     }
 }
