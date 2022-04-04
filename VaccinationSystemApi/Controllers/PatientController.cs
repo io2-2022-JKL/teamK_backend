@@ -186,15 +186,17 @@ namespace VaccinationSystemApi.Controllers
         //this will require a separate service in the future
         public string HourStringFromTimeHours(Models.Utils.TimeHours timeHours)
         {
-            return timeHours.Hour.ToString() + ":" + timeHours.Minutes.ToString();
+            string hour = timeHours.Hour < 10 ? '0' + timeHours.Hour.ToString() : timeHours.Hour.ToString();
+            string minute = timeHours.Minutes < 10 ? '0' + timeHours.Minutes.ToString() : timeHours.Minutes.ToString();
+            return hour + ":" + minute;
         }
 
-        private ICollection<OpeningHoursDTO> OpeningHoursToDTO(OpeningHours openingHours)
+        public ICollection<OpeningHoursDTO> OpeningHoursToDTO(OpeningHours openingHours)
         {
             var mondayDto = new OpeningHoursDTO()
             {
                 From = HourStringFromTimeHours(openingHours.MondayOpen),
-                To = HourStringFromTimeHours(openingHours.MondayOpen),
+                To = HourStringFromTimeHours(openingHours.MondayClose),
             };
             var tuesdayDto = new OpeningHoursDTO()
             {
