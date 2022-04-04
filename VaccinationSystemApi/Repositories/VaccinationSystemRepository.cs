@@ -295,22 +295,29 @@ namespace VaccinationSystemApi.Repositories
 
         public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId)
         {
-            return _db.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.Now);
+            return _db.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.Now)
+                .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
+                .Include(a => a.Vaccine_);
         }
 
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId)
         {
-            return _db.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From < DateTime.Now);
+            return _db.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From < DateTime.Now)
+                .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
+                .Include(a => a.Vaccine_);
         }
 
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
         {
             return _db.TimeSlots.Include(t => t.AssignedDoctor)
-                .Include(t => t.AssignedDoctor.VaccinationCenter_)
-                .Include(t => t.AssignedDoctor.VaccinationCenter_.AvailableVaccines)
+                .ThenInclude(d => d.VaccinationCenter_)
+                .ThenInclude(vc => vc.AvailableVaccines)
+                .ThenInclude(v => v.Virus_)
                 .Where(t => t.AssignedDoctor.VaccinationCenter_.City == city && t.From == dateFrom 
                 && t.To == dateTo && t.AssignedDoctor.VaccinationCenter_.AvailableVaccines.Select(v => v.Virus_.Name == virus).Count() > 0);
             // timeSlot isn't directly related to virus
         }
+
+
     }
 }
