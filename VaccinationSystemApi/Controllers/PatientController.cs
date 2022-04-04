@@ -184,7 +184,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         //this will require a separate service in the future
-        private string HourStringFromTimeHours(Models.Utils.TimeHours timeHours)
+        public string HourStringFromTimeHours(Models.Utils.TimeHours timeHours)
         {
             return timeHours.Hour.ToString() + ":" + timeHours.Minutes.ToString();
         }
