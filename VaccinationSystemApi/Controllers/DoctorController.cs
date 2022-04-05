@@ -23,7 +23,7 @@ namespace VaccinationSystemApi.Controllers
             _vaccinationService.CreateTimeSlot(new TimeSlot
             {
                 Active = true,
-                DoctorId = doctorId,
+                AssignedDoctorId = doctorId,
                 From = request.From,
                 To = request.To,
                 IsFree = true,
