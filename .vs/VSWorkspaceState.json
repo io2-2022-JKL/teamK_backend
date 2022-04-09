@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
-    "\\VaccinationSystemApi"
+    "\\VaccinationSystemApi",
+    "\\VaccinationSystemApi\\Controllers"
   ],
-  "SelectedNode": "\\VaccinationSystemApi\\VaccinationSystemApi.csproj",
+  "SelectedNode": "\\VaccinationSystemApi.sln",
   "PreviewInSolutionExplorer": false
 }
