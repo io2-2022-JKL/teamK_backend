@@ -16,11 +16,11 @@ namespace VaccinationSystemApi.Controllers
         private readonly TimeHoursService _timeHoursService;
 
         public PatientController(IVaccinationSystemRepository repo)
-            {
+        {
             _vaccinationService = repo;
             _timeHoursService = new TimeHoursService();
             
-            }
+        }
 
         [HttpGet("centers/{city}")]
         public IEnumerable<BrowseVaccinationCentersResponse> BrowseVaccinationCenters(string city)
