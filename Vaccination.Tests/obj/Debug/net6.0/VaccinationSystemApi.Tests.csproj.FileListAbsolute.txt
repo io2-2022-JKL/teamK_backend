@@ -145,3 +145,12 @@ C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\obj\Debug
 C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\obj\Debug\net6.0\ref\VaccinationSystemApi.Tests.dll
 C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\obj\Debug\net6.0\VaccinationSystemApi.Tests.pdb
 C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\obj\Debug\net6.0\VaccinationSystemApi.Tests.genruntimeconfig.cache
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Azure.Core.dll
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Azure.Identity.dll
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Azure.Security.KeyVault.Certificates.dll
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Azure.Security.KeyVault.Secrets.dll
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Microsoft.AspNetCore.Authentication.OpenIdConnect.dll
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Users\Paweu\Source\Repos\K_VaccinationSystem_net5\Vaccination.Tests\bin\Debug\net6.0\Microsoft.Identity.Web.dll
