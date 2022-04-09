@@ -14,6 +14,11 @@ using System.Threading.Tasks;
 using VaccinationSystemApi.Repositories;
 using VaccinationSystemApi.Repositories.Interfaces;
 
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Identity.Web;
+using Microsoft.OpenApi.Models;
+
 using VaccinationSystemApi.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -31,6 +36,10 @@ namespace VaccinationSystemApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // authentication
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
+
             services.AddSingleton<IVaccinationSystemRepository, VaccinationSystemRepository>();
             
             services.AddControllers();
@@ -58,6 +67,7 @@ namespace VaccinationSystemApi
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

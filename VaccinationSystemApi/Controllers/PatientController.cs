@@ -5,15 +5,22 @@ using System.Linq;
 using VaccinationSystemApi.Models;
 using VaccinationSystemApi.Repositories.Interfaces;
 using VaccinationSystemApi.Dtos.Patients;
+using VaccinationSystemApi.Services;
 
 namespace VaccinationSystemApi.Controllers
 {
     [ApiController]
-    public class PatientController: ControllerBase
+    public class PatientController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
+        private readonly TimeHoursService _timeHoursService;
 
-        public PatientController(IVaccinationSystemRepository repo) => _vaccinationService = repo;     
+        public PatientController(IVaccinationSystemRepository repo)
+            {
+            _vaccinationService = repo;
+            _timeHoursService = new TimeHoursService();
+            
+            }
 
         [HttpGet("centers/{city}")]
         public IEnumerable<BrowseVaccinationCentersResponse> BrowseVaccinationCenters(string city)
@@ -147,7 +154,7 @@ namespace VaccinationSystemApi.Controllers
                     DoctorLastName = t.AssignedDoctor.LastName,
                     From = t.From,
                     To = t.To,
-                    openingHours = OpeningHoursToDTO(t.AssignedDoctor.VaccinationCenter_.OpeningHours_),
+                    openingHours = _timeHoursService.OpeningHoursToDTO(t.AssignedDoctor.VaccinationCenter_.OpeningHours_),
                     TimeSlotId = t.Id.ToString(),
                     VaccinationCenterCity = t.AssignedDoctor.VaccinationCenter_.City,
                     VaccinationCenterName = t.AssignedDoctor.VaccinationCenter_.Name,
@@ -184,56 +191,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         //this will require a separate service in the future
-        public string HourStringFromTimeHours(Models.Utils.TimeHours timeHours)
-        {
-            string hour = timeHours.Hour < 10 ? '0' + timeHours.Hour.ToString() : timeHours.Hour.ToString();
-            string minute = timeHours.Minutes < 10 ? '0' + timeHours.Minutes.ToString() : timeHours.Minutes.ToString();
-            return hour + ":" + minute;
-        }
-
-        public ICollection<OpeningHoursDTO> OpeningHoursToDTO(OpeningHours openingHours)
-        {
-            var mondayDto = new OpeningHoursDTO()
-            {
-                From = HourStringFromTimeHours(openingHours.MondayOpen),
-                To = HourStringFromTimeHours(openingHours.MondayClose),
-            };
-            var tuesdayDto = new OpeningHoursDTO()
-            {
-                From = HourStringFromTimeHours(openingHours.TuesdayOpen),
-                To = HourStringFromTimeHours(openingHours.TuesdayClose),
-            };
-            var wednesdayDto = new OpeningHoursDTO()
-            {
-                From = HourStringFromTimeHours(openingHours.WednesdayOpen),
-                To = HourStringFromTimeHours(openingHours.WednesdayClose),
-            };
-            var thursdayDto = new OpeningHoursDTO()
-            {
-                From = HourStringFromTimeHours(openingHours.ThursdayOpen),
-                To = HourStringFromTimeHours(openingHours.ThursdayClose),
-            };
-            var fridayDto = new OpeningHoursDTO()
-            {
-                From = HourStringFromTimeHours(openingHours.FridayOpen),
-                To = HourStringFromTimeHours(openingHours.FridayClose),
-            };
-            var saturdayDto = new OpeningHoursDTO()
-            {
-                From = HourStringFromTimeHours(openingHours.SaturdayOpen),
-                To = HourStringFromTimeHours(openingHours.SaturdayClose),
-            };
-            var sundayDto = new OpeningHoursDTO()
-            {
-                From = HourStringFromTimeHours(openingHours.SundayOpen),
-                To = HourStringFromTimeHours(openingHours.SundayClose),
-            };
-
-            return new List<OpeningHoursDTO>()
-            {
-                mondayDto, tuesdayDto, wednesdayDto, thursdayDto, fridayDto, saturdayDto, sundayDto
-            };
-        }
+        
 
     }
 }
