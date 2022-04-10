@@ -40,9 +40,7 @@ namespace VaccinationSystemApi
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
 
-            services.AddSingleton<IVaccinationSystemRepository, VaccinationSystemRepository>();
             
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "VaccinationSystemApi", Version = "v1" });
@@ -51,6 +49,9 @@ namespace VaccinationSystemApi
             var config =
             services.AddDbContext<VaccinationContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IVaccinationSystemRepository, VaccinationSystemRepository>();
+
+            services.AddControllers();
 
             //this is required only for Razor apps????
             /*services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)

@@ -6,9 +6,12 @@ using VaccinationSystemApi.Models;
 using VaccinationSystemApi.Repositories.Interfaces;
 using VaccinationSystemApi.Dtos.Patients;
 using VaccinationSystemApi.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VaccinationSystemApi.Controllers
 {
+
+    [Authorize]
     [ApiController]
     public class PatientController : ControllerBase
     {

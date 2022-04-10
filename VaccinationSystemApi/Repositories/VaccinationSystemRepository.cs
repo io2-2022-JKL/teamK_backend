@@ -24,6 +24,13 @@ namespace VaccinationSystemApi.Repositories
         private List<Virus> viruses;
         private List<Vaccine> vaccines;
 
+        public VaccinationSystemRepository(VaccinationContext db)
+        {
+            _db = db;
+        }
+
+
+
 
 
         /*private readonly List<VaccinationCenter> centers = new()
@@ -214,7 +221,7 @@ namespace VaccinationSystemApi.Repositories
 
         public IEnumerable<VaccinationCenter> GetCenters()
         {
-            return centers;
+            return _db.VaccinationCenters;
         }
 
         public VaccinationCenter GetCenter(Guid id)

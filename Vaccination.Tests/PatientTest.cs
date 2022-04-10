@@ -11,8 +11,6 @@ namespace Vaccination.Tests;
 
 public class PatientTest
 {
-    VaccinationSystemApi.Controllers.PatientController patientController = 
-        new VaccinationSystemApi.Controllers.PatientController(new VaccinationSystemApi.Repositories.VaccinationSystemRepository());
 
     VaccinationSystemApi.Services.TimeHoursService timeHoursService = new VaccinationSystemApi.Services.TimeHoursService();
     
