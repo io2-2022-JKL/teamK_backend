@@ -7,12 +7,17 @@ using VaccinationSystemApi.Repositories.Interfaces;
 using VaccinationSystemApi.Dtos.Patients;
 using VaccinationSystemApi.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 
 namespace VaccinationSystemApi.Controllers
 {
 
-    [Authorize]
     [ApiController]
+    [Route("[controller]")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PatientController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
@@ -28,6 +33,7 @@ namespace VaccinationSystemApi.Controllers
         [HttpGet("centers/{city}")]
         public IEnumerable<BrowseVaccinationCentersResponse> BrowseVaccinationCenters(string city)
         {
+            
             List<BrowseVaccinationCentersResponse> centers = new List<BrowseVaccinationCentersResponse>();
             foreach(var s in _vaccinationService.GetCenters().Where(x => x.City == city))
             {

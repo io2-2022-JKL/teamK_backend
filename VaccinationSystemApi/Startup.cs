@@ -16,11 +16,15 @@ using VaccinationSystemApi.Repositories.Interfaces;
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Identity.Web;
+
 using Microsoft.OpenApi.Models;
 
 using VaccinationSystemApi.Data;
 using Microsoft.EntityFrameworkCore;
+using VaccinationSystemApi.Configuration;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Identity;
 
 namespace VaccinationSystemApi
 {
@@ -36,14 +40,17 @@ namespace VaccinationSystemApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // authentication
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddMicrosoftIdentityWebApi(Configuration.GetSection("AzureAd"));
-
-            
+            services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "VaccinationSystemApi", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey
+                });
             });
 
             var config =
@@ -51,11 +58,32 @@ namespace VaccinationSystemApi
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddScoped<IVaccinationSystemRepository, VaccinationSystemRepository>();
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(jwt =>
+           {
+               var key = Encoding.ASCII.GetBytes(Configuration["JwtConfig:Secret"]);
+               jwt.SaveToken = true;
+               jwt.TokenValidationParameters = new TokenValidationParameters()
+               {
+                   ValidateIssuerSigningKey = true,
+                   IssuerSigningKey = new SymmetricSecurityKey(key),
+                   ValidateIssuer = false,
+                   ValidateAudience = false,
+                   ValidateLifetime = true,
+                   RequireExpirationTime = false,
+               };
+           });
+
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                        .AddEntityFrameworkStores<VaccinationContext>();
+
             services.AddControllers();
 
-            //this is required only for Razor apps????
-            /*services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();*/
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
