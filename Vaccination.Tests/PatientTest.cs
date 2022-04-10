@@ -11,15 +11,15 @@ namespace Vaccination.Tests;
 
 public class PatientTest
 {
-    VaccinationSystemApi.Controllers.PatientController patientController = 
-        new VaccinationSystemApi.Controllers.PatientController(new VaccinationSystemApi.Repositories.VaccinationSystemRepository());
+
+    VaccinationSystemApi.Services.TimeHoursService timeHoursService = new VaccinationSystemApi.Services.TimeHoursService();
     
     [Fact]
     public void HoursFromTimeHours1()
     {
         var timeHours = new VaccinationSystemApi.Models.Utils.TimeHours(4, 34);
 
-        string result = patientController.HourStringFromTimeHours(timeHours);
+        string result = timeHoursService.HourStringFromTimeHours(timeHours);
         Assert.Equal("04:34", result);
     }
     [Fact]
@@ -43,7 +43,7 @@ public class PatientTest
             SundayClose = new TimeHours(22, 0),
         };
 
-        List<OpeningHoursDTO> result = patientController.OpeningHoursToDTO(timeHours).ToList();
+        List<OpeningHoursDTO> result = timeHoursService.OpeningHoursToDTO(timeHours).ToList();
         List<OpeningHoursDTO> should = new List<OpeningHoursDTO>(){
             new OpeningHoursDTO() {
                 From = "03:32",
