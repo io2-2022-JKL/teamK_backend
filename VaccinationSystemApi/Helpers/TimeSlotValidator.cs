@@ -2,7 +2,7 @@
 
 namespace VaccinationSystemApi.Helpers
 {
-    public class TimeSlotValidator
+    public static class TimeSlotValidator
     {
         public static bool IsAvailable(DateTime startSlot, DateTime endSlot, DateTime startDate, DateTime endDate)
         {
