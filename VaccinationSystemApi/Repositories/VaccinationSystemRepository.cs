@@ -288,6 +288,11 @@ namespace VaccinationSystemApi.Repositories
         {
             timeSlots.Where(x => x.Id == id).ToList().ForEach(s => s.IsFree = false);
         }
+        public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, string date)
+        {
+            return _db.TimeSlots.Where(x => x.AssignedDoctorId == doctorId && x.From.ToShortDateString() == date
+                && x.Active == true);
+        }
 
         public Doctor GetDoctorByTimeSlot(Guid id)
         {
