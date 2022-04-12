@@ -24,6 +24,13 @@ namespace VaccinationSystemApi.Repositories
         private List<Virus> viruses;
         private List<Vaccine> vaccines;
 
+        public VaccinationSystemRepository(VaccinationContext db)
+        {
+            _db = db;
+        }
+
+
+
 
 
         /*private readonly List<VaccinationCenter> centers = new()
@@ -214,7 +221,7 @@ namespace VaccinationSystemApi.Repositories
 
         public IEnumerable<VaccinationCenter> GetCenters()
         {
-            return centers;
+            return _db.VaccinationCenters;
         }
 
         public VaccinationCenter GetCenter(Guid id)
@@ -271,5 +278,56 @@ namespace VaccinationSystemApi.Repositories
         {
             appointments.Where(x => x.Id == id).ToList().ForEach(s => s.Status = AppointmentStatus.Cancelled);
         }
+<<<<<<< HEAD
+
+        public void CreateTimeSlot(TimeSlot timeSlot)
+        {
+            timeSlots.Add(timeSlot);
+        }
+
+        public void DeleteTimeSlot(Guid id)
+        {
+            timeSlots.Where(x => x.Id == id).ToList().ForEach(s => s.IsFree = false);
+        }
+
+        public Doctor GetDoctorByTimeSlot(Guid id)
+        {
+            var slotFromDb = timeSlots.Where(x => x.Id == id).SingleOrDefault();
+            if (slotFromDb is null) return null;
+            return this.GetDoctor(slotFromDb.AssignedDoctorId);
+        }
+        public void ModifyTimeSlot(Guid timeSlotId, DateTime from, DateTime to)
+        {
+            timeSlots.Where(x => x.Id == timeSlotId).ToList().ForEach(s => { s.From = from; s.To = to; });
+        }
+
+        public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId)
+        {
+            return _db.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.Now)
+                .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
+                .Include(a => a.Vaccine_);
+        }
+
+        public IEnumerable<Appointment> GetFormerAppointments(Guid patientId)
+        {
+            return _db.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From < DateTime.Now)
+                .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
+                .Include(a => a.Vaccine_);
+        }
+
+        public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
+        {
+            return _db.TimeSlots.Include(t => t.AssignedDoctor)
+                .ThenInclude(d => d.VaccinationCenter_)
+                .ThenInclude(vc => vc.AvailableVaccines)
+                .ThenInclude(v => v.Virus_)
+                .Where(t => t.AssignedDoctor.VaccinationCenter_.City == city && t.From == dateFrom 
+                && t.To == dateTo && t.AssignedDoctor.VaccinationCenter_.AvailableVaccines.Select(v => v.Virus_.Name == virus).Count() > 0);
+            // timeSlot isn't directly related to virus
+        }
+
+
+=======
+>>>>>>> parent of cd57a89 (create doctor controller and routes for managing timeSlots)
     }
 }

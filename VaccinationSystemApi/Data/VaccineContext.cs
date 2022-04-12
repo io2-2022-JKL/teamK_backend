@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using VaccinationSystemApi.Models;
 
 namespace VaccinationSystemApi.Data
 {
-    public class VaccinationContext : DbContext
+    public class VaccinationContext : IdentityDbContext
     {
         public VaccinationContext(DbContextOptions<VaccinationContext> options) : base(options)
         {
@@ -19,6 +20,8 @@ namespace VaccinationSystemApi.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<Appointment>().ToTable("Appointment");
             modelBuilder.Entity<Certificate>().ToTable("Certificate");
             modelBuilder.Entity<Doctor>().ToTable("Doctor");

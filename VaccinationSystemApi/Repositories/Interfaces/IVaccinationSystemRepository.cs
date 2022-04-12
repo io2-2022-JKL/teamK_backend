@@ -20,5 +20,15 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId);
         Appointment GetAppointment(Guid id);
         void CancelAppointment(Guid id);
+<<<<<<< HEAD
+        void CreateTimeSlot(TimeSlot timeSlot);
+        Doctor GetDoctorByTimeSlot(Guid id);
+        void DeleteTimeSlot(Guid id);
+        void ModifyTimeSlot(Guid timeSlotId, DateTime from, DateTime to);
+        public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId);
+        public IEnumerable<Appointment> GetFormerAppointments(Guid patientId);
+        public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus);
+=======
+>>>>>>> parent of cd57a89 (create doctor controller and routes for managing timeSlots)
     }
 }
