@@ -8,7 +8,7 @@ namespace VaccinationSystemApi.Models
     { 
         public VaccinationCenter VaccinationCenter_ { get; set; }
         ICollection<Appointment> Appointments { get; set; }
-        public Guid PatientAccountId { get; set; }
+        public Guid? PatientAccountId { get; set; }
         public Patient PatientAccount { get; set; }
         public bool Active { get; set; }
     }

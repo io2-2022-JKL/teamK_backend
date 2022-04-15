@@ -16,6 +16,6 @@ namespace VaccinationSystemApi.Models
         public Virus Virus_ { get; set; }
         public int MinPatientAge { get; set; }
         public int MaxPatientAge { get; set; }
-        public bool Used { get; set; }
+        public bool IsStillBeingUsed { get; set; }
     }
 }

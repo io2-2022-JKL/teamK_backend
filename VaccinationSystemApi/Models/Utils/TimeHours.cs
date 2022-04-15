@@ -16,5 +16,16 @@ namespace VaccinationSystemApi.Models.Utils
             Hour = hour;
             Minutes = minutes;
         }
+
+        public TimeHours(Guid Id, int hour, int minutes = 0)
+        {
+            this.Id = Id;
+            Hour = hour;
+            Minutes = minutes;
+        }
+
+        public TimeHours()
+        {
+        }
     }
 }

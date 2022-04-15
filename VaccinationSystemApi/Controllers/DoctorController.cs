@@ -70,5 +70,11 @@ namespace VaccinationSystemApi.Controllers
                 _vaccinationService.ModifyTimeSlot(timeSlotId, request.From, request.To);
             }
         }
+
+        [HttpPost("initDb")]
+        public void InitDb()
+        {
+            _vaccinationService.SeedData();
+        }
     }
 }
