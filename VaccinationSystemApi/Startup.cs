@@ -55,7 +55,7 @@ namespace VaccinationSystemApi
 
             var config =
             services.AddDbContext<VaccinationContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(Configuration["connectionString"]));
             services.AddScoped<IVaccinationSystemRepository, VaccinationSystemRepository>();
 
             services.AddAuthentication(options =>

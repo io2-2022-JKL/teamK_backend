@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using VaccinationSystemApi.Dtos.Doctors;
-using VaccinationSystemApi.Models;
 using VaccinationSystemApi.Repositories.Interfaces;
+using VaccinationSystemApi.Helpers;
+using VaccinationSystemApi.Models;
 
 namespace VaccinationSystemApi.Controllers
 {
-    
+
     [ApiController]
 
     public class DoctorController: ControllerBase
@@ -20,15 +18,36 @@ namespace VaccinationSystemApi.Controllers
         [HttpPost("doctor/timeSlot/create/{doctorId}")]
         public void CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {
-            _vaccinationService.CreateTimeSlot(new TimeSlot
+            var dateStart = request.From;
+            var timeSpan = TimeSpan.FromMinutes(request.Duration);
+            var slotsFromDb = _vaccinationService.GetDoctorActiveSlots(doctorId, dateStart.ToShortDateString());
+            while(dateStart + timeSpan <= request.To)
             {
-                Active = true,
-                AssignedDoctorId = doctorId,
-                From = request.From,
-                To = request.To,
-                IsFree = true,
-                Id = Guid.NewGuid()
-            });
+                TimeSlotValidator.Validate(dateStart, dateStart + timeSpan);
+                bool isFree = true;
+                foreach(var existingSlots in slotsFromDb)
+                {
+                    if(!TimeSlotValidator.IsAvailable(dateStart, dateStart + timeSpan, existingSlots.From, existingSlots.To))
+                    {
+                        isFree = false;
+                        break;
+                    }
+                }
+
+                if(isFree)
+                {
+                    _vaccinationService.CreateTimeSlot(new TimeSlot
+                    {
+                        Active = true,
+                        AssignedDoctorId = doctorId,
+                        From = dateStart,
+                        To = dateStart + timeSpan,
+                        IsFree = true,
+                        Id = Guid.NewGuid()
+                    });
+                }
+                dateStart += timeSpan;
+            }
         }
 
         [HttpPost("doctor/timeSlot/delete/{doctorId}")]
@@ -38,7 +57,7 @@ namespace VaccinationSystemApi.Controllers
             {
                 if(_vaccinationService.GetDoctorByTimeSlot(slot).Id == doctorId)
                 {
-
+                    _vaccinationService.DeleteTimeSlot(slot);
                 }
             }
         }

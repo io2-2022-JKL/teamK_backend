@@ -9,5 +9,6 @@ namespace VaccinationSystemApi.Dtos.Doctors
     {
         public DateTime From { get; init; }
         public DateTime To { get; init; }
+        public int Duration { get; init; }
     }
 }
