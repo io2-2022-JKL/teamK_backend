@@ -10,8 +10,8 @@ using VaccinationSystemApi.Data;
 namespace VaccinationSystemApi.Migrations
 {
     [DbContext(typeof(VaccinationContext))]
-    [Migration("20220410172357_Authentication")]
-    partial class Authentication
+    [Migration("20220415080544_InitMigration")]
+    partial class InitMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
