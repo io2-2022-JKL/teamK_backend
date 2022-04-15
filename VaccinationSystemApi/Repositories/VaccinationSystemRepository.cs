@@ -14,7 +14,7 @@ namespace VaccinationSystemApi.Repositories
 {
     public class VaccinationSystemRepository : IVaccinationSystemRepository
     {
-        private readonly VaccinationContext _db;
+        private readonly VaccinationContext _dbContext;
 
         private readonly List<VaccinationCenter> centers;
         private readonly List<Patient> patients;
@@ -26,11 +26,8 @@ namespace VaccinationSystemApi.Repositories
 
         public VaccinationSystemRepository(VaccinationContext db)
         {
-            _db = db;
+            _dbContext = db;
         }
-
-
-
 
 
         /*private readonly List<VaccinationCenter> centers = new()
@@ -211,37 +208,37 @@ namespace VaccinationSystemApi.Repositories
 
         public Patient GetPatient(Guid id)
         {
-            return patients.Where(x => x.Id == id).FirstOrDefault();
+            return _dbContext.Patients.Where(x => x.Id == id).FirstOrDefault();
         }
 
         public IEnumerable<Patient> GetPatients()
         {
-            return patients;
+            return _dbContext.Patients;
         }
 
         public IEnumerable<VaccinationCenter> GetCenters()
         {
-            return _db.VaccinationCenters;
+            return _dbContext.VaccinationCenters;
         }
 
         public VaccinationCenter GetCenter(Guid id)
         {
-            return centers.Where(x => x.Id == id).SingleOrDefault();
+            return _dbContext.VaccinationCenters.Where(x => x.Id == id).SingleOrDefault();
         }
 
         public IEnumerable<Doctor> GetDoctors()
         {
-            return doctors;
+            return _dbContext.Doctors;
         }
 
         public Doctor GetDoctor(Guid id)
         {
-            return doctors.Where(x => x.Id == id).SingleOrDefault();
+            return _dbContext.Doctors.Where(x => x.Id == id).SingleOrDefault();
         }
 
         public VaccinationCenter GetCenterOfDoctor(Guid doctorId)
         {
-            var doctorFromDb = doctors.Where(x => x.Id == doctorId).SingleOrDefault();
+            var doctorFromDb = _dbContext.Doctors.Where(x => x.Id == doctorId).SingleOrDefault();
 
             if (doctorFromDb is null) return null;
 
@@ -249,13 +246,13 @@ namespace VaccinationSystemApi.Repositories
         }
         public IEnumerable<TimeSlot> GetTimeSlots()
         {
-            return timeSlots;
+            return _dbContext.TimeSlots;
         }
 
         public Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
         {
             Guid createdId = Guid.NewGuid();
-            appointments.Add(new Appointment
+            _dbContext.Appointments.Add(new Appointment
             {
                 Id = createdId,
                 Status = AppointmentStatus.Planned,
@@ -265,63 +262,73 @@ namespace VaccinationSystemApi.Repositories
                 Vaccine_ = new Vaccine(),
                 WhichDose = 1
             });
-            
+
+            _dbContext.SaveChanges();
             return createdId;
         }
 
         public Appointment GetAppointment(Guid id)
         {
-            return appointments.Where(x => x.Id == id).SingleOrDefault();
+            return _dbContext.Appointments.Where(x => x.Id == id).SingleOrDefault();
         }
 
         public void CancelAppointment(Guid id)
         {
-            appointments.Where(x => x.Id == id).ToList().ForEach(s => s.Status = AppointmentStatus.Cancelled);
+            var appointmentFromDb = _dbContext.Appointments.Where(x => x.Id == id).SingleOrDefault();
+            if (appointmentFromDb == null) return;
+
+            appointmentFromDb.Status = AppointmentStatus.Cancelled;
+            _dbContext.SaveChanges();
         }
 
         public void CreateTimeSlot(TimeSlot timeSlot)
         {
-            timeSlots.Add(timeSlot);
+            _dbContext.TimeSlots.Add(timeSlot);
+            _dbContext.SaveChanges();
         }
 
         public void DeleteTimeSlot(Guid id)
         {
-            timeSlots.Where(x => x.Id == id).ToList().ForEach(s => s.IsFree = false);
+            var slotFromDb = _dbContext.TimeSlots.Where(x => x.Id == id).SingleOrDefault();
+            if (slotFromDb == null) return;
+
+            slotFromDb.IsFree = false;
+            _dbContext.SaveChanges();
         }
         public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, string date)
         {
-            return _db.TimeSlots.Where(x => x.AssignedDoctorId == doctorId && x.From.ToShortDateString() == date
+            return _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId && x.From.ToShortDateString() == date
                 && x.Active == true);
         }
 
         public Doctor GetDoctorByTimeSlot(Guid id)
         {
-            var slotFromDb = timeSlots.Where(x => x.Id == id).SingleOrDefault();
+            var slotFromDb = _dbContext.TimeSlots.Where(x => x.Id == id).SingleOrDefault();
             if (slotFromDb is null) return null;
-            return this.GetDoctor(slotFromDb.AssignedDoctorId);
+            return GetDoctor(slotFromDb.AssignedDoctorId);
         }
         public void ModifyTimeSlot(Guid timeSlotId, DateTime from, DateTime to)
         {
-            timeSlots.Where(x => x.Id == timeSlotId).ToList().ForEach(s => { s.From = from; s.To = to; });
+            _dbContext.TimeSlots.Where(x => x.Id == timeSlotId).ToList().ForEach(s => { s.From = from; s.To = to; });
         }
 
         public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId)
         {
-            return _db.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.Now)
+            return _dbContext.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.Now)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
                 .Include(a => a.Vaccine_);
         }
 
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId)
         {
-            return _db.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From < DateTime.Now)
+            return _dbContext.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From < DateTime.Now)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
                 .Include(a => a.Vaccine_);
         }
 
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
         {
-            return _db.TimeSlots.Include(t => t.AssignedDoctor)
+            return _dbContext.TimeSlots.Include(t => t.AssignedDoctor)
                 .ThenInclude(d => d.VaccinationCenter_)
                 .ThenInclude(vc => vc.AvailableVaccines)
                 .ThenInclude(v => v.Virus_)
