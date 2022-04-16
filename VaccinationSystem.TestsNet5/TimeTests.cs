@@ -28,6 +28,8 @@ namespace VaccinationSystem.TestsNet5
         {
             var timeHours = new OpeningHours()
             {
+                Id = Guid.NewGuid(),
+                VaccCenterId = Guid.NewGuid(),
                 MondayOpen = new TimeHours(3, 32),
                 MondayClose = new TimeHours(18, 21),
                 TuesdayOpen = new TimeHours(5, 22),

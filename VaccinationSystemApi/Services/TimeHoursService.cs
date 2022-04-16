@@ -15,7 +15,7 @@ namespace VaccinationSystemApi.Services
 
         public ICollection<OpeningHoursDTO> OpeningHoursToDTO(OpeningHours openingHours)
         {
-            /*var mondayDto = new OpeningHoursDTO()
+            var mondayDto = new OpeningHoursDTO()
             {
                 From = HourStringFromTimeHours(openingHours.MondayOpen),
                 To = HourStringFromTimeHours(openingHours.MondayClose),
@@ -54,7 +54,7 @@ namespace VaccinationSystemApi.Services
             return new List<OpeningHoursDTO>()
             {
                 mondayDto, tuesdayDto, wednesdayDto, thursdayDto, fridayDto, saturdayDto, sundayDto
-            };*/
+            };
             return null;
         }
     }
