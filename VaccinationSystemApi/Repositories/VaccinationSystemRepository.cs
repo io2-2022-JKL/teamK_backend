@@ -166,6 +166,15 @@ namespace VaccinationSystemApi.Repositories
 
         public void SeedData()
         {
+            _dbContext.VaccinationCenters.Add(new VaccinationCenter()
+            {
+                Active = true,
+                Id = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),
+                Address = "Hoża 15",
+                City = "Warszawa",
+                Name = "Centrum Szczepień na Hożej",
+            });
+
             _dbContext.Patients.Add(new Patient()
             {
                 Id = Guid.NewGuid(),
@@ -223,7 +232,7 @@ namespace VaccinationSystemApi.Repositories
                 Password = null,
                 PatientAccountId = null,
                 Pesel = "80545454545",
-                VaccinationCenter_ = null,
+                VaccinationCenterId = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),
                 PhoneNumber = "666666666",
             });
 
@@ -253,9 +262,10 @@ namespace VaccinationSystemApi.Repositories
             var sundayClose1 = new TimeHours(20, 0);
             var openingHoursId1 = Guid.NewGuid();
 
-            /*_dbContext.OpeningHours.Add(new OpeningHours()
+            _dbContext.OpeningHours.Add(new OpeningHours()
             {
                 Id = openingHoursId1,
+                VaccCenterId = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),
                 MondayOpen = mondayOpen1,
                 MondayClose = mondayClose1,
                 TuesdayOpen = tuesdayOpen1,
@@ -272,14 +282,7 @@ namespace VaccinationSystemApi.Repositories
                 SundayClose = sundayClose1,
             });
 
-            _dbContext.VaccinationCenters.Add(new VaccinationCenter()
-            {
-                Active = true,
-                Id = Guid.NewGuid(),
-                Address = "Hoża 15",
-                City = "Warszawa",
-                Name = "Centrum Szczepień na Hożej",
-            });/*
+            _dbContext.SaveChanges();
 
             /*private readonly List<VaccinationCenter> centers = new()
        {

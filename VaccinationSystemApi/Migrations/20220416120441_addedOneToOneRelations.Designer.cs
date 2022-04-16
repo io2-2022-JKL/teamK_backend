@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VaccinationSystemApi.Data;
 
 namespace VaccinationSystemApi.Migrations
 {
     [DbContext(typeof(VaccinationContext))]
-    partial class VaccinationContextModelSnapshot : ModelSnapshot
+    [Migration("20220416120441_addedOneToOneRelations")]
+    partial class addedOneToOneRelations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,14 +309,14 @@ namespace VaccinationSystemApi.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("VaccinationCenterId")
+                    b.Property<Guid?>("VaccinationCenter_Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PatientAccountId");
 
-                    b.HasIndex("VaccinationCenterId");
+                    b.HasIndex("VaccinationCenter_Id");
 
                     b.ToTable("Doctor");
                 });
@@ -659,9 +661,7 @@ namespace VaccinationSystemApi.Migrations
 
                     b.HasOne("VaccinationSystemApi.Models.VaccinationCenter", "VaccinationCenter_")
                         .WithMany("Doctors")
-                        .HasForeignKey("VaccinationCenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VaccinationCenter_Id");
 
                     b.Navigation("PatientAccount");
 
