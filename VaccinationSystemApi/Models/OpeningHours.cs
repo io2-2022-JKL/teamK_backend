@@ -7,6 +7,8 @@ namespace VaccinationSystemApi.Models
     public class OpeningHours
     {
         public Guid Id { get; set; }
+        public Guid VaccCenterId { get; set; }
+        public VaccinationCenter VaccCenter { get; set; }
         public TimeHours MondayOpen { get; set; }
         public TimeHours MondayClose { get; set; }
         public TimeHours TuesdayOpen { get; set; }
@@ -21,6 +23,5 @@ namespace VaccinationSystemApi.Models
         public TimeHours SaturdayClose { get; set; }
         public TimeHours SundayOpen { get; set; }
         public TimeHours SundayClose { get; set; }
-
     }
 }

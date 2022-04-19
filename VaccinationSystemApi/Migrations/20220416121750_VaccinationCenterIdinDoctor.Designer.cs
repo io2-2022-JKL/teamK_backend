@@ -10,8 +10,8 @@ using VaccinationSystemApi.Data;
 namespace VaccinationSystemApi.Migrations
 {
     [DbContext(typeof(VaccinationContext))]
-    [Migration("20220410172357_Authentication")]
-    partial class Authentication
+    [Migration("20220416121750_VaccinationCenterIdinDoctor")]
+    partial class VaccinationCenterIdinDoctor
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -233,7 +233,7 @@ namespace VaccinationSystemApi.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("TimeSlot_Id")
+                    b.Property<Guid>("TimeslotId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("VaccineBatchNumber")
@@ -249,7 +249,8 @@ namespace VaccinationSystemApi.Migrations
 
                     b.HasIndex("Patient_Id");
 
-                    b.HasIndex("TimeSlot_Id");
+                    b.HasIndex("TimeslotId")
+                        .IsUnique();
 
                     b.HasIndex("Vaccine_Id");
 
@@ -299,7 +300,7 @@ namespace VaccinationSystemApi.Migrations
                     b.Property<string>("Password")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("PatientAccountId")
+                    b.Property<Guid?>("PatientAccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Pesel")
@@ -308,14 +309,14 @@ namespace VaccinationSystemApi.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("VaccinationCenter_Id")
+                    b.Property<Guid>("VaccinationCenterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PatientAccountId");
 
-                    b.HasIndex("VaccinationCenter_Id");
+                    b.HasIndex("VaccinationCenterId");
 
                     b.ToTable("Doctor");
                 });
@@ -362,6 +363,9 @@ namespace VaccinationSystemApi.Migrations
                     b.Property<Guid?>("TuesdayOpenId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("VaccCenterId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid?>("WednesdayCloseId")
                         .HasColumnType("uniqueidentifier");
 
@@ -393,6 +397,9 @@ namespace VaccinationSystemApi.Migrations
                     b.HasIndex("TuesdayCloseId");
 
                     b.HasIndex("TuesdayOpenId");
+
+                    b.HasIndex("VaccCenterId")
+                        .IsUnique();
 
                     b.HasIndex("WednesdayCloseId");
 
@@ -499,12 +506,7 @@ namespace VaccinationSystemApi.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("OpeningHours_Id")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("OpeningHours_Id");
 
                     b.ToTable("VaccinationCenter");
                 });
@@ -517,6 +519,9 @@ namespace VaccinationSystemApi.Migrations
 
                     b.Property<string>("Company")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsStillBeingUsed")
+                        .HasColumnType("bit");
 
                     b.Property<int>("MaxDaysBetweenDoses")
                         .HasColumnType("int");
@@ -535,9 +540,6 @@ namespace VaccinationSystemApi.Migrations
 
                     b.Property<int>("NumberOfDoses")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Used")
-                        .HasColumnType("bit");
 
                     b.Property<Guid?>("VaccinationCenterId")
                         .HasColumnType("uniqueidentifier");
@@ -626,8 +628,10 @@ namespace VaccinationSystemApi.Migrations
                         .HasForeignKey("Patient_Id");
 
                     b.HasOne("VaccinationSystemApi.Models.TimeSlot", "TimeSlot_")
-                        .WithMany()
-                        .HasForeignKey("TimeSlot_Id");
+                        .WithOne("AppointmentSigned")
+                        .HasForeignKey("VaccinationSystemApi.Models.Appointment", "TimeslotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VaccinationSystemApi.Models.Vaccine", "Vaccine_")
                         .WithMany()
@@ -653,13 +657,13 @@ namespace VaccinationSystemApi.Migrations
                 {
                     b.HasOne("VaccinationSystemApi.Models.Patient", "PatientAccount")
                         .WithMany()
-                        .HasForeignKey("PatientAccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("PatientAccountId");
 
                     b.HasOne("VaccinationSystemApi.Models.VaccinationCenter", "VaccinationCenter_")
                         .WithMany("Doctors")
-                        .HasForeignKey("VaccinationCenter_Id");
+                        .HasForeignKey("VaccinationCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("PatientAccount");
 
@@ -716,6 +720,12 @@ namespace VaccinationSystemApi.Migrations
                         .WithMany()
                         .HasForeignKey("TuesdayOpenId");
 
+                    b.HasOne("VaccinationSystemApi.Models.VaccinationCenter", "VaccCenter")
+                        .WithOne("OpeningHours_")
+                        .HasForeignKey("VaccinationSystemApi.Models.OpeningHours", "VaccCenterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "WednesdayClose")
                         .WithMany()
                         .HasForeignKey("WednesdayCloseId");
@@ -748,6 +758,8 @@ namespace VaccinationSystemApi.Migrations
 
                     b.Navigation("TuesdayOpen");
 
+                    b.Navigation("VaccCenter");
+
                     b.Navigation("WednesdayClose");
 
                     b.Navigation("WednesdayOpen");
@@ -762,15 +774,6 @@ namespace VaccinationSystemApi.Migrations
                         .IsRequired();
 
                     b.Navigation("AssignedDoctor");
-                });
-
-            modelBuilder.Entity("VaccinationSystemApi.Models.VaccinationCenter", b =>
-                {
-                    b.HasOne("VaccinationSystemApi.Models.OpeningHours", "OpeningHours_")
-                        .WithMany()
-                        .HasForeignKey("OpeningHours_Id");
-
-                    b.Navigation("OpeningHours_");
                 });
 
             modelBuilder.Entity("VaccinationSystemApi.Models.Vaccine", b =>
@@ -793,11 +796,18 @@ namespace VaccinationSystemApi.Migrations
                     b.Navigation("Certificates");
                 });
 
+            modelBuilder.Entity("VaccinationSystemApi.Models.TimeSlot", b =>
+                {
+                    b.Navigation("AppointmentSigned");
+                });
+
             modelBuilder.Entity("VaccinationSystemApi.Models.VaccinationCenter", b =>
                 {
                     b.Navigation("AvailableVaccines");
 
                     b.Navigation("Doctors");
+
+                    b.Navigation("OpeningHours_");
                 });
 #pragma warning restore 612, 618
         }

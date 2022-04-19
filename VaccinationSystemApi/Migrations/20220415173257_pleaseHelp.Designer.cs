@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VaccinationSystemApi.Data;
 
 namespace VaccinationSystemApi.Migrations
 {
     [DbContext(typeof(VaccinationContext))]
-    partial class VaccinationContextModelSnapshot : ModelSnapshot
+    [Migration("20220415173257_pleaseHelp")]
+    partial class pleaseHelp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,14 +309,14 @@ namespace VaccinationSystemApi.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("VaccinationCenterId")
+                    b.Property<Guid?>("VaccinationCenter_Id")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PatientAccountId");
 
-                    b.HasIndex("VaccinationCenterId");
+                    b.HasIndex("VaccinationCenter_Id");
 
                     b.ToTable("Doctor");
                 });
@@ -325,83 +327,18 @@ namespace VaccinationSystemApi.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FridayCloseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("FridayOpenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("MondayCloseId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("MondayOpenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SaturdayCloseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SaturdayOpenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SundayCloseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("SundayOpenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ThursdayCloseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ThursdayOpenId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TuesdayCloseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("TuesdayOpenId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("VaccCenterId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("WednesdayCloseId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("WednesdayOpenId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("FridayCloseId");
-
-                    b.HasIndex("FridayOpenId");
-
-                    b.HasIndex("MondayCloseId");
 
                     b.HasIndex("MondayOpenId");
 
-                    b.HasIndex("SaturdayCloseId");
-
-                    b.HasIndex("SaturdayOpenId");
-
-                    b.HasIndex("SundayCloseId");
-
-                    b.HasIndex("SundayOpenId");
-
-                    b.HasIndex("ThursdayCloseId");
-
-                    b.HasIndex("ThursdayOpenId");
-
-                    b.HasIndex("TuesdayCloseId");
-
-                    b.HasIndex("TuesdayOpenId");
-
                     b.HasIndex("VaccCenterId")
                         .IsUnique();
-
-                    b.HasIndex("WednesdayCloseId");
-
-                    b.HasIndex("WednesdayOpenId");
 
                     b.ToTable("OpeningHours");
                 });
@@ -659,9 +596,7 @@ namespace VaccinationSystemApi.Migrations
 
                     b.HasOne("VaccinationSystemApi.Models.VaccinationCenter", "VaccinationCenter_")
                         .WithMany("Doctors")
-                        .HasForeignKey("VaccinationCenterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VaccinationCenter_Id");
 
                     b.Navigation("PatientAccount");
 
@@ -670,53 +605,9 @@ namespace VaccinationSystemApi.Migrations
 
             modelBuilder.Entity("VaccinationSystemApi.Models.OpeningHours", b =>
                 {
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "FridayClose")
-                        .WithMany()
-                        .HasForeignKey("FridayCloseId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "FridayOpen")
-                        .WithMany()
-                        .HasForeignKey("FridayOpenId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "MondayClose")
-                        .WithMany()
-                        .HasForeignKey("MondayCloseId");
-
                     b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "MondayOpen")
                         .WithMany()
                         .HasForeignKey("MondayOpenId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "SaturdayClose")
-                        .WithMany()
-                        .HasForeignKey("SaturdayCloseId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "SaturdayOpen")
-                        .WithMany()
-                        .HasForeignKey("SaturdayOpenId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "SundayClose")
-                        .WithMany()
-                        .HasForeignKey("SundayCloseId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "SundayOpen")
-                        .WithMany()
-                        .HasForeignKey("SundayOpenId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "ThursdayClose")
-                        .WithMany()
-                        .HasForeignKey("ThursdayCloseId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "ThursdayOpen")
-                        .WithMany()
-                        .HasForeignKey("ThursdayOpenId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "TuesdayClose")
-                        .WithMany()
-                        .HasForeignKey("TuesdayCloseId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "TuesdayOpen")
-                        .WithMany()
-                        .HasForeignKey("TuesdayOpenId");
 
                     b.HasOne("VaccinationSystemApi.Models.VaccinationCenter", "VaccCenter")
                         .WithOne("OpeningHours_")
@@ -724,43 +615,9 @@ namespace VaccinationSystemApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "WednesdayClose")
-                        .WithMany()
-                        .HasForeignKey("WednesdayCloseId");
-
-                    b.HasOne("VaccinationSystemApi.Models.Utils.TimeHours", "WednesdayOpen")
-                        .WithMany()
-                        .HasForeignKey("WednesdayOpenId");
-
-                    b.Navigation("FridayClose");
-
-                    b.Navigation("FridayOpen");
-
-                    b.Navigation("MondayClose");
-
                     b.Navigation("MondayOpen");
 
-                    b.Navigation("SaturdayClose");
-
-                    b.Navigation("SaturdayOpen");
-
-                    b.Navigation("SundayClose");
-
-                    b.Navigation("SundayOpen");
-
-                    b.Navigation("ThursdayClose");
-
-                    b.Navigation("ThursdayOpen");
-
-                    b.Navigation("TuesdayClose");
-
-                    b.Navigation("TuesdayOpen");
-
                     b.Navigation("VaccCenter");
-
-                    b.Navigation("WednesdayClose");
-
-                    b.Navigation("WednesdayOpen");
                 });
 
             modelBuilder.Entity("VaccinationSystemApi.Models.TimeSlot", b =>

@@ -30,180 +30,7 @@ namespace VaccinationSystemApi.Repositories
         }
 
 
-        /*private readonly List<VaccinationCenter> centers = new()
-        {
-            new VaccinationCenter
-            {
-                Active = true,
-                Address = "Street 1/45",
-                AvailableVaccines = null,
-                City = "Warsaw",
-                Doctors = null,
-                Id = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),
-                Name = "Center1",
-                OpeningHours = new TimeHours[] { new TimeHours(10, 0) },
-                ClosingHours = new TimeHours[] { new TimeHours(18, 0) },
-            },
-            new VaccinationCenter
-            {
-                Active = true,
-                Address = "Street2 14",
-                AvailableVaccines = null,
-                City = "Warsaw",
-                Doctors = null,
-                Id = Guid.Parse("e39f5ab2-aadf-40f5-aff8-9354cb2222d8"),
-                Name = "Center2",
-                OpeningHours = new TimeHours[] { new TimeHours(10, 0) },
-                ClosingHours = new TimeHours[] { new TimeHours(18, 0) },
-            },
-            new VaccinationCenter
-            {
-                Active = true,
-                Address = "Lwowska 15",
-                AvailableVaccines = null,
-                City = "Rzeszow",
-                Doctors = null,
-                Id = Guid.NewGuid(),
-                Name = "Center3",
-                OpeningHours = new TimeHours[] { new TimeHours(10, 0) },
-                ClosingHours = new TimeHours[] { new TimeHours(18, 0) },
-            },
-        };
-
-        private readonly List<Patient> patients = new()
-        {
-            new Patient
-            {
-                Active = true,
-                Appointments = null,
-                Certificates = null,
-                DateOfBirth = new DateTime(2000, 11, 8),
-                EMail = "patient1@mymail.com",
-                FirstName = "Patient1",
-                LastName = "LeSurname",
-                Id = Guid.NewGuid(),
-                Password = "password",
-                Pesel = "001131451142",
-                PhoneNumber = "661541786"
-            },
-            new Patient
-            {
-                Active = true,
-                Appointments = null,
-                Certificates = null,
-                DateOfBirth = new DateTime(1972, 11, 8),
-                EMail = "hassterplan@mymail.com",
-                FirstName = "Gunther",
-                LastName = "Steiner",
-                Id = Guid.NewGuid(),
-                Password = "doors",
-                Pesel = "72110892412",
-                PhoneNumber = ""
-            },
-
-        };
-
-        private readonly List<Doctor> doctors = new()
-        {
-            new Doctor
-            {
-                Id = Guid.Parse("a3ef6dde-333c-4904-9a37-d07c72f3fa7d"),
-                Active = true,
-                DateOfBirth = new DateTime(1980, 01, 01),
-                EMail = "mydoctor@cure.com",
-                FirstName = "Doctor1",
-                LastName = "Srnanme1",
-                Password = "paswd",
-                PatientAccountId = Guid.NewGuid(),
-                Pesel = "80010141181",
-                PhoneNumber = "666444333",
-                VaccinationCenterId = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),   
-            },    
-            new Doctor
-            {
-                Id = Guid.Parse("9efdcda1-0b9a-4cab-82e4-08382cda3851"),
-                Active = true,
-                DateOfBirth = new DateTime(1980, 01, 01),
-                EMail = "mydoctor@cure.com",
-                FirstName = "Doctor2",
-                LastName = "Srnanme2",
-                Password = "paswd",
-                PatientAccountId = Guid.NewGuid(),
-                Pesel = "80010141181",
-                PhoneNumber = "666444333",
-                VaccinationCenterId = Guid.Parse("e39f5ab2-aadf-40f5-aff8-9354cb2222d8"),   
-            }
-        };
-
-        private List<TimeSlot> timeSlots = new()
-        {
-            new TimeSlot
-            {
-                Id = Guid.NewGuid(),
-                Active = true,
-                IsFree = true,
-                From = new DateTime(2022, 05, 10, 12, 00, 00),
-                To = new DateTime(2022, 05, 10, 13, 00, 00),
-                DoctorId = Guid.Parse("9efdcda1-0b9a-4cab-82e4-08382cda3851"),
-            },
-            new TimeSlot
-            {
-                Id = Guid.NewGuid(),
-                Active = true,
-                IsFree = true,
-                From = new DateTime(2022, 05, 11, 15, 00, 00),
-                To = new DateTime(2022, 05, 11, 15, 30, 00),
-                DoctorId = Guid.Parse("9efdcda1-0b9a-4cab-82e4-08382cda3851"),
-            },
-            new TimeSlot
-            {
-                Id = Guid.NewGuid(),
-                Active = true,
-                IsFree = true,
-                From = new DateTime(2022, 05, 10, 13, 00, 00),
-                To = new DateTime(2022, 05, 10, 14, 00, 00),
-                DoctorId = Guid.Parse("9efdcda1-0b9a-4cab-82e4-08382cda3851"),
-            },
-            new TimeSlot
-            {
-                Id = Guid.NewGuid(),
-                Active = true,
-                IsFree = true,
-                From = new DateTime(2022, 05, 10, 13, 00, 00),
-                To = new DateTime(2022, 05, 10, 14, 00, 00),
-                DoctorId = Guid.Parse("a3ef6dde-333c-4904-9a37-d07c72f3fa7d"),
-            },
-
-
-        };
-
-        private List<Appointment> appointments = new();
-
-        var v1 = new Virus()
-        {
-            Id = Guid.NewGuid(),
-            Name = "Coronavirus"
-        };
-
-        private List<Virus> viruses = new List<Virus>()
-        {
-            
-        };
-
-        private List<Vaccine> vaccines = new List<Vaccine>() {
-            new Vaccine() {
-            Id = Guid.NewGuid(),
-            Company = "Pfizer",
-            MaxDaysBetweenDoses = 28,
-            MaxPatientAge = 73,
-            MinDaysBetweenDoses = 21,
-            MinPatientAge = 15,
-            Name = "Pfizer Vaccine Google Chrome",
-            NumberOfDoses = 3,
-            Used = true,
-            Virus_ = viruses[0]
-            }
-        };*/
+       
 
 
         public Patient GetPatient(Guid id)
@@ -337,6 +164,300 @@ namespace VaccinationSystemApi.Repositories
             // timeSlot isn't directly related to virus
         }
 
+        public void SeedData()
+        {
+            _dbContext.VaccinationCenters.Add(new VaccinationCenter()
+            {
+                Active = true,
+                Id = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),
+                Address = "Hoża 15",
+                City = "Warszawa",
+                Name = "Centrum Szczepień na Hożej",
+            });
 
+            _dbContext.Patients.Add(new Patient()
+            {
+                Id = Guid.NewGuid(),
+                FirstName = "Robert", //16:01 - 3h36m
+                LastName = "Lewandowski",
+                Active = true,
+                DateOfBirth = new DateTime(1989, 11, 25),
+                EMail = "rlewandowski@gmail.com",
+                Password = "",
+                Pesel = "89739200923",
+                PhoneNumber = "874888333",
+            });
+
+            _dbContext.Viruses.Add(new Virus()
+            {
+                Id = Guid.NewGuid(),
+                Name = "SARS COVID-2019"
+            });
+            _dbContext.Vaccines.Add(new Vaccine()
+            {
+                Id = Guid.NewGuid(),
+                Company = "Moderna Co.",
+                MaxDaysBetweenDoses = 42,
+                MaxPatientAge = 80,
+                MinDaysBetweenDoses = 21,
+                MinPatientAge = 5,
+                Name = "Moderna SuperCovidRemover",
+                NumberOfDoses = 3,
+                IsStillBeingUsed = true,
+                Virus_ = _dbContext.Viruses.Where(v => v.Name == "SARS COVID-2019").SingleOrDefault(),
+            });
+            var timeslotId1 = Guid.NewGuid();
+            
+
+            _dbContext.Appointments.Add(new Appointment()
+            {
+                Id = Guid.NewGuid(),
+                Patient_ = _dbContext.Patients.Where(p => p.EMail == "rlewandowski@gmail.com").SingleOrDefault(),
+                Status = AppointmentStatus.Planned,
+                VaccineBatchNumber = "24601",
+                Vaccine_ = null,
+                TimeslotId = timeslotId1,
+                WhichDose = 1,
+            });
+
+            Guid doctorId1 = Guid.NewGuid();
+            _dbContext.Doctors.Add(new Doctor()
+            {
+                Id = doctorId1,
+                Active = true,
+                DateOfBirth = new DateTime(1980, 1, 1),
+                EMail = "doctorMcdoctoring@onet.pl",
+                FirstName = "Gregory",
+                LastName = "House",
+                Password = null,
+                PatientAccountId = null,
+                Pesel = "80545454545",
+                VaccinationCenterId = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),
+                PhoneNumber = "666666666",
+            });
+
+            _dbContext.TimeSlots.Add(new TimeSlot()
+            {
+                Id = timeslotId1,
+                From = new DateTime(2022, 7, 3, 8, 0, 0),
+                To = new DateTime(2022, 7, 3, 9, 0, 0),
+                AssignedDoctorId = doctorId1,
+                Active = true,
+                IsFree = false,
+            });
+
+            var mondayOpen1 = new TimeHours(8, 0);
+            var mondayClose1 = new TimeHours(20, 0);
+            var tuesdayOpen1 = new TimeHours(8, 0);
+            var tuesdayClose1 = new TimeHours(20, 0);
+            var wednesdayOpen1 = new TimeHours(8, 0);
+            var wednesdayClose1 = new TimeHours(20, 0);
+            var thursdayOpen1 = new TimeHours(8, 0);
+            var thursdayClose1 = new TimeHours(20, 0);
+            var fridayOpen1 = new TimeHours(8, 0);
+            var fridayClose1 = new TimeHours(20, 0);
+            var saturdayOpen1 = new TimeHours(8, 0);
+            var saturdayClose1 = new TimeHours(20, 0);
+            var sundayOpen1 = new TimeHours(8, 0);
+            var sundayClose1 = new TimeHours(20, 0);
+            var openingHoursId1 = Guid.NewGuid();
+
+            _dbContext.OpeningHours.Add(new OpeningHours()
+            {
+                Id = openingHoursId1,
+                VaccCenterId = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),
+                MondayOpen = mondayOpen1,
+                MondayClose = mondayClose1,
+                TuesdayOpen = tuesdayOpen1,
+                TuesdayClose = tuesdayClose1,
+                WednesdayOpen = wednesdayOpen1,
+                WednesdayClose = wednesdayClose1,
+                ThursdayOpen = thursdayOpen1,
+                ThursdayClose = thursdayClose1,
+                FridayOpen = fridayOpen1,
+                FridayClose = fridayClose1,
+                SaturdayOpen = saturdayOpen1,
+                SaturdayClose = saturdayClose1,
+                SundayOpen = sundayOpen1,
+                SundayClose = sundayClose1,
+            });
+
+            _dbContext.SaveChanges();
+
+            /*private readonly List<VaccinationCenter> centers = new()
+       {
+           new VaccinationCenter
+           {
+               Active = true,
+               Address = "Street 1/45",
+               AvailableVaccines = null,
+               City = "Warsaw",
+               Doctors = null,
+               Id = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),
+               Name = "Center1",
+               OpeningHours = new TimeHours[] { new TimeHours(10, 0) },
+               ClosingHours = new TimeHours[] { new TimeHours(18, 0) },
+           },
+           new VaccinationCenter
+           {
+               Active = true,
+               Address = "Street2 14",
+               AvailableVaccines = null,
+               City = "Warsaw",
+               Doctors = null,
+               Id = Guid.Parse("e39f5ab2-aadf-40f5-aff8-9354cb2222d8"),
+               Name = "Center2",
+               OpeningHours = new TimeHours[] { new TimeHours(10, 0) },
+               ClosingHours = new TimeHours[] { new TimeHours(18, 0) },
+           },
+           new VaccinationCenter
+           {
+               Active = true,
+               Address = "Lwowska 15",
+               AvailableVaccines = null,
+               City = "Rzeszow",
+               Doctors = null,
+               Id = Guid.NewGuid(),
+               Name = "Center3",
+               OpeningHours = new TimeHours[] { new TimeHours(10, 0) },
+               ClosingHours = new TimeHours[] { new TimeHours(18, 0) },*/
+
+       /*private readonly List<Patient> patients = new()
+       {
+           new Patient
+           {
+               Active = true,
+               Appointments = null,
+               Certificates = null,
+               DateOfBirth = new DateTime(2000, 11, 8),
+               EMail = "patient1@mymail.com",
+               FirstName = "Patient1",
+               LastName = "LeSurname",
+               Id = Guid.NewGuid(),
+               Password = "password",
+               Pesel = "001131451142",
+               PhoneNumber = "661541786"
+           },
+           new Patient
+           {
+               Active = true,
+               Appointments = null,
+               Certificates = null,
+               DateOfBirth = new DateTime(1972, 11, 8),
+               EMail = "hassterplan@mymail.com",
+               FirstName = "Gunther",
+               LastName = "Steiner",
+               Id = Guid.NewGuid(),
+               Password = "doors",
+               Pesel = "72110892412",
+               PhoneNumber = ""
+           },
+
+       };
+
+       private readonly List<Doctor> doctors = new()
+       {
+           new Doctor
+           {
+               Id = Guid.Parse("a3ef6dde-333c-4904-9a37-d07c72f3fa7d"),
+               Active = true,
+               DateOfBirth = new DateTime(1980, 01, 01),
+               EMail = "mydoctor@cure.com",
+               FirstName = "Doctor1",
+               LastName = "Srnanme1",
+               Password = "paswd",
+               PatientAccountId = Guid.NewGuid(),
+               Pesel = "80010141181",
+               PhoneNumber = "666444333",
+               VaccinationCenterId = Guid.Parse("a3c2b53f-d1f9-4e45-a4d0-0732fe1179bd"),   
+           },    
+           new Doctor
+           {
+               Id = Guid.Parse("9efdcda1-0b9a-4cab-82e4-08382cda3851"),
+               Active = true,
+               DateOfBirth = new DateTime(1980, 01, 01),
+               EMail = "mydoctor@cure.com",
+               FirstName = "Doctor2",
+               LastName = "Srnanme2",
+               Password = "paswd",
+               PatientAccountId = Guid.NewGuid(),
+               Pesel = "80010141181",
+               PhoneNumber = "666444333",
+               VaccinationCenterId = Guid.Parse("e39f5ab2-aadf-40f5-aff8-9354cb2222d8"),   
+           }
+       };
+
+       private List<TimeSlot> timeSlots = new()
+       {
+           new TimeSlot
+           {
+               Id = Guid.NewGuid(),
+               Active = true,
+               IsFree = true,
+               From = new DateTime(2022, 05, 10, 12, 00, 00),
+               To = new DateTime(2022, 05, 10, 13, 00, 00),
+               DoctorId = Guid.Parse("9efdcda1-0b9a-4cab-82e4-08382cda3851"),
+           },
+           new TimeSlot
+           {
+               Id = Guid.NewGuid(),
+               Active = true,
+               IsFree = true,
+               From = new DateTime(2022, 05, 11, 15, 00, 00),
+               To = new DateTime(2022, 05, 11, 15, 30, 00),
+               DoctorId = Guid.Parse("9efdcda1-0b9a-4cab-82e4-08382cda3851"),
+           },
+           new TimeSlot
+           {
+               Id = Guid.NewGuid(),
+               Active = true,
+               IsFree = true,
+               From = new DateTime(2022, 05, 10, 13, 00, 00),
+               To = new DateTime(2022, 05, 10, 14, 00, 00),
+               DoctorId = Guid.Parse("9efdcda1-0b9a-4cab-82e4-08382cda3851"),
+           },
+           new TimeSlot
+           {
+               Id = Guid.NewGuid(),
+               Active = true,
+               IsFree = true,
+               From = new DateTime(2022, 05, 10, 13, 00, 00),
+               To = new DateTime(2022, 05, 10, 14, 00, 00),
+               DoctorId = Guid.Parse("a3ef6dde-333c-4904-9a37-d07c72f3fa7d"),
+           },
+
+
+       };
+
+       private List<Appointment> appointments = new();
+
+       var v1 = new Virus()
+       {
+           Id = Guid.NewGuid(),
+           Name = "Coronavirus"
+       };
+
+       private List<Virus> viruses = new List<Virus>()
+       {
+
+       };
+
+       private List<Vaccine> vaccines = new List<Vaccine>() {
+           new Vaccine() {
+           Id = Guid.NewGuid(),
+           Company = "Pfizer",
+           MaxDaysBetweenDoses = 28,
+           MaxPatientAge = 73,
+           MinDaysBetweenDoses = 21,
+           MinPatientAge = 15,
+           Name = "Pfizer Vaccine Google Chrome",
+           NumberOfDoses = 3,
+           Used = true,
+           Virus_ = viruses[0]
+           }
+       };*/
+
+
+        }
     }
 }

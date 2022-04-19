@@ -11,5 +11,6 @@ namespace VaccinationSystemApi.Models
         public Doctor AssignedDoctor { get; set; }
         public bool IsFree { get; set; }
         public bool Active { get; set; }
+        public Appointment AppointmentSigned { get; set; }
     }
 }

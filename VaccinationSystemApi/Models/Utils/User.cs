@@ -13,7 +13,7 @@ namespace VaccinationSystemApi.Models.Utils
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string EMail { get; set; }
-        public string Password { get; set; }
+        public string? Password { get; set; } //legacy argument, always null
         public string PhoneNumber { get; set; }
     }
 }

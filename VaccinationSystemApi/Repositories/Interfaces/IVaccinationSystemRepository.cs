@@ -8,6 +8,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
 {
     public interface IVaccinationSystemRepository
     {
+        void SeedData();
         IEnumerable<Patient> GetPatients();
         Patient GetPatient(Guid id);
 

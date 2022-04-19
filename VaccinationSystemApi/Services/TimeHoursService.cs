@@ -55,6 +55,7 @@ namespace VaccinationSystemApi.Services
             {
                 mondayDto, tuesdayDto, wednesdayDto, thursdayDto, fridayDto, saturdayDto, sundayDto
             };
+            return null;
         }
     }
 }
