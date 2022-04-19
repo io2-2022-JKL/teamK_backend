@@ -55,7 +55,7 @@ namespace VaccinationSystemApi
 
             var config =
             services.AddDbContext<VaccinationContext>(options =>
-                options.UseSqlServer(Configuration["connectionString"]));
+                options.UseSqlServer("Server=tcp:coredbserver14.database.windows.net,1433;Initial Catalog=coredb;Persist Security Info=False;User Id=vaccinationadmin;Password=Admin14!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"));
             services.AddScoped<IVaccinationSystemRepository, VaccinationSystemRepository>();
 
             services.AddAuthentication(options =>

@@ -71,10 +71,5 @@ namespace VaccinationSystemApi.Controllers
             }
         }
 
-        [HttpPost("initDb")]
-        public void InitDb()
-        {
-            _vaccinationService.SeedData();
-        }
     }
 }
