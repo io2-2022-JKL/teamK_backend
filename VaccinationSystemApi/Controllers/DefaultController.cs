@@ -69,7 +69,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("signin")]
-        public async Task<IActionResult> SignIn(SignInRequest signInRequest)
+        public async Task<ActionResult<SignInResponse>> SignIn(SignInRequest signInRequest)
         {
             if (ModelState.IsValid)
             {
@@ -77,50 +77,33 @@ namespace VaccinationSystemApi.Controllers
 
                 if (existingUser == null)
                 {
-                    return BadRequest(new RegistrationResponse()
-                    {
-                        Errors = new List<string>() {
-                                "Invalid login request"
-                            },
-                        Success = false
-                    });
+                    return BadRequest("Unrecognised data format");
                 }
 
                 var isCorrect = await _userManager.CheckPasswordAsync(existingUser, signInRequest.Password);
 
                 if (!isCorrect)
                 {
-                    return BadRequest(new RegistrationResponse()
-                    {
-                        Errors = new List<string>() {
-                                "Invalid login request"
-                            },
-                        Success = false
-                    });
+                    return BadRequest("Unrecognised data format");
                 }
 
                 var jwtToken = GenerateJwtToken(existingUser);
 
-                return Ok(new RegistrationResponse()
+                return Ok(new SignInResponse()
                 {
-                    Success = true,
-                    Token = jwtToken
+                    UserId = existingUser.Id,
+                    UserType = "patient", // for now hardcoded patient,
+                    Jwt = jwtToken,
                 });
             }
 
-            return BadRequest(new RegistrationResponse()
-            {
-                Errors = new List<string>() {
-                        "Invalid payload"
-                    },
-                Success = false
-            });
+            return BadRequest("Unrecognised data format");
         }
 
         [HttpGet("/user/logout/{userId}")]
         public void Logout(int userId)
         {
-
+            // empty
         }
 
         private string GenerateJwtToken(IdentityUser user)
