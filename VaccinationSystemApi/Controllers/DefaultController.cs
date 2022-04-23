@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using VaccinationSystemApi.Configuration;
 using VaccinationSystemApi.Dtos.Login;
+using VaccinationSystemApi.Repositories;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -20,13 +21,17 @@ namespace VaccinationSystemApi.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly JwtConfig _jwtConfig;
+        private readonly VaccinationSystemRepository _vaccinationService;
 
         public DefaultController(
             UserManager<IdentityUser> userManager,
-            IOptionsMonitor<JwtConfig> optionsMonitor)
+            IOptionsMonitor<JwtConfig> optionsMonitor,
+            VaccinationSystemRepository vaccinationService
+            )
         {
             _userManager = userManager;
             _jwtConfig = optionsMonitor.CurrentValue;
+            _vaccinationService = vaccinationService;
         }
 
         [HttpPost("register")]
@@ -39,12 +44,16 @@ namespace VaccinationSystemApi.Controllers
 
                 if (existingUser != null)
                 {
-                    return BadRequest();
+                    return BadRequest("Unrecognised data format");
                 }
 
                 var newUser = new IdentityUser() { Email = registerRequest.Mail, UserName = registerRequest.PESEL };
                 var isCreated = await _userManager.CreateAsync(newUser, registerRequest.Password);
-                if (isCreated.Succeeded) //password required bunch of stuff: alpha, upper, digit, nonalphanumeric
+                var isCreatedInPatientTable = _vaccinationService.CreatePatient(registerRequest);
+
+                bool creationSuccess = isCreated.Succeeded && isCreatedInPatientTable;
+
+                if (creationSuccess) //password required bunch of stuff: alpha, upper, digit, nonalphanumeric
                 {
                     var jwtToken = GenerateJwtToken(newUser);
 
@@ -52,11 +61,11 @@ namespace VaccinationSystemApi.Controllers
                 }
                 else
                 {
-                    return BadRequest();
+                    return BadRequest("Unrecognised data format");
                 }
             }
 
-            return BadRequest();
+            return BadRequest("Unrecognised data format");
         }
 
         [HttpPost("signin")]

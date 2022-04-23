@@ -24,7 +24,7 @@ namespace VaccinationSystemApi.Dtos.Login
         [Required]
         [EmailAddress]
         public string Mail { get; set; }
-        public string DateOfBirth { get; set; }
+        public DateTime DateOfBirth { get; set; }
         [Required]
         public string Password { get; set; }
         public string PhoneNumber { get; set; }

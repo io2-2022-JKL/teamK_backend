@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using VaccinationSystemApi.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using VaccinationSystemApi.Dtos.Login;
 
 namespace VaccinationSystemApi.Repositories
 {
@@ -458,6 +459,26 @@ namespace VaccinationSystemApi.Repositories
        };*/
 
 
+        }
+
+        public bool CreatePatient(RegisterRequest registerRequest)
+        {
+
+           var result = _dbContext.Patients.Add(new Patient()
+            {
+                Active = true,
+                DateOfBirth = registerRequest.DateOfBirth,
+                EMail = registerRequest.Mail,
+                FirstName = registerRequest.FirstName,
+                LastName = registerRequest.LastName,
+                PhoneNumber = registerRequest.PhoneNumber,
+                Pesel = registerRequest.PESEL,
+                Id = Guid.NewGuid()
+            });
+
+            int entries = _dbContext.SaveChanges();
+
+            return entries > 0;
         }
     }
 }
