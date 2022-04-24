@@ -16,7 +16,7 @@ namespace VaccinationSystemApi.Controllers
 {
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("patient")]
     //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class PatientController : ControllerBase
     {
@@ -75,13 +75,13 @@ namespace VaccinationSystemApi.Controllers
             return searched;
         }
 
-        [HttpPost("appointments/create/{patientId}/{timeSlotId}/{vaccineId}")]
+        [HttpPost("timeSlots/Book/{patientId}/{timeSlotId}/{vaccineId}")]
         public Guid MakeAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
         {
             return _vaccinationService.CreateAppointment(patientId, timeSlotId, vaccineId);
         }
 
-        [HttpPost("appointments/cancel/{id}")]
+        [HttpDelete("appointments/incomingAppointments/cancelAppointments/{patientId}/{id}")]
         public void CancelAppointment(Guid id)
         {
             var appointmentFromDb = _vaccinationService.GetAppointment(id);
@@ -146,7 +146,7 @@ namespace VaccinationSystemApi.Controllers
             return appointmentResponses;
         }
 
-        [HttpGet("/patient/timeSlots/Filter")]
+        [HttpGet("timeSlots/Filter")]
         public ActionResult<ICollection<FilterTimeslotsResponse>> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
         {
             IEnumerable <TimeSlot> timeslotsFromDb;
