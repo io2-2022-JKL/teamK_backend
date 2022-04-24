@@ -79,6 +79,18 @@ namespace VaccinationSystemApi
                };
            });
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                // changed the default Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 1;
+                options.Password.RequiredUniqueChars = 1;
+            });
+
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                         .AddEntityFrameworkStores<VaccinationContext>();
 
