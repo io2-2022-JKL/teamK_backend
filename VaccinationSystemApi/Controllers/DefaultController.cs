@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using VaccinationSystemApi.Configuration;
 using VaccinationSystemApi.Dtos.Login;
 using VaccinationSystemApi.Repositories;
+using VaccinationSystemApi.Repositories.Interfaces;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -21,12 +22,12 @@ namespace VaccinationSystemApi.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly JwtConfig _jwtConfig;
-        private readonly VaccinationSystemRepository _vaccinationService;
+        private readonly IVaccinationSystemRepository _vaccinationService;
 
         public DefaultController(
             UserManager<IdentityUser> userManager,
             IOptionsMonitor<JwtConfig> optionsMonitor,
-            VaccinationSystemRepository vaccinationService
+            IVaccinationSystemRepository vaccinationService
             )
         {
             _userManager = userManager;
