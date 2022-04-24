@@ -120,6 +120,8 @@ namespace VaccinationSystemApi
             }
 
             //app.UseHttpsRedirection();
+            
+            app.UseCors("_MyAllowSpecificOrigins");
 
             app.UseRouting();
 
@@ -130,6 +132,7 @@ namespace VaccinationSystemApi
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
