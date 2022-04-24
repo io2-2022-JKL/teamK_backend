@@ -66,7 +66,7 @@ namespace VaccinationSystemApi.Repositories
 
         public VaccinationCenter GetCenterOfDoctor(Guid doctorId)
         {
-            var doctorFromDb = _dbContext.Doctors.Where(x => x.Id == doctorId).SingleOrDefault();
+            var doctorFromDb = _dbContext.Doctors.Where(x => x.Id == doctorId).Include(d => d.VaccinationCenter_).SingleOrDefault();
 
             if (doctorFromDb is null) return null;
 
@@ -74,7 +74,7 @@ namespace VaccinationSystemApi.Repositories
         }
         public IEnumerable<TimeSlot> GetTimeSlots()
         {
-            return _dbContext.TimeSlots;
+            return _dbContext.TimeSlots.ToList();
         }
 
         public Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
@@ -84,10 +84,10 @@ namespace VaccinationSystemApi.Repositories
             {
                 Id = createdId,
                 Status = AppointmentStatus.Planned,
-                Patient_ = patients.Where(x => x.Id == patientId).SingleOrDefault(),
-                TimeSlot_ = timeSlots.Where(t => t.Id == timeSlotId).SingleOrDefault(),
+                Patient_ = _dbContext.Patients.Where(x => x.Id == patientId).SingleOrDefault(),
+                TimeSlot_ = _dbContext.TimeSlots.Where(t => t.Id == timeSlotId).SingleOrDefault(),
                 VaccineBatchNumber = "batch1",
-                Vaccine_ = new Vaccine(),
+                Vaccine_ = _dbContext.Vaccines.Where(v => v.Id == vaccineId).SingleOrDefault(),
                 WhichDose = 1
             });
 
@@ -144,7 +144,7 @@ namespace VaccinationSystemApi.Repositories
         {
             return _dbContext.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.Now)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
-                .Include(a => a.Vaccine_);
+                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_);
         }
 
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId)
@@ -160,8 +160,22 @@ namespace VaccinationSystemApi.Repositories
                 .ThenInclude(d => d.VaccinationCenter_)
                 .ThenInclude(vc => vc.AvailableVaccines)
                 .ThenInclude(v => v.Virus_)
-                .Where(t => t.AssignedDoctor.VaccinationCenter_.City == city && t.From == dateFrom 
-                && t.To == dateTo && t.AssignedDoctor.VaccinationCenter_.AvailableVaccines.Select(v => v.Virus_.Name == virus).Count() > 0);
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.MondayOpen)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.MondayClose)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.TuesdayOpen)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.TuesdayClose)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.WednesdayOpen)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.WednesdayClose)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.ThursdayOpen)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.ThursdayClose)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.FridayOpen)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.FridayClose)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SaturdayOpen)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SaturdayClose)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayOpen)
+                .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayClose)
+                .Where(t => t.AssignedDoctor.VaccinationCenter_.City == city && t.From >= dateFrom
+                && t.To <= dateTo && t.AssignedDoctor.VaccinationCenter_.AvailableVaccines.Select(v => v.Virus_.Name == virus).Count() > 0).ToList();
             // timeSlot isn't directly related to virus
         }
 
