@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using VaccinationSystemApi.Models;
+using VaccinationSystemApi.Dtos.Login;
 
 namespace VaccinationSystemApi.Repositories.Interfaces
 {
@@ -28,5 +29,6 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId);
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId);
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus);
+        bool CreatePatient(RegisterRequest registerRequest);
     }
 }
