@@ -147,9 +147,18 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpGet("/patient/timeSlots/Filter")]
-        public ICollection<FilterTimeslotsResponse> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
+        public ActionResult<ICollection<FilterTimeslotsResponse>> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
         {
-            var timeslotsFromDb = _vaccinationService.FilterTimeslots(city, dateFrom, dateTo, virus);
+            IEnumerable <TimeSlot> timeslotsFromDb;
+            try
+            {
+                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, dateFrom, dateTo, virus);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+
             var responses = new List<FilterTimeslotsResponse>();
 
             foreach(var t in timeslotsFromDb)
@@ -171,7 +180,7 @@ namespace VaccinationSystemApi.Controllers
                 };
                 responses.Add(filterTimeslotResponse);
             }
-            return responses;
+            return Ok(responses);
         }
 
         private ICollection<VaccineDTO> VaccineCollectionToDTO(ICollection<Vaccine> vaccines)
