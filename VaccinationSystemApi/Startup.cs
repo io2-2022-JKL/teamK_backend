@@ -56,6 +56,7 @@ namespace VaccinationSystemApi
             var config =
             services.AddDbContext<VaccinationContext>(options =>
                 options.UseSqlServer("Server=tcp:coredbserver14.database.windows.net,1433;Initial Catalog=coredb;Persist Security Info=False;User Id=vaccinationadmin;Password=Admin14!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"));
+            
             services.AddScoped<IVaccinationSystemRepository, VaccinationSystemRepository>();
 
             services.AddAuthentication(options =>
@@ -79,11 +80,33 @@ namespace VaccinationSystemApi
                };
            });
 
+            services.Configure<IdentityOptions>(options =>
+            {
+                // changed the default Password settings.
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 1;
+                options.Password.RequiredUniqueChars = 1;
+            });
+
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                         .AddEntityFrameworkStores<VaccinationContext>();
 
             services.AddControllers();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: "_MyAllowSpecificOrigins",
+                                  builder =>
+                                  {
+                                      builder.AllowAnyOrigin();
+                                      builder.AllowAnyMethod();
+                                      builder.AllowAnyHeader();
+                                  });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -97,6 +120,8 @@ namespace VaccinationSystemApi
             }
 
             //app.UseHttpsRedirection();
+            
+            app.UseCors("_MyAllowSpecificOrigins");
 
             app.UseRouting();
 
@@ -107,6 +132,7 @@ namespace VaccinationSystemApi
             {
                 endpoints.MapControllers();
             });
+
         }
     }
 }
