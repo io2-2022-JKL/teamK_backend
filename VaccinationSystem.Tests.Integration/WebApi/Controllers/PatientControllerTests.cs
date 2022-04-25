@@ -30,7 +30,7 @@ namespace VaccinationSystem.Tests.Integration.WebApi.Controllers
             var expectedNumberOfCenters = 1;
 
             //act
-            var httpResponse = await _client.GetAsync("/centers/Warszawa");
+            var httpResponse = await _client.GetAsync("https://vaccinationsystemapi.azurewebsites.net/patient/centers/Warszawa");
 
             var json = await httpResponse.Content.ReadAsStringAsync();
             var vehicles = System.Text.Json.JsonSerializer.Deserialize<List<BrowseVaccinationCentersResponse>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
