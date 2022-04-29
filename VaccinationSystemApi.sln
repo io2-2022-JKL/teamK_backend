@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VaccinationSystemApi", "Vac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VaccinationSystem.TestsNet5", "VaccinationSystem.TestsNet5\VaccinationSystem.TestsNet5.csproj", "{53E24F5F-0A73-40ED-B50E-CD9560207514}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VaccinationSystem.Tests.Integration", "VaccinationSystem.Tests.Integration\VaccinationSystem.Tests.Integration.csproj", "{6D2ADAAE-708B-4E31-A90D-4D7244C19BF4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VaccinationSystem.TestsIntegration", "VaccinationSystem.Tests.Integration\VaccinationSystem.TestsIntegration.csproj", "{6D2ADAAE-708B-4E31-A90D-4D7244C19BF4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
