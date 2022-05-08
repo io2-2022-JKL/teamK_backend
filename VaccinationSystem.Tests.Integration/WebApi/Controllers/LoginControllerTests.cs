@@ -17,25 +17,28 @@ using Microsoft.Net.Http.Headers;
 using RestSharp;
 
 using System.Diagnostics;
-
+using VaccinationSystem.Tests.Integration.WebApi;
 
 namespace VaccinationSystem.TestsIntegration.WebApi.Controllers
 {
  
     public class LoginControllerTests
     {
-        private readonly RestClient _client;
+        string baseUri = "https://vaccinationsystemapi.azurewebsites.net/";
+        private HttpClient _client;
+        private RestClient restClient;
 
         public LoginControllerTests()
         {
-            string baseUri = "https://vaccinationsystemapi.azurewebsites.net/";
-            _client = new RestClient(baseUri);
+            
+            _client = new CustomWebApplicationFactory<Startup>().CreateClient();
+            restClient = new RestClient(_client);
         }
 
         [Fact]
         public async void RegisteringUser()
         {
-            var request = new RestRequest("register");
+            var request = new RestRequest(baseUri + "register");
 
             request.AddJsonBody(new
             {
@@ -51,7 +54,8 @@ namespace VaccinationSystem.TestsIntegration.WebApi.Controllers
 
             AddHeadersToRequest(request);
 
-            RestResponse registrationResponse = await _client.PostAsync(request);
+            
+            RestResponse registrationResponse = await restClient.PostAsync(request);
 
             Assert.True(registrationResponse.IsSuccessful);
 
