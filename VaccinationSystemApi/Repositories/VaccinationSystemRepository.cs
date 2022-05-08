@@ -475,8 +475,10 @@ namespace VaccinationSystemApi.Repositories
 
         }
 
-        public bool CreatePatient(RegisterRequest registerRequest)
+        public bool CreatePatient(RegisterRequest registerRequest, Guid guid = default(Guid))
         {
+            if (guid == default(Guid))
+                guid = Guid.NewGuid();
 
            var result = _dbContext.Patients.Add(new Patient()
             {
@@ -487,8 +489,8 @@ namespace VaccinationSystemApi.Repositories
                 LastName = registerRequest.LastName,
                 PhoneNumber = registerRequest.PhoneNumber,
                 Pesel = registerRequest.PESEL,
-                Id = Guid.NewGuid()
-            });
+                Id = guid
+           });
 
             int entries = _dbContext.SaveChanges();
 
