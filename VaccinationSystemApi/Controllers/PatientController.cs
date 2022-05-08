@@ -30,6 +30,25 @@ namespace VaccinationSystemApi.Controllers
             
         }
 
+        [HttpGet("info/{patientid}")]
+        public ActionResult<BrowsePatientByIdResponse> GetPatientInfo(Guid patientid)
+        {
+            var patientFromDb = _vaccinationService.GetPatient(patientid);
+            if (patientFromDb is null)
+                return NotFound();
+            BrowsePatientByIdResponse patientResponse = new()
+            {
+                DataOfBirth = patientFromDb.DateOfBirth,
+                EMail = patientFromDb.EMail,
+                FirstName = patientFromDb.FirstName,
+                LastName = patientFromDb.LastName,
+                Pesel = patientFromDb.Pesel,
+                PhoneNumber = patientFromDb.PhoneNumber
+            };
+
+            return Ok(patientResponse);
+        }
+
         [HttpGet("centers/{city}")]
         public IEnumerable<BrowseVaccinationCentersResponse> BrowseVaccinationCenters(string city)
         {
