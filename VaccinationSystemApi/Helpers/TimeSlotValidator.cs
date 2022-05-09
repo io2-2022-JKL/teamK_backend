@@ -10,6 +10,10 @@ namespace VaccinationSystemApi.Helpers
                 return false;
             if (endSlot >= startDate && endSlot <= endDate)
                 return false;
+            if (startDate >= startSlot && startDate <= endSlot)
+                return false;
+            if (endDate >= startSlot && endDate <= endSlot)
+                return false;
             return true;
         }
         public static void Validate(DateTime startDate, DateTime endDate)

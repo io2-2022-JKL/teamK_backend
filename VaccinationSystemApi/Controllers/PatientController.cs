@@ -30,6 +30,25 @@ namespace VaccinationSystemApi.Controllers
             
         }
 
+        [HttpGet("info/{patientId}")]
+        public ActionResult<BrowsePatientByIdResponse> GetPatientInfo(Guid patientId)
+        {
+            var patientFromDb = _vaccinationService.GetPatient(patientId);
+            if (patientFromDb is null)
+                return NotFound();
+            BrowsePatientByIdResponse patientResponse = new()
+            {
+                DataOfBirth = patientFromDb.DateOfBirth,
+                EMail = patientFromDb.EMail,
+                FirstName = patientFromDb.FirstName,
+                LastName = patientFromDb.LastName,
+                Pesel = patientFromDb.Pesel,
+                PhoneNumber = patientFromDb.PhoneNumber
+            };
+
+            return Ok(patientResponse);
+        }
+
         [HttpGet("centers/{city}")]
         public IEnumerable<BrowseVaccinationCentersResponse> BrowseVaccinationCenters(string city)
         {
@@ -51,6 +70,18 @@ namespace VaccinationSystemApi.Controllers
             };
 
             return centers;
+        }
+
+        [HttpGet("certificates/{patientId}")]
+        public ActionResult<IEnumerable<BrowseCertificateResponse>> GetPatientCertificates(Guid patientId)
+        {
+            var patientFromDb = _vaccinationService.GetPatient(patientId);
+            if (patientFromDb is null)
+                return BadRequest();
+
+            if(patientFromDb.Certificates is null)
+                return NotFound();
+            return Ok(patientFromDb.Certificates);
         }
 
         [HttpGet("timeSlots/{id}")]
