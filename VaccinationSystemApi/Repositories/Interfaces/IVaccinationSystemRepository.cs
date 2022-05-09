@@ -29,6 +29,6 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId);
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId);
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus);
-        bool CreatePatient(RegisterRequest registerRequest);
+        bool CreatePatient(RegisterRequest registerRequest, Guid guid = default(Guid));
     }
 }

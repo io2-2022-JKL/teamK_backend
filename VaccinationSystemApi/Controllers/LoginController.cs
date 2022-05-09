@@ -18,13 +18,13 @@ using VaccinationSystemApi.Repositories.Interfaces;
 namespace VaccinationSystemApi.Controllers
 {
     [ApiController]
-    public class DefaultController : ControllerBase
+    public class LoginController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly JwtConfig _jwtConfig;
         private readonly IVaccinationSystemRepository _vaccinationService;
 
-        public DefaultController(
+        public LoginController(
             UserManager<IdentityUser> userManager,
             IOptionsMonitor<JwtConfig> optionsMonitor,
             IVaccinationSystemRepository vaccinationService
@@ -50,11 +50,11 @@ namespace VaccinationSystemApi.Controllers
 
                 var newUser = new IdentityUser() { Email = registerRequest.Mail, UserName = registerRequest.PESEL };
                 var isCreated = await _userManager.CreateAsync(newUser, registerRequest.Password);
-                var isCreatedInPatientTable = _vaccinationService.CreatePatient(registerRequest);
+                var isCreatedInPatientTable = _vaccinationService.CreatePatient(registerRequest, Guid.Parse(newUser.Id));
 
                 bool creationSuccess = isCreated.Succeeded && isCreatedInPatientTable;
 
-                if (creationSuccess) //password required bunch of stuff: alpha, upper, digit, nonalphanumeric
+                if (creationSuccess)
                 {
                     var jwtToken = GenerateJwtToken(newUser);
 
