@@ -17,14 +17,6 @@ namespace VaccinationSystemApi.Repositories
     {
         private readonly VaccinationContext _dbContext;
 
-        private readonly List<VaccinationCenter> centers;
-        private readonly List<Patient> patients;
-        private readonly List<Doctor> doctors;
-        private List<TimeSlot> timeSlots;
-        private List<Appointment> appointments;
-        private List<Virus> viruses;
-        private List<Vaccine> vaccines;
-
         public VaccinationSystemRepository(VaccinationContext db)
         {
             _dbContext = db;
@@ -75,6 +67,13 @@ namespace VaccinationSystemApi.Repositories
         public IEnumerable<TimeSlot> GetTimeSlots()
         {
             return _dbContext.TimeSlots.ToList();
+        }
+
+        public IEnumerable<Certificate> GetPatientCertificates(Guid patientId)
+        {
+            var patientFromDb = this.GetPatient(patientId);
+
+            return patientFromDb.Certificates;
         }
 
         public Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)

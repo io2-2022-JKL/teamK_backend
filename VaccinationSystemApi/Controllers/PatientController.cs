@@ -30,10 +30,10 @@ namespace VaccinationSystemApi.Controllers
             
         }
 
-        [HttpGet("info/{patientid}")]
-        public ActionResult<BrowsePatientByIdResponse> GetPatientInfo(Guid patientid)
+        [HttpGet("info/{patientId}")]
+        public ActionResult<BrowsePatientByIdResponse> GetPatientInfo(Guid patientId)
         {
-            var patientFromDb = _vaccinationService.GetPatient(patientid);
+            var patientFromDb = _vaccinationService.GetPatient(patientId);
             if (patientFromDb is null)
                 return NotFound();
             BrowsePatientByIdResponse patientResponse = new()
@@ -70,6 +70,18 @@ namespace VaccinationSystemApi.Controllers
             };
 
             return centers;
+        }
+
+        [HttpGet("certificates/{patientId}")]
+        public ActionResult<IEnumerable<BrowseCertificateResponse>> GetPatientCertificates(Guid patientId)
+        {
+            var patientFromDb = _vaccinationService.GetPatient(patientId);
+            if (patientFromDb is null)
+                return BadRequest();
+
+            if(patientFromDb.Certificates is null)
+                return NotFound();
+            return Ok(patientFromDb.Certificates);
         }
 
         [HttpGet("timeSlots/{id}")]
