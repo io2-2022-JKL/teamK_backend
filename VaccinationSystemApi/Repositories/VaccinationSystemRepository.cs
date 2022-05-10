@@ -128,6 +128,11 @@ namespace VaccinationSystemApi.Repositories
                 && x.Active == true);
         }
 
+        public IEnumerable<TimeSlot> GetDoctorTimeSlots(Guid doctorId)
+        {
+            return _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId);
+        }
+
         public Doctor GetDoctorByTimeSlot(Guid id)
         {
             var slotFromDb = _dbContext.TimeSlots.Where(x => x.Id == id).SingleOrDefault();

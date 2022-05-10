@@ -4,6 +4,9 @@ using VaccinationSystemApi.Dtos.Doctors;
 using VaccinationSystemApi.Repositories.Interfaces;
 using VaccinationSystemApi.Helpers;
 using VaccinationSystemApi.Models;
+using System.Collections;
+using System.Collections.Generic;
+using VaccinationSystemApi.Helpers.Converters;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -31,6 +34,25 @@ namespace VaccinationSystemApi.Controllers
                 VaccinationCenterName = centerFromDb.Name,
                 VaccinationCenterStreet = centerFromDb.Address,
             };
+
+            return Ok(response);
+        }
+
+        [HttpGet("doctor/timeSlots/{doctorId}")]
+        public ActionResult<IEnumerable<GetTimeSlotsResponse>> GetTimeSlots(Guid doctorId)
+        {
+            var doctorFromDb = _vaccinationService.GetDoctor(doctorId);
+            if (doctorFromDb is null)
+                return BadRequest();
+
+            var timeSlotsFromDb = _vaccinationService.GetDoctorTimeSlots(doctorId);
+            List<GetTimeSlotsResponse> response = new List<GetTimeSlotsResponse>();
+            foreach(var timeSlot in timeSlotsFromDb)
+            {
+                response.Add(ConvertTimeSlotToResponse.Convert(timeSlot));
+            }
+            if (response.Count == 0)
+                return NotFound();
 
             return Ok(response);
         }

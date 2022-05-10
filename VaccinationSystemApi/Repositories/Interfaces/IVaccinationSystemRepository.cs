@@ -27,6 +27,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         void DeleteTimeSlot(Guid id);
         void ModifyTimeSlot(Guid timeSlotId, DateTime from, DateTime to);
         public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, string date);
+        public IEnumerable<TimeSlot> GetDoctorTimeSlots(Guid doctorId);
         public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId);
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId);
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus);
