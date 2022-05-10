@@ -15,6 +15,26 @@ namespace VaccinationSystemApi.Controllers
         private readonly IVaccinationSystemRepository _vaccinationService;
         public DoctorController(IVaccinationSystemRepository repo) => _vaccinationService = repo;
 
+        [HttpGet("doctor/info/{doctorId}")]
+        public ActionResult<GetDoctorInfoResponse> GetDoctorInfo(Guid doctorId)
+        {
+            var doctorFromDb = _vaccinationService.GetDoctor(doctorId);
+            if (doctorFromDb is null)
+                return NotFound();
+
+            var centerFromDb = _vaccinationService.GetCenter(doctorFromDb.VaccinationCenterId);
+
+           GetDoctorInfoResponse response = new()
+            {
+                PatientAccountId = "",
+                VaccinationCenterId = doctorFromDb.VaccinationCenterId.ToString(),
+                VaccinationCenterName = centerFromDb.Name,
+                VaccinationCenterStreet = centerFromDb.Address,
+            };
+
+            return Ok(response);
+        }
+
         [HttpPost("doctor/timeSlot/create/{doctorId}")]
         public void CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {
