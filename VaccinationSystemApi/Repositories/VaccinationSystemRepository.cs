@@ -578,5 +578,28 @@ namespace VaccinationSystemApi.Repositories
 
             return entitiesChanged > 0;
         }
+
+        public IEnumerable<string> GetViruses()
+        {
+            var viruses = _dbContext.Viruses.ToArray();
+            List<string> virusNames = new List<string>();
+            foreach(var v in viruses)
+            {
+                virusNames.Add(v.Name);
+            }
+            return virusNames;
+        }
+        public IEnumerable<string> GetCities()
+        {
+            var vaccinationCenters = _dbContext.VaccinationCenters.ToArray();
+            HashSet<string> cities = new HashSet<string>();
+
+            foreach(var vc in vaccinationCenters)
+            {
+                cities.Add(vc.City);
+            }
+
+            return cities;
+        }
     }
 }

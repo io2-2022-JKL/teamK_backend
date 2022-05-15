@@ -118,7 +118,7 @@ namespace VaccinationSystemApi.Controllers
             return result ? Ok() : BadRequest();
         }
 
-        [HttpDelete("doctors/deleteDoctor/{doctorId")]
+        [HttpDelete("doctors/deleteDoctor/{doctorId}")]
         public ActionResult DeleteDoctor(Guid doctorId)
         {
             bool result = _vaccinationService.DeleteDoctor(doctorId, out bool wasDoctorFound);

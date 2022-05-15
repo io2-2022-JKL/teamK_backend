@@ -37,5 +37,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         bool EditDoctor(DoctorDTO doctorData, out bool doctorFound);
         bool AddDoctor(Doctor doctorToAdd);
         bool DeleteDoctor(Guid DoctorId, out bool doctorFound);
+        IEnumerable<string> GetViruses();
+        IEnumerable<string> GetCities();
     }
 }
