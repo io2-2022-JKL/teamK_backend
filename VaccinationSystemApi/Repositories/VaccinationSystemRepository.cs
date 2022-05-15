@@ -10,6 +10,7 @@ using VaccinationSystemApi.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VaccinationSystemApi.Dtos.Login;
+using VaccinationSystemApi.Dtos.Admin;
 
 namespace VaccinationSystemApi.Repositories
 {
@@ -21,11 +22,6 @@ namespace VaccinationSystemApi.Repositories
         {
             _dbContext = db;
         }
-
-
-       
-
-
         public Patient GetPatient(Guid id)
         {
             return _dbContext.Patients.Where(x => x.Id == id).FirstOrDefault();
@@ -494,6 +490,116 @@ namespace VaccinationSystemApi.Repositories
             int entries = _dbContext.SaveChanges();
 
             return entries > 0;
+        }
+
+        public bool EditPatient(PatientDTO patientToEdit, out bool patientFound)
+        {
+            var patientFromDb = _dbContext.Patients.Where(p => p.Id == Guid.Parse(patientToEdit.PatientId)).FirstOrDefault();
+            if(patientToEdit is null)
+            {
+                patientFound = false;
+                return false;
+            }
+            patientFound = true;
+
+            patientFromDb.Pesel = patientToEdit.PESEL;
+            patientFromDb.Active = patientToEdit.Active;
+            patientFromDb.DateOfBirth = patientToEdit.DateOfBirth;
+            patientFromDb.EMail = patientToEdit.Mail;
+            patientFromDb.LastName = patientToEdit.LastName;
+            patientFromDb.FirstName = patientToEdit.FirstName;
+            patientFromDb.PhoneNumber = patientToEdit.PhoneNumber;
+
+            int entitiesUpdated = _dbContext.SaveChanges();
+
+            return entitiesUpdated > 0;
+        }
+
+        public bool RemovePatient(Guid patientId)
+        {
+            Patient patientToRemove = _dbContext.Patients.Where(p => p.Id == patientId).SingleOrDefault();
+            _dbContext.Patients.Remove(patientToRemove);
+
+            int entitiesModified = _dbContext.SaveChanges();
+            return entitiesModified > 0;
+        }
+
+        public IEnumerable<Doctor> GetDoctorsWithMatchingVaccinationCentres()
+        {
+            return _dbContext.Doctors.Include(d => d.VaccinationCenter_).ToArray();
+        }
+
+        public bool EditDoctor(DoctorDTO doctorData, out bool doctorFound)
+        {
+            var doctorToEdit = _dbContext.Doctors.Where(d => d.Id == doctorData.Id).FirstOrDefault();
+            if (doctorToEdit is null) 
+            {
+                doctorFound = false;
+                return false;
+            }
+
+            doctorFound = true;
+
+            doctorToEdit.Pesel = doctorData.PESEL;
+            doctorToEdit.FirstName = doctorData.FirstName;
+            doctorToEdit.LastName = doctorData.LastName;
+            doctorToEdit.EMail = doctorData.Mail;
+            doctorToEdit.DateOfBirth = doctorData.DateOfBirth;
+            doctorToEdit.PhoneNumber = doctorData.PhoneNumber;
+            doctorToEdit.Active = doctorData.Active;
+            doctorToEdit.VaccinationCenterId = doctorData.VaccinationCenterID;
+
+            int entitiesChanged = _dbContext.SaveChanges();
+            return entitiesChanged > 0;
+        }
+
+        public bool AddDoctor(Doctor doctorToAdd)
+        {
+            _dbContext.Doctors.Add(doctorToAdd);
+            int entitiesChanged = _dbContext.SaveChanges();
+
+            return entitiesChanged > 0;
+        }
+
+        public bool DeleteDoctor(Guid doctorId, out bool wasDoctorFound)
+        {
+            var doctorToRemove = _dbContext.Doctors.Where(d => d.Id == doctorId).SingleOrDefault();
+
+            if (doctorToRemove is null)
+            {
+                wasDoctorFound = false;
+                return false;
+            }
+                wasDoctorFound = true;
+
+            _dbContext.Doctors.Remove(doctorToRemove);
+
+            int entitiesChanged = _dbContext.SaveChanges();
+
+            return entitiesChanged > 0;
+        }
+
+        public IEnumerable<string> GetViruses()
+        {
+            var viruses = _dbContext.Viruses.ToArray();
+            List<string> virusNames = new List<string>();
+            foreach(var v in viruses)
+            {
+                virusNames.Add(v.Name);
+            }
+            return virusNames;
+        }
+        public IEnumerable<string> GetCities()
+        {
+            var vaccinationCenters = _dbContext.VaccinationCenters.ToArray();
+            HashSet<string> cities = new HashSet<string>();
+
+            foreach(var vc in vaccinationCenters)
+            {
+                cities.Add(vc.City);
+            }
+
+            return cities;
         }
     }
 }
