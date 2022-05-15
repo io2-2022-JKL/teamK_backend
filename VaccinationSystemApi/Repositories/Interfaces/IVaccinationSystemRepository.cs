@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using VaccinationSystemApi.Models;
 using VaccinationSystemApi.Dtos.Login;
+using VaccinationSystemApi.Dtos.Admin;
 
 namespace VaccinationSystemApi.Repositories.Interfaces
 {
@@ -11,7 +12,6 @@ namespace VaccinationSystemApi.Repositories.Interfaces
     {
         IEnumerable<Patient> GetPatients();
         Patient GetPatient(Guid id);
-
         IEnumerable<VaccinationCenter> GetCenters();
         VaccinationCenter GetCenter(Guid id);
         IEnumerable<Doctor> GetDoctors();
@@ -31,5 +31,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId);
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus);
         bool CreatePatient(RegisterRequest registerRequest, Guid guid = default(Guid));
+        bool EditPatient(PatientDTO patientToEdit, out bool wasPatientFound);
+        bool RemovePatient(Guid patientId);
     }
 }

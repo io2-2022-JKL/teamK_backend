@@ -10,6 +10,7 @@ using VaccinationSystemApi.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VaccinationSystemApi.Dtos.Login;
+using VaccinationSystemApi.Dtos.Admin;
 
 namespace VaccinationSystemApi.Repositories
 {
@@ -489,6 +490,38 @@ namespace VaccinationSystemApi.Repositories
             int entries = _dbContext.SaveChanges();
 
             return entries > 0;
+        }
+
+        public bool EditPatient(PatientDTO patientToEdit, out bool patientFound)
+        {
+            var patientFromDb = _dbContext.Patients.Where(p => p.Id == Guid.Parse(patientToEdit.PatientId)).FirstOrDefault();
+            if(patientToEdit is null)
+            {
+                patientFound = false;
+                return false;
+            }
+            patientFound = true;
+
+            patientFromDb.Pesel = patientToEdit.PESEL;
+            patientFromDb.Active = patientToEdit.Active;
+            patientFromDb.DateOfBirth = patientToEdit.DateOfBirth;
+            patientFromDb.EMail = patientToEdit.Mail;
+            patientFromDb.LastName = patientToEdit.LastName;
+            patientFromDb.FirstName = patientToEdit.FirstName;
+            patientFromDb.PhoneNumber = patientToEdit.PhoneNumber;
+
+            int entitiesUpdated = _dbContext.SaveChanges();
+
+            return entitiesUpdated > 0;
+        }
+
+        public bool RemovePatient(Guid patientId)
+        {
+            Patient patientToRemove = _dbContext.Patients.Where(p => p.Id == patientId).SingleOrDefault();
+            _dbContext.Patients.Remove(patientToRemove);
+
+            int entitiesModified = _dbContext.SaveChanges();
+            return entitiesModified > 0;
         }
     }
 }

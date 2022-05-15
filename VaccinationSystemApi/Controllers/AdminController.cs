@@ -30,7 +30,7 @@ namespace VaccinationSystemApi.Controllers
                     Mail = patient.EMail,
                     FirstName = patient.FirstName,
                     LastName = patient.LastName,
-                    DateOfBirth = patient.DateOfBirth.ToShortDateString(),
+                    DateOfBirth = patient.DateOfBirth,
                     Active = patient.Active,
                 });
             }
@@ -41,6 +41,28 @@ namespace VaccinationSystemApi.Controllers
                 return (NotFound("Error, no matching patient found"));
 
             return Ok(patientsDtos);
+        }
+
+        [HttpPost("editPatient")]
+        public ActionResult EditPatient(PatientDTO patientToEdit)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("BadData");
+
+            bool result = _vaccinationService.EditPatient(patientToEdit, out bool wasPatientFound);
+            if (!wasPatientFound) return NotFound("Error, no patient found to edit");
+
+            return result ? Ok() : BadRequest("Bad data");
+        }
+
+        [HttpDelete("deletePatient/{patientId}")]
+        public ActionResult DeletePatient(Guid patientId)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("BadData");
+
+            bool result = _vaccinationService.RemovePatient(patientId);
+            return result ? Ok() : NotFound();
         }
     }
 }
