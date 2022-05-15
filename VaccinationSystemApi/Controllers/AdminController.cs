@@ -66,14 +66,14 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpGet("doctors")]
-        public ActionResult<IEnumerable<DoctorDTO>> GetDoctors()
+        public ActionResult<IEnumerable<DoctorWithCenterDTO>> GetDoctors()
         {
             var doctorsFromDb = _vaccinationService.GetDoctorsWithMatchingVaccinationCentres();
-            var doctorDtos = new List<DoctorDTO>();
+            var doctorDtos = new List<DoctorWithCenterDTO>();
 
             foreach(var doctor in doctorsFromDb)
             {
-                doctorDtos.Add(new DoctorDTO
+                doctorDtos.Add(new DoctorWithCenterDTO
                 {
                     Id = doctor.Id,
                     FirstName = doctor.FirstName,
@@ -93,6 +93,16 @@ namespace VaccinationSystemApi.Controllers
                 return NotFound("Error, no matching doctor found");
 
             return Ok(doctorDtos);
+        }
+
+        [HttpPost("doctors/editDoctor")]
+        public ActionResult EditDoctor(DoctorDTO doctorDto)
+        {
+            bool result = _vaccinationService.EditDoctor(doctorDto, out bool doctorFound);
+            if (!doctorFound)
+                return NotFound();
+
+            return result ? Ok() : BadRequest();
         }
     }
 }

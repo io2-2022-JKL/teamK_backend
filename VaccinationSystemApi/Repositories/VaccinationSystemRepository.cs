@@ -528,5 +528,29 @@ namespace VaccinationSystemApi.Repositories
         {
             return _dbContext.Doctors.Include(d => d.VaccinationCenter_).ToArray();
         }
+
+        bool EditDoctor(DoctorDTO doctorData, out bool doctorFound)
+        {
+            var doctorToEdit = _dbContext.Doctors.Where(d => d.Id == doctorData.Id).FirstOrDefault();
+            if (doctorToEdit is null) 
+            {
+                doctorFound = false;
+                return false;
+            }
+
+            doctorFound = true;
+
+            doctorToEdit.Pesel = doctorData.PESEL;
+            doctorToEdit.FirstName = doctorData.FirstName;
+            doctorToEdit.LastName = doctorData.LastName;
+            doctorToEdit.EMail = doctorData.Mail;
+            doctorToEdit.DateOfBirth = doctorData.DateOfBirth;
+            doctorToEdit.PhoneNumber = doctorData.PhoneNumber;
+            doctorToEdit.Active = doctorData.Active;
+            doctorToEdit.VaccinationCenterId = doctorData.VaccinationCenterID;
+
+            int entitiesChanged = _dbContext.SaveChanges();
+            return entitiesChanged > 0;
+        }
     }
 }

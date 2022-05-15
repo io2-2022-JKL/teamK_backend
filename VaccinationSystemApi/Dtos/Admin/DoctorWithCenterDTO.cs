@@ -2,7 +2,7 @@
 
 namespace VaccinationSystemApi.Dtos.Admin
 {
-    public class DoctorDTO
+    public class DoctorWithCenterDTO
     {
         public Guid Id { get; set; }
         public string PESEL { get; set; }
@@ -13,5 +13,8 @@ namespace VaccinationSystemApi.Dtos.Admin
         public string PhoneNumber { get; set; }
         public bool Active { get; set; }
         public Guid VaccinationCenterID { get; set; }
+        public string Name { get; set; }
+        public string City { get; set; }
+        public string Street { get; set; }
     }
 }
