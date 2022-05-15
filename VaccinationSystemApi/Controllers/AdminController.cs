@@ -117,5 +117,16 @@ namespace VaccinationSystemApi.Controllers
             
             return result ? Ok() : BadRequest();
         }
+
+        [HttpDelete("doctors/deleteDoctor/{doctorId")]
+        public ActionResult DeleteDoctor(Guid doctorId)
+        {
+            bool result = _vaccinationService.DeleteDoctor(doctorId, out bool wasDoctorFound);
+
+            if (!wasDoctorFound)
+                return NotFound("Error, no doctor found to delete");
+
+            return result ? Ok() : BadRequest();
+        }
     }
 }

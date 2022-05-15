@@ -524,12 +524,12 @@ namespace VaccinationSystemApi.Repositories
             return entitiesModified > 0;
         }
 
-        IEnumerable<Doctor> GetDoctorsWithMatchingVaccinationCentres()
+        public IEnumerable<Doctor> GetDoctorsWithMatchingVaccinationCentres()
         {
             return _dbContext.Doctors.Include(d => d.VaccinationCenter_).ToArray();
         }
 
-        bool EditDoctor(DoctorDTO doctorData, out bool doctorFound)
+        public bool EditDoctor(DoctorDTO doctorData, out bool doctorFound)
         {
             var doctorToEdit = _dbContext.Doctors.Where(d => d.Id == doctorData.Id).FirstOrDefault();
             if (doctorToEdit is null) 
@@ -553,9 +553,27 @@ namespace VaccinationSystemApi.Repositories
             return entitiesChanged > 0;
         }
 
-        bool AddDoctor(Doctor doctorToAdd)
+        public bool AddDoctor(Doctor doctorToAdd)
         {
             _dbContext.Doctors.Add(doctorToAdd);
+            int entitiesChanged = _dbContext.SaveChanges();
+
+            return entitiesChanged > 0;
+        }
+
+        public bool DeleteDoctor(Guid doctorId, out bool wasDoctorFound)
+        {
+            var doctorToRemove = _dbContext.Doctors.Where(d => d.Id == doctorId).SingleOrDefault();
+
+            if (doctorToRemove is null)
+            {
+                wasDoctorFound = false;
+                return false;
+            }
+                wasDoctorFound = true;
+
+            _dbContext.Doctors.Remove(doctorToRemove);
+
             int entitiesChanged = _dbContext.SaveChanges();
 
             return entitiesChanged > 0;
