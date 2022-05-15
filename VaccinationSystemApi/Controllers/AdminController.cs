@@ -64,5 +64,35 @@ namespace VaccinationSystemApi.Controllers
             bool result = _vaccinationService.RemovePatient(patientId);
             return result ? Ok() : NotFound();
         }
+
+        [HttpGet("doctors")]
+        public ActionResult<IEnumerable<DoctorDTO>> GetDoctors()
+        {
+            var doctorsFromDb = _vaccinationService.GetDoctorsWithMatchingVaccinationCentres();
+            var doctorDtos = new List<DoctorDTO>();
+
+            foreach(var doctor in doctorsFromDb)
+            {
+                doctorDtos.Add(new DoctorDTO
+                {
+                    Id = doctor.Id,
+                    FirstName = doctor.FirstName,
+                    LastName = doctor.LastName,
+                    Active = doctor.Active,
+                    DateOfBirth = doctor.DateOfBirth,
+                    Mail = doctor.EMail,
+                    PESEL = doctor.Pesel,
+                    PhoneNumber = doctor.PhoneNumber,
+                    VaccinationCenterID = doctor.VaccinationCenterId,
+                    City = doctor.VaccinationCenter_.City,
+                    Name = doctor.VaccinationCenter_.Name,
+                    Street = doctor.VaccinationCenter_.Address,
+                });
+            }
+            if (doctorDtos.Count == 0)
+                return NotFound("Error, no matching doctor found");
+
+            return Ok(doctorDtos);
+        }
     }
 }

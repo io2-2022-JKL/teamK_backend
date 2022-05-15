@@ -523,5 +523,10 @@ namespace VaccinationSystemApi.Repositories
             int entitiesModified = _dbContext.SaveChanges();
             return entitiesModified > 0;
         }
+
+        IEnumerable<Doctor> GetDoctorsWithMatchingVaccinationCentres()
+        {
+            return _dbContext.Doctors.Include(d => d.VaccinationCenter_).ToArray();
+        }
     }
 }

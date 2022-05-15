@@ -33,5 +33,6 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         bool CreatePatient(RegisterRequest registerRequest, Guid guid = default(Guid));
         bool EditPatient(PatientDTO patientToEdit, out bool wasPatientFound);
         bool RemovePatient(Guid patientId);
+        IEnumerable<Doctor> GetDoctorsWithMatchingVaccinationCentres();
     }
 }
