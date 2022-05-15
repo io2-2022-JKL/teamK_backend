@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <Folder Include="Dtos\Doctors\" />
-    <Folder Include="Dtos\Admin\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 

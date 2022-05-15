@@ -21,11 +21,6 @@ namespace VaccinationSystemApi.Repositories
         {
             _dbContext = db;
         }
-
-
-       
-
-
         public Patient GetPatient(Guid id)
         {
             return _dbContext.Patients.Where(x => x.Id == id).FirstOrDefault();

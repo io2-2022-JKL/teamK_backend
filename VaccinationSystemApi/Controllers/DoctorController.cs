@@ -9,7 +9,6 @@ namespace VaccinationSystemApi.Controllers
 {
 
     [ApiController]
-
     public class DoctorController: ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
