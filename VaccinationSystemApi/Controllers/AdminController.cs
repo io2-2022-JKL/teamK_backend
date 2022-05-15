@@ -104,5 +104,18 @@ namespace VaccinationSystemApi.Controllers
 
             return result ? Ok() : BadRequest();
         }
+        [HttpPost("doctors/addDoctor")]
+        public ActionResult AddDoctor(AddDoctorDTO addDoctorDTO)
+        {
+            var doctorToAdd = new Doctor()
+            {
+                Id = Guid.NewGuid(),
+                PatientAccountId = addDoctorDTO.PatientId,
+                VaccinationCenterId = addDoctorDTO.VaccinationCenterId
+            };
+            bool result = _vaccinationService.AddDoctor(doctorToAdd);
+            
+            return result ? Ok() : BadRequest();
+        }
     }
 }

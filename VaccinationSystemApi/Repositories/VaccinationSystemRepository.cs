@@ -552,5 +552,13 @@ namespace VaccinationSystemApi.Repositories
             int entitiesChanged = _dbContext.SaveChanges();
             return entitiesChanged > 0;
         }
+
+        bool AddDoctor(Doctor doctorToAdd)
+        {
+            _dbContext.Doctors.Add(doctorToAdd);
+            int entitiesChanged = _dbContext.SaveChanges();
+
+            return entitiesChanged > 0;
+        }
     }
 }
