@@ -57,6 +57,49 @@ namespace VaccinationSystemApi.Controllers
             return Ok(response);
         }
 
+        [HttpGet("doctor/formerAppointents/{doctorId}")]
+        public ActionResult<IEnumerable<GetFormerAppointmentsResponse>> GetFormerAppointments(Guid doctorId)
+        {
+            var doctorFromDb = _vaccinationService.GetDoctor(doctorId);
+            if (doctorFromDb is null)
+                return BadRequest();
+
+            List<GetFormerAppointmentsResponse> response = new List<GetFormerAppointmentsResponse>();
+            var appointmentsFromDb = _vaccinationService.GetAppointments();
+
+            foreach (var appointment in appointmentsFromDb)
+            {
+                var slotFromDb = _vaccinationService.GetTimeSlot(appointment.TimeslotId);
+                if (slotFromDb.AssignedDoctorId == doctorId)
+                {
+                    //var patientFromDb = _vaccinationService.GetPatient(appointment.)
+                    
+                    if(slotFromDb.To < DateTime.UtcNow)
+                    {
+                        if (appointment.Patient_ is null) continue;
+                        response.Add(new GetFormerAppointmentsResponse()
+                        {
+                            PatientFirstName = appointment.Patient_.FirstName,
+                            PatientLastName = appointment.Patient_.LastName,
+                            AppointmentId = appointment.Id.ToString(),
+                            BatchNumber = appointment.VaccineBatchNumber,
+                            CertifyState = "",
+                            From = slotFromDb.From.ToString(),
+                            To = slotFromDb.To.ToString(),
+                            Pesel = appointment.Patient_.Pesel,
+                            State = "",
+                            VaccineCompany = appointment.Vaccine_.Company,
+                            VaccineDose = appointment.WhichDose,
+                            VaccineName = appointment.Vaccine_.Name,
+                            VaccineVirus = appointment.Vaccine_.Virus_.Name,
+                        });
+                    }
+                }
+            }
+
+            return Ok(response);
+        }
+
         [HttpPost("doctor/timeSlot/create/{doctorId}")]
         public void CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {

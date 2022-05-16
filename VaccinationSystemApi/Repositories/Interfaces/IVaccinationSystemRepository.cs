@@ -11,13 +11,14 @@ namespace VaccinationSystemApi.Repositories.Interfaces
     {
         IEnumerable<Patient> GetPatients();
         Patient GetPatient(Guid id);
-
         IEnumerable<VaccinationCenter> GetCenters();
         VaccinationCenter GetCenter(Guid id);
         IEnumerable<Doctor> GetDoctors();
         Doctor GetDoctor(Guid id);
         VaccinationCenter GetCenterOfDoctor(Guid doctorId);
         IEnumerable<TimeSlot> GetTimeSlots();
+        TimeSlot GetTimeSlot(Guid timeSlotId);
+        IEnumerable<Appointment> GetAppointments();
         IEnumerable<Certificate> GetPatientCertificates(Guid patientId);
         Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId);
         Appointment GetAppointment(Guid id);
