@@ -100,6 +100,46 @@ namespace VaccinationSystemApi.Controllers
             return Ok(response);
         }
 
+        [HttpGet("doctor/incomingAppointents/{doctorId}")]
+        public ActionResult<IEnumerable<GetIncomingAppointmentsResponse>> GetIncomingAppointments(Guid doctorId)
+        {
+            var doctorFromDb = _vaccinationService.GetDoctor(doctorId);
+            if (doctorFromDb is null)
+                return BadRequest();
+
+            List<GetIncomingAppointmentsResponse> response = new List<GetIncomingAppointmentsResponse>();
+            var appointmentsFromDb = _vaccinationService.GetAppointments();
+
+            foreach (var appointment in appointmentsFromDb)
+            {
+                var slotFromDb = _vaccinationService.GetTimeSlot(appointment.TimeslotId);
+                if (slotFromDb.AssignedDoctorId == doctorId)
+                {
+                    //var patientFromDb = _vaccinationService.GetPatient(appointment.)
+
+                    if (slotFromDb.To > DateTime.UtcNow)
+                    {
+                        if (appointment.Patient_ is null) continue;
+                        response.Add(new GetIncomingAppointmentsResponse()
+                        {
+                            appointmentId = appointment.Id.ToString(),
+                            from = slotFromDb.From.ToString(),
+                            to = slotFromDb.To.ToString(),
+                            patientFirstName = appointment.Patient_.FirstName,
+                            patientLastName = appointment.Patient_.LastName,
+                            vaccineCompany = appointment.Vaccine_.Company,
+                            vaccineName = appointment.Vaccine_.Name,
+                            vaccineVirus = appointment.Vaccine_.Virus_.Name,
+                            whichVaccineDose = appointment.WhichDose
+                        });
+                    }
+                }
+            }
+            if (response.Count == 0)
+                return NotFound("Doctor has no incoming appointments so far");
+            return Ok(response);
+        }
+
         [HttpPost("doctor/timeSlot/create/{doctorId}")]
         public void CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {
