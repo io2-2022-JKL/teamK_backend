@@ -38,12 +38,12 @@ namespace VaccinationSystemApi.Controllers
                 return NotFound();
             BrowsePatientByIdResponse patientResponse = new()
             {
-                DataOfBirth = patientFromDb.DateOfBirth,
-                EMail = patientFromDb.EMail,
-                FirstName = patientFromDb.FirstName,
-                LastName = patientFromDb.LastName,
-                Pesel = patientFromDb.Pesel,
-                PhoneNumber = patientFromDb.PhoneNumber
+                dateOfBirth = patientFromDb.DateOfBirth,
+                mail = patientFromDb.EMail,
+                firstName = patientFromDb.FirstName,
+                lastName = patientFromDb.LastName,
+                PESEL = patientFromDb.Pesel,
+                phoneNumber = patientFromDb.PhoneNumber
             };
 
             return Ok(patientResponse);

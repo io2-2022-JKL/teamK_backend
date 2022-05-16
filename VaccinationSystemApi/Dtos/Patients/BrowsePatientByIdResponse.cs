@@ -7,11 +7,11 @@ namespace VaccinationSystemApi.Dtos.Patients
 {
     public record BrowsePatientByIdResponse
     {
-        public string FirstName { get; init; }
-        public string LastName { get; init; }
-        public string Pesel { get; init; }
-        public DateTime DataOfBirth { get; init; }
-        public string EMail { get; init; }
-        public string PhoneNumber { get; init; }
+        public string firstName { get; init; }
+        public string lastName { get; init; }
+        public string PESEL { get; init; }
+        public DateTime dateOfBirth { get; init; }
+        public string mail { get; init; }
+        public string phoneNumber { get; init; }
     }
 }

@@ -60,9 +60,19 @@ namespace VaccinationSystemApi.Repositories
 
             return doctorFromDb.VaccinationCenter_;
         }
+
+        public TimeSlot GetTimeSlot(Guid timeSlotId)
+        {
+            return _dbContext.TimeSlots.Where(t => t.Id == timeSlotId).SingleOrDefault();
+        }
         public IEnumerable<TimeSlot> GetTimeSlots()
         {
             return _dbContext.TimeSlots.ToList();
+        }
+
+        public IEnumerable<Appointment> GetAppointments()
+        {
+            return _dbContext.Appointments.ToList();
         }
 
         public IEnumerable<Certificate> GetPatientCertificates(Guid patientId)
@@ -124,6 +134,11 @@ namespace VaccinationSystemApi.Repositories
                 && x.Active == true);
         }
 
+        public IEnumerable<TimeSlot> GetDoctorTimeSlots(Guid doctorId)
+        {
+            return _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId);
+        }
+
         public Doctor GetDoctorByTimeSlot(Guid id)
         {
             var slotFromDb = _dbContext.TimeSlots.Where(x => x.Id == id).SingleOrDefault();
@@ -133,6 +148,7 @@ namespace VaccinationSystemApi.Repositories
         public void ModifyTimeSlot(Guid timeSlotId, DateTime from, DateTime to)
         {
             _dbContext.TimeSlots.Where(x => x.Id == timeSlotId).ToList().ForEach(s => { s.From = from; s.To = to; });
+            _dbContext.SaveChanges();
         }
 
         public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId)
@@ -223,6 +239,7 @@ namespace VaccinationSystemApi.Repositories
             {
                 Id = Guid.NewGuid(),
                 Patient_ = _dbContext.Patients.Where(p => p.EMail == "rlewandowski@gmail.com").SingleOrDefault(),
+                //PatientId = _dbContext.Patients.Where(p => p.EMail == "rlewandowski@gmail.com").SingleOrDefault().Id,
                 Status = AppointmentStatus.Planned,
                 VaccineBatchNumber = "24601",
                 Vaccine_ = null,
