@@ -140,6 +140,24 @@ namespace VaccinationSystemApi.Controllers
             return Ok(response);
         }
 
+        [HttpGet("doctor/vaccinate/{doctorId}/{appointmentId}")]
+        public ActionResult<GetVaccinateInfoResponse> GetVaccinateInfo(Guid doctorId, Guid appointmentId)
+        {
+            if (_vaccinationService.GetDoctor(doctorId) is null)
+                return BadRequest("Doctor with given id doesn't exist");
+            var appointmentsFromDb = _vaccinationService.GetAppointments();
+            List<Appointment> doctorAppointments = new List<Appointment>();
+            foreach(var appointment in appointmentsFromDb)
+            {
+                var slotFromDb = _vaccinationService.GetTimeSlot(appointment.TimeslotId);
+                if (slotFromDb.AssignedDoctorId == doctorId && appointmentId == appointment.Id)
+                {
+                    return Ok();
+                }
+            }
+            return NotFound("No appointment with given id found for given doctor");
+        }
+
         [HttpPost("doctor/timeSlot/create/{doctorId}")]
         public void CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {

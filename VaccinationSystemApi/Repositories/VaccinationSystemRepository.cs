@@ -78,6 +78,7 @@ namespace VaccinationSystemApi.Repositories
         {
             return _dbContext.Appointments.ToList();
         }
+
         public IEnumerable<Certificate> GetPatientCertificates(Guid patientId)
         {
             var patientFromDb = this.GetPatient(patientId);
