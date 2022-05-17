@@ -150,7 +150,25 @@ namespace VaccinationSystemApi.Controllers
                 var slotFromDb = _vaccinationService.GetTimeSlot(appointment.TimeslotId);
                 if (slotFromDb.AssignedDoctorId == doctorId && appointmentId == appointment.Id)
                 {
-                    return Ok();
+                    GetVaccinateInfoResponse response = new()
+                    {
+                        dateOfBirth = appointment.Patient_.DateOfBirth.ToString(),
+                        from = slotFromDb.From.ToString(),
+                        maxDaysBetweenDoses = appointment.Vaccine_.MaxDaysBetweenDoses,
+                        maxPatientAge = appointment.Vaccine_.MaxPatientAge,
+                        minDaysBetweenDoses = appointment.Vaccine_.MinDaysBetweenDoses,
+                        minPatientAge = appointment.Vaccine_.MinPatientAge,
+                        numberOfDoses = appointment.Vaccine_.NumberOfDoses,
+                        patientFirstName = appointment.Patient_.FirstName,
+                        patientLastName = appointment.Patient_.LastName,
+                        pesel = appointment.Patient_.Pesel,
+                        to = slotFromDb.To.ToString(),
+                        vaccineCompany = appointment.Vaccine_.Company,
+                        vaccineName = appointment.Vaccine_.Name,
+                        virusName = appointment.Vaccine_.Virus_.Name,
+                    };
+
+                    return Ok(response);
                 }
             }
             return NotFound("No appointment with given id found for given doctor");
