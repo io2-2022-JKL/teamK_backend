@@ -71,7 +71,6 @@ namespace VaccinationSystemApi.Controllers
                 var slotFromDb = _vaccinationService.GetTimeSlot(appointment.TimeslotId);
                 if (slotFromDb.AssignedDoctorId == doctorId)
                 {
-                    //var patientFromDb = _vaccinationService.GetPatient(appointment.)
                     
                     if(slotFromDb.To < DateTime.UtcNow)
                     {

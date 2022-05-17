@@ -72,7 +72,7 @@ namespace VaccinationSystemApi.Repositories
 
         public IEnumerable<Appointment> GetAppointments()
         {
-            return _dbContext.Appointments.ToList();
+            return _dbContext.Appointments.Include(a => a.Patient_).Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).ToList();
         }
 
         public IEnumerable<Certificate> GetPatientCertificates(Guid patientId)
