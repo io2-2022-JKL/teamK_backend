@@ -102,7 +102,9 @@ namespace VaccinationSystemApi.Repositories
 
         public Appointment GetAppointment(Guid id)
         {
-            return _dbContext.Appointments.Where(x => x.Id == id).SingleOrDefault();
+            return _dbContext.Appointments.Where(x => x.Id == id).Include(a => a.Patient_)
+                .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor)
+                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).SingleOrDefault();
         }
 
         public void CancelAppointment(Guid id)
@@ -164,6 +166,13 @@ namespace VaccinationSystemApi.Repositories
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
                 .Include(a => a.Vaccine_);
         }
+
+        public void ConfirmVaccination(Guid appointmentId)
+        {
+            _dbContext.Appointments.Where(a => a.Id == appointmentId).ToList().ForEach(a => a.Status = AppointmentStatus.Finished);
+            _dbContext.SaveChanges();
+        }
+
 
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
         {
