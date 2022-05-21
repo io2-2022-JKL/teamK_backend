@@ -21,16 +21,19 @@ namespace VaccinationSystemApi.Controllers
     public class LoginController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private readonly JwtConfig _jwtConfig;
         private readonly IVaccinationSystemRepository _vaccinationService;
 
         public LoginController(
             UserManager<IdentityUser> userManager,
             IOptionsMonitor<JwtConfig> optionsMonitor,
-            IVaccinationSystemRepository vaccinationService
+            IVaccinationSystemRepository vaccinationService,
+            RoleManager<IdentityRole> roleManager
             )
         {
             _userManager = userManager;
+            _roleManager = roleManager;
             _jwtConfig = optionsMonitor.CurrentValue;
             _vaccinationService = vaccinationService;
         }
@@ -56,9 +59,9 @@ namespace VaccinationSystemApi.Controllers
 
                 if (creationSuccess)
                 {
-                    var result = _userManager.AddToRoleAsync(newUser, "patient");
+                    var result = await _userManager.AddToRoleAsync(newUser, "Patient");
 
-                    var jwtToken = GenerateJwtToken(newUser);
+                    var jwtToken = await GenerateJwtToken(newUser);
 
                     return Ok(jwtToken);
                 }
@@ -96,7 +99,7 @@ namespace VaccinationSystemApi.Controllers
                 {
                     UserId = existingUser.Id,
                     UserType = "patient", // for now hardcoded patient,
-                    Jwt = jwtToken,
+                    Jwt = jwtToken.Result,
                 });
             }
 
@@ -109,21 +112,17 @@ namespace VaccinationSystemApi.Controllers
             // empty
         }
 
-        private string GenerateJwtToken(IdentityUser user)
+        private async Task<string> GenerateJwtToken(IdentityUser user)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
             var key = Encoding.ASCII.GetBytes(_jwtConfig.Secret);
 
+            var claims = await GetAllValidClaims(user);
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[]
-                {
-                    new Claim("Id", user.Id),
-                    new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                }),
+                Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(6),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
@@ -132,6 +131,42 @@ namespace VaccinationSystemApi.Controllers
             var jwtToken = jwtTokenHandler.WriteToken(token);
 
             return jwtToken;
+        }
+
+        private async Task<List<Claim>> GetAllValidClaims(IdentityUser user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim("Id", user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            // Getting the claims that we have assigned to the user
+            var userClaims = await _userManager.GetClaimsAsync(user);
+            claims.AddRange(userClaims);
+
+            // Get the user role and add it to the claims
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            foreach (var userRole in userRoles)
+            {
+                var role = await _roleManager.FindByNameAsync(userRole);
+
+                if (role != null)
+                {
+                    claims.Add(new Claim(ClaimTypes.Role, userRole));
+
+                    var roleClaims = await _roleManager.GetClaimsAsync(role);
+                    foreach (var roleClaim in roleClaims)
+                    {
+                        claims.Add(roleClaim);
+                    }
+                }
+            }
+
+            return claims;
         }
     }
 }
