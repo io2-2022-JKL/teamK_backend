@@ -110,8 +110,6 @@ namespace VaccinationSystemApi.Repositories
         public void CancelAppointment(Guid id)
         {
             var appointmentFromDb = _dbContext.Appointments.Where(x => x.Id == id).SingleOrDefault();
-            if (appointmentFromDb == null) return;
-
             appointmentFromDb.Status = AppointmentStatus.Cancelled;
             _dbContext.SaveChanges();
         }

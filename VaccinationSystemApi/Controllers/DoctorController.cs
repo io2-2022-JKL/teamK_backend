@@ -7,6 +7,7 @@ using VaccinationSystemApi.Models;
 using System.Collections;
 using System.Collections.Generic;
 using VaccinationSystemApi.Helpers.Converters;
+using VaccinationSystemApi.Models.Utils;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -244,7 +245,7 @@ namespace VaccinationSystemApi.Controllers
             int finishedDoses = 0;
             foreach(var appointment in patientFormerAppointmentsFromDb)
             {
-                if (appointment.Vaccine_.Id == appointmentFromDb.Vaccine_.Id)
+                if (appointment.Vaccine_.Id == appointmentFromDb.Vaccine_.Id && appointment.Status == AppointmentStatus.Finished)
                     finishedDoses++;
             }
             bool isLastDose = finishedDoses == appointmentFromDb.Vaccine_.NumberOfDoses;
@@ -253,6 +254,21 @@ namespace VaccinationSystemApi.Controllers
                 canCertify = isLastDose,
             };
             return Ok(response);  
+        }
+
+        [HttpPost("doctor/vaccinate/vaccinationDidNotHappen/{doctorId}/{appointmentId}")]
+
+        public ActionResult CancelVaccination(Guid doctorId, Guid appointmentId)
+        {
+            var appointmentFromDb = _vaccinationService.GetAppointment(appointmentId);
+            if(appointmentFromDb is null)
+                return BadRequest("Appointment with given id doesn't exist");
+
+            if (appointmentFromDb.TimeSlot_.AssignedDoctor.Id != doctorId)
+                return Forbid("User forbidden to confirm vaccination");
+
+            _vaccinationService.CancelAppointment(appointmentId);
+            return Ok();
         }
 
     }
