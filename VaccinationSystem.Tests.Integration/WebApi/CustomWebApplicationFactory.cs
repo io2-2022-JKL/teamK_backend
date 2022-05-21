@@ -16,6 +16,7 @@ namespace VaccinationSystem.Tests.Integration.WebApi
             {
                 // Create a new service provider.
                 var serviceProvider = new ServiceCollection().AddEntityFrameworkInMemoryDatabase()
+                    .AddEntityFrameworkProxies()
                     .BuildServiceProvider();
 
                 // Add a database context (AppDbContext) using an in-memory database for testing.

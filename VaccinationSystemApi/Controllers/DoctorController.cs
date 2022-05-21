@@ -256,7 +256,7 @@ namespace VaccinationSystemApi.Controllers
             {
                 canCertify = isLastDose,
             };
-            return Ok(response);  
+            return Ok(response); 
         }
 
         [HttpPost("doctor/vaccinate/vaccinationDidNotHappen/{doctorId}/{appointmentId}")]
