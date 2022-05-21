@@ -233,13 +233,15 @@ namespace VaccinationSystemApi.Controllers
 
         [HttpPost("doctor/vaccinate/confirmVaccination/{doctorId}/{appointmentId}/{batchId}")]
 
-        public ActionResult<ConfirmVaccinationResponse> ConfirmVaccination(Guid doctorId, Guid appointmentId, Guid batchId)
+        public ActionResult<ConfirmVaccinationResponse> ConfirmVaccination(Guid doctorId, Guid appointmentId, string batchId)
         {
             var appointmentFromDb = _vaccinationService.GetAppointment(appointmentId);
             if (appointmentFromDb is null)
                 return BadRequest("Appointment with given id doesn't exist");
             if (appointmentFromDb.TimeSlot_.AssignedDoctor.Id != doctorId)
                 return Forbid("User forbidden to confirm vaccination");
+            if (appointmentFromDb.TimeSlot_.From >= DateTime.UtcNow)
+                return Forbid("This appointment is in the future");
             _vaccinationService.ConfirmVaccination(appointmentId);
             var patientFormerAppointmentsFromDb = _vaccinationService.GetFormerAppointments(appointmentFromDb.Patient_.Id);
             int finishedDoses = 0;
@@ -248,6 +250,7 @@ namespace VaccinationSystemApi.Controllers
                 if (appointment.Vaccine_.Id == appointmentFromDb.Vaccine_.Id && appointment.Status == AppointmentStatus.Finished)
                     finishedDoses++;
             }
+            _vaccinationService.AddVaccinationBatchNumber(appointmentId, batchId);
             bool isLastDose = finishedDoses == appointmentFromDb.Vaccine_.NumberOfDoses;
             ConfirmVaccinationResponse response = new()
             {

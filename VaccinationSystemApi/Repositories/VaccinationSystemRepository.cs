@@ -171,6 +171,12 @@ namespace VaccinationSystemApi.Repositories
             _dbContext.SaveChanges();
         }
 
+        public void AddVaccinationBatchNumber(Guid appointmentId, string batchNumber)
+        {
+            _dbContext.Appointments.Where(a => a.Id == appointmentId).ToList().ForEach(a => a.VaccineBatchNumber = batchNumber);
+            _dbContext.SaveChanges();
+        }
+
         public void CreateCertificate(Certificate certificateToAdd)
         {
             _dbContext.Add(certificateToAdd);

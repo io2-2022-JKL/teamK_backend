@@ -42,6 +42,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         bool AddDoctor(Doctor doctorToAdd);
         bool DeleteDoctor(Guid DoctorId, out bool doctorFound);
         void CreateCertificate(Certificate certificateToAdd);
+        void AddVaccinationBatchNumber(Guid appointmentId, string batchNumber);
         IEnumerable<string> GetViruses();
         IEnumerable<string> GetCities();
     }
