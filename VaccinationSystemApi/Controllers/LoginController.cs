@@ -56,6 +56,8 @@ namespace VaccinationSystemApi.Controllers
 
                 if (creationSuccess)
                 {
+                    var result = _userManager.AddToRoleAsync(newUser, "patient");
+
                     var jwtToken = GenerateJwtToken(newUser);
 
                     return Ok(jwtToken);
