@@ -171,6 +171,12 @@ namespace VaccinationSystemApi.Repositories
             _dbContext.SaveChanges();
         }
 
+        public void CreateCertificate(Certificate certificateToAdd)
+        {
+            _dbContext.Add(certificateToAdd);
+            _dbContext.SaveChanges();
+        }
+
 
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
         {

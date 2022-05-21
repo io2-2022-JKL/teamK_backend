@@ -271,5 +271,36 @@ namespace VaccinationSystemApi.Controllers
             return Ok();
         }
 
+        [HttpPost("doctor/vaccinate/certify/{doctorId}/{appointmentId}")]
+        public ActionResult Certify(Guid doctorId, Guid appointmentId)
+        {
+            var appointmentFromDb = _vaccinationService.GetAppointment(appointmentId);
+            if (appointmentFromDb is null)
+                return BadRequest("Appointment with given id doesn't exist");
+
+            if (appointmentFromDb.TimeSlot_.AssignedDoctor.Id != doctorId)
+                return Forbid("User forbidden to confirm vaccination");
+
+            int finishedDoses = 0;
+            var patientFormerAppointmentsFromDb = _vaccinationService.GetFormerAppointments(appointmentFromDb.Patient_.Id);
+            foreach (var appointment in patientFormerAppointmentsFromDb)
+            {
+                if (appointment.Vaccine_.Id == appointmentFromDb.Vaccine_.Id && appointment.Status == AppointmentStatus.Finished)
+                    finishedDoses++;
+            }
+            bool canBeCertified = finishedDoses == appointmentFromDb.Vaccine_.NumberOfDoses;
+            if (!canBeCertified)
+                return Forbid("That wasn't the lat dose");
+
+            _vaccinationService.CreateCertificate(new Certificate()
+            {
+                Id = Guid.NewGuid(),
+                Owner = appointmentFromDb.Patient_,
+                Url = ""
+            });
+            return Ok();
+
+        }
+
     }
 }
