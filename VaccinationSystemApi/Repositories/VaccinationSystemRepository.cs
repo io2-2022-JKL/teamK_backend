@@ -32,6 +32,12 @@ namespace VaccinationSystemApi.Repositories
             return _dbContext.Patients;
         }
 
+        public IEnumerable<Certificate> GetCertificates()
+        {
+            return _dbContext.Certificates;
+        }
+
+
         public IEnumerable<VaccinationCenter> GetCenters()
         {
             return _dbContext.VaccinationCenters;
@@ -72,7 +78,7 @@ namespace VaccinationSystemApi.Repositories
 
         public IEnumerable<Appointment> GetAppointments()
         {
-            return _dbContext.Appointments.ToList();
+            return _dbContext.Appointments.Include(a => a.Patient_).Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).ToList();
         }
 
         public IEnumerable<Certificate> GetPatientCertificates(Guid patientId)
@@ -102,14 +108,14 @@ namespace VaccinationSystemApi.Repositories
 
         public Appointment GetAppointment(Guid id)
         {
-            return _dbContext.Appointments.Where(x => x.Id == id).SingleOrDefault();
+            return _dbContext.Appointments.Where(x => x.Id == id).Include(a => a.Patient_)
+                .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor)
+                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).SingleOrDefault();
         }
 
         public void CancelAppointment(Guid id)
         {
             var appointmentFromDb = _dbContext.Appointments.Where(x => x.Id == id).SingleOrDefault();
-            if (appointmentFromDb == null) return;
-
             appointmentFromDb.Status = AppointmentStatus.Cancelled;
             _dbContext.SaveChanges();
         }
@@ -164,6 +170,25 @@ namespace VaccinationSystemApi.Repositories
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
                 .Include(a => a.Vaccine_);
         }
+
+        public void ConfirmVaccination(Guid appointmentId)
+        {
+            _dbContext.Appointments.Where(a => a.Id == appointmentId).ToList().ForEach(a => a.Status = AppointmentStatus.Finished);
+            _dbContext.SaveChanges();
+        }
+
+        public void AddVaccinationBatchNumber(Guid appointmentId, string batchNumber)
+        {
+            _dbContext.Appointments.Where(a => a.Id == appointmentId).ToList().ForEach(a => a.VaccineBatchNumber = batchNumber);
+            _dbContext.SaveChanges();
+        }
+
+        public void CreateCertificate(Certificate certificateToAdd)
+        {
+            _dbContext.Add(certificateToAdd);
+            _dbContext.SaveChanges();
+        }
+
 
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
         {
