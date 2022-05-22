@@ -145,5 +145,11 @@ namespace VaccinationSystemApi.Controllers
 
             return result ? Ok() : BadRequest();
         }
+
+        [HttpGet("doctors/Timeslots/{doctorId}")]
+        public ActionResult GetTimeslots(Guid doctorId)
+        {
+
+        }
     }
 }
