@@ -11,6 +11,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
     public interface IVaccinationSystemRepository
     {
         IEnumerable<Patient> GetPatients();
+        IEnumerable<Certificate> GetCertificates();
         Patient GetPatient(Guid id);
         IEnumerable<VaccinationCenter> GetCenters();
         VaccinationCenter GetCenter(Guid id);

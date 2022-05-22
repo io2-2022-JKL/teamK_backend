@@ -32,6 +32,12 @@ namespace VaccinationSystemApi.Repositories
             return _dbContext.Patients;
         }
 
+        public IEnumerable<Certificate> GetCertificates()
+        {
+            return _dbContext.Certificates;
+        }
+
+
         public IEnumerable<VaccinationCenter> GetCenters()
         {
             return _dbContext.VaccinationCenters;
