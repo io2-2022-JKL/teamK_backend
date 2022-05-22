@@ -95,11 +95,12 @@ namespace VaccinationSystemApi.Controllers
 
                 var jwtToken = GenerateJwtToken(existingUser);
 
+                HttpContext.Response.Headers.Add("Authorization", jwtToken.Result);
                 return Ok(new SignInResponse()
                 {
                     UserId = existingUser.Id,
                     UserType = "patient", // for now hardcoded patient,
-                    Jwt = jwtToken.Result,
+                    //Jwt = jwtToken.Result,
                 });
             }
 
