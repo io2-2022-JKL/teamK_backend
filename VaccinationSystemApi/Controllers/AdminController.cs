@@ -7,6 +7,7 @@ using VaccinationSystemApi.Helpers;
 using VaccinationSystemApi.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
+using VaccinationSystemApi.Exceptions;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -147,9 +148,88 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpGet("doctors/Timeslots/{doctorId}")]
-        public ActionResult GetTimeslots(Guid doctorId)
+        public ActionResult<IEnumerable<TimeslotDTO>> GetTimeslots(Guid doctorId)
         {
+            try
+            {
+                var timeslots = _vaccinationService.GetDoctorsTimeSlots(doctorId);
+                return Ok(timeslots);
+            }
+            catch (ModelNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
 
+        [HttpPost("doctors/Timeslots/deleteTimeslots")]
+        public ActionResult DeleteTimeslots(IEnumerable<TimeslotIdWrapperDTO> timeslotsToDelete)
+        {
+            List<Guid> timeslotIds = new List<Guid>();
+
+            foreach(var timeslot in timeslotsToDelete)
+            {
+                timeslotIds.Add(timeslot.Id);
+            }
+
+            try
+            {
+                _vaccinationService.DeleteTimeslots(timeslotIds);
+                return Ok();
+            }
+            catch (ModelNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpGet("vaccinationCenters")]
+        public ActionResult<IEnumerable<VaccinationCenterDTO>> GetVaccinationCenters()
+        {
+            try
+            {
+                var vaccinationCenters = _vaccinationService.GetVaccinationCenters();
+                return Ok(vaccinationCenters);
+            }
+            catch (ModelNotFoundException)
+            {
+                return NotFound();
+            }
+        }
+
+        [HttpPost("vaccinationCenters/editVaccinationCenter")]
+        public ActionResult EditVaccinationCenter(VaccinationCenterDTO centerToEdit)
+        {
+            try
+            {
+                _vaccinationService.EditVaccinationCenter(centerToEdit);
+                return Ok();
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
+        }
+
+        [HttpDelete("vaccinationCenters/deleteVaccinationCenter/{vaccinationCenterId}")]
+        public ActionResult DeleteVaccinationCenter(Guid vaccinationCenterId)
+        {
+            try
+            {
+                _vaccinationService.DeleteVaccinationCenter(vaccinationCenterId);
+                return Ok();
+            }
+            catch (NoChangesInDatabaseException)
+            {
+                return NotFound();
+            }
         }
     }
 }

@@ -11,16 +11,20 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using VaccinationSystemApi.Dtos.Login;
 using VaccinationSystemApi.Dtos.Admin;
+using VaccinationSystemApi.Exceptions;
+using VaccinationSystemApi.Services;
 
 namespace VaccinationSystemApi.Repositories
 {
     public class VaccinationSystemRepository : IVaccinationSystemRepository
     {
         private readonly VaccinationContext _dbContext;
+        private readonly TimeHoursService _timeHoursService;
 
         public VaccinationSystemRepository(VaccinationContext db)
         {
             _dbContext = db;
+            _timeHoursService = new TimeHoursService();
         }
         public Patient GetPatient(Guid id)
         {
@@ -650,6 +654,90 @@ namespace VaccinationSystemApi.Repositories
             }
 
             return cities;
+        }
+
+        public IEnumerable<TimeSlot> GetDoctorsTimeSlots(Guid doctorId)
+        {
+            var timeslots = _dbContext.TimeSlots.Where(t => t.AssignedDoctorId == doctorId).ToArray();
+
+            if (timeslots.Length == 0)
+                throw new ModelNotFoundException();
+
+            return timeslots;
+        }
+
+        public void DeleteTimeslots(IEnumerable<Guid> timeslotIds)
+        {
+            var timeslots = _dbContext.TimeSlots.Where(t => timeslotIds.Contains(t.Id));
+
+            if (timeslots.Count() == 0)
+                throw new ModelNotFoundException();
+
+            foreach(var t in timeslots)
+            {
+                t.Active = false;
+            }
+
+            _dbContext.SaveChanges();
+        }
+
+        public IEnumerable<VaccinationCenter> GetVaccinationCenters()
+        {
+            var vaccinationCenters = _dbContext.VaccinationCenters.ToArray();
+
+            if (vaccinationCenters.Length == 0)
+                throw new ModelNotFoundException();
+
+            return vaccinationCenters;
+        }
+
+        public void AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd)
+        {
+            VaccinationCenter vaccinationCenter = new VaccinationCenter();
+            vaccinationCenter.Id = Guid.NewGuid();
+            vaccinationCenter.Name = centerToAdd.Name;
+            vaccinationCenter.City = centerToAdd.City;
+            vaccinationCenter.Address = centerToAdd.Street;
+            vaccinationCenter.Active = centerToAdd.Active;
+            vaccinationCenter.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToAdd.OpeningHoursDays as IList<OpeningHoursDTO>);
+
+
+            _dbContext.VaccinationCenters.Add(vaccinationCenter);
+
+            int entitiesChanged = _dbContext.SaveChanges();
+
+            if(entitiesChanged <= 0)
+                throw new NoChangesInDatabaseException();
+        }
+
+        public void EditVaccinationCenter(VaccinationCenterDTO centerToEdit)
+        {
+            var vaccinationCenterFromTheDatabase = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerToEdit.Id).Single();
+
+            vaccinationCenterFromTheDatabase.Name = centerToEdit.Name;
+            vaccinationCenterFromTheDatabase.City = centerToEdit.City;
+            vaccinationCenterFromTheDatabase.Address = centerToEdit.Street;
+            vaccinationCenterFromTheDatabase.AvailableVaccines = new List<Vaccine>();
+
+            foreach(var v in centerToEdit.Vaccines)
+            {
+                vaccinationCenterFromTheDatabase.AvailableVaccines.Add(new Vaccine() { Id = v.Id });
+            }
+
+            vaccinationCenterFromTheDatabase.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToEdit.OpeningHoursDays as  IList<OpeningHoursDTO>);
+            vaccinationCenterFromTheDatabase.Active = centerToEdit.Active;
+
+            _dbContext.SaveChanges();
+        }
+
+        public void DeleteVaccinationCenter(Guid centerId)
+        {
+            var vaccinationCenter = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerId).SingleOrDefault();
+            _dbContext.Remove(vaccinationCenter);
+            int entitiesChanged = _dbContext.SaveChanges();
+
+            if (entitiesChanged <= 0)
+                throw new NoChangesInDatabaseException();
         }
     }
 }

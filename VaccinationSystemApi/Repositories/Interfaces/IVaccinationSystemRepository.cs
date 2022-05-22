@@ -46,5 +46,11 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         void AddVaccinationBatchNumber(Guid appointmentId, string batchNumber);
         IEnumerable<string> GetViruses();
         IEnumerable<string> GetCities();
+        IEnumerable<TimeSlot> GetDoctorsTimeSlots(Guid doctorId);
+        void DeleteTimeslots(IEnumerable<Guid> TimeslotIds);
+        IEnumerable<VaccinationCenter> GetVaccinationCenters();
+        void AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd);
+        void EditVaccinationCenter(VaccinationCenterDTO centerToEdit);
+        void DeleteVaccinationCenter(Guid centerId);
     }
 }
