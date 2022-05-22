@@ -51,6 +51,21 @@ namespace VaccinationSystemApi
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey
                 });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type=ReferenceType.SecurityScheme,
+                                Id="Bearer"
+                            }
+                        },
+                        new string[]{}
+                    }
+                });
             });
 
             var config =
@@ -119,6 +134,7 @@ namespace VaccinationSystemApi
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "VaccinationSystemApi v1"));
+            
             //app.UseHttpsRedirection();
 
             app.UseCors("_MyAllowSpecificOrigins");

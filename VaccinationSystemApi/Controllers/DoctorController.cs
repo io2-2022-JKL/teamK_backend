@@ -7,11 +7,14 @@ using VaccinationSystemApi.Models;
 using System.Collections;
 using System.Collections.Generic;
 using VaccinationSystemApi.Helpers.Converters;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace VaccinationSystemApi.Controllers
 {
 
     [ApiController]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
     public class DoctorController: ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
