@@ -93,14 +93,21 @@ namespace VaccinationSystemApi.Controllers
                     return BadRequest("Unrecognised data format");
                 }
 
-                var jwtToken = GenerateJwtToken(existingUser);
+                var jwtToken = await GenerateJwtToken(existingUser);
 
-                HttpContext.Response.Headers.Add("Authorization", jwtToken.Result);
+                var roleList = await _userManager.GetRolesAsync(existingUser);
+                List<string> roles = new List<string>(roleList);
+
+                string userType = "";
+                if (roles.Contains("Admin")) userType = "Admin";
+                else if (roles.Contains("Doctor")) userType = "Doctor";
+                else if (roles.Contains("Patient")) userType = "Patient";
+
+                HttpContext.Response.Headers.Add("Authorization", jwtToken);
                 return Ok(new SignInResponse()
                 {
                     UserId = existingUser.Id,
-                    UserType = "patient", // for now hardcoded patient,
-                    //Jwt = jwtToken.Result,
+                    UserType = userType,
                 });
             }
 

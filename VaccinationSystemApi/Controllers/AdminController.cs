@@ -5,6 +5,8 @@ using VaccinationSystemApi.Dtos.Admin;
 using VaccinationSystemApi.Repositories.Interfaces;
 using VaccinationSystemApi.Helpers;
 using VaccinationSystemApi.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -13,7 +15,14 @@ namespace VaccinationSystemApi.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
-        public AdminController(IVaccinationSystemRepository repo) => _vaccinationService = repo;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly UserManager<IdentityUser> _userManager;
+        public AdminController(IVaccinationSystemRepository repo, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
+        {
+            _vaccinationService = repo;
+            _roleManager = roleManager;
+            _userManager = userManager;
+        }
     
         [HttpGet("patients")]
         public ActionResult<IEnumerable<PatientDTO>> GetPatients()
@@ -105,14 +114,22 @@ namespace VaccinationSystemApi.Controllers
             return result ? Ok() : BadRequest();
         }
         [HttpPost("doctors/addDoctor")]
-        public ActionResult AddDoctor(AddDoctorDTO addDoctorDTO)
+        public async Task<ActionResult> AddDoctor(AddDoctorDTO addDoctorDTO)
         {
+            var identityUser = await _userManager.FindByIdAsync(addDoctorDTO.PatientId.ToString());
+
+            if (identityUser is null)
+                return BadRequest("");
+
+            await _userManager.AddToRoleAsync(identityUser, "Doctor");
+
             var doctorToAdd = new Doctor()
             {
-                Id = Guid.NewGuid(),
+                Id = addDoctorDTO.PatientId,
                 PatientAccountId = addDoctorDTO.PatientId,
                 VaccinationCenterId = addDoctorDTO.VaccinationCenterId
             };
+
             bool result = _vaccinationService.AddDoctor(doctorToAdd);
             
             return result ? Ok() : BadRequest();
