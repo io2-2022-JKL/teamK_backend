@@ -11,6 +11,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
     public interface IVaccinationSystemRepository
     {
         IEnumerable<Patient> GetPatients();
+        IEnumerable<Certificate> GetCertificates();
         Patient GetPatient(Guid id);
         IEnumerable<VaccinationCenter> GetCenters();
         VaccinationCenter GetCenter(Guid id);
@@ -25,6 +26,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         Appointment GetAppointment(Guid id);
         void CancelAppointment(Guid id);
         void CreateTimeSlot(TimeSlot timeSlot);
+        void ConfirmVaccination(Guid appointmentId);
         Doctor GetDoctorByTimeSlot(Guid id);
         void DeleteTimeSlot(Guid id);
         void ModifyTimeSlot(Guid timeSlotId, DateTime from, DateTime to);
@@ -40,6 +42,8 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         bool EditDoctor(DoctorDTO doctorData, out bool doctorFound);
         bool AddDoctor(Doctor doctorToAdd);
         bool DeleteDoctor(Guid DoctorId, out bool doctorFound);
+        void CreateCertificate(Certificate certificateToAdd);
+        void AddVaccinationBatchNumber(Guid appointmentId, string batchNumber);
         IEnumerable<string> GetViruses();
         IEnumerable<string> GetCities();
     }
