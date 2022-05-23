@@ -191,7 +191,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpGet("vaccinationCenters")]
-        public ActionResult<IEnumerable<VaccinationCenterDTO>> GetVaccinationCenters()
+        public ActionResult<IEnumerable<VaccinationCenterAdminDTO>> GetVaccinationCenters()
         {
             try
             {
@@ -205,7 +205,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("vaccinationCenters/editVaccinationCenter")]
-        public ActionResult EditVaccinationCenter(VaccinationCenterDTO centerToEdit)
+        public ActionResult EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit)
         {
             try
             {

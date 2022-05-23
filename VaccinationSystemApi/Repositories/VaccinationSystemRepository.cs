@@ -699,7 +699,7 @@ namespace VaccinationSystemApi.Repositories
             vaccinationCenter.City = centerToAdd.City;
             vaccinationCenter.Address = centerToAdd.Street;
             vaccinationCenter.Active = centerToAdd.Active;
-            vaccinationCenter.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToAdd.OpeningHoursDays as IList<OpeningHoursDTO>);
+            vaccinationCenter.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToAdd.OpeningHoursDays as IList<OpeningHoursAdminDTO>);
 
 
             _dbContext.VaccinationCenters.Add(vaccinationCenter);
@@ -710,7 +710,7 @@ namespace VaccinationSystemApi.Repositories
                 throw new NoChangesInDatabaseException();
         }
 
-        public void EditVaccinationCenter(VaccinationCenterDTO centerToEdit)
+        public void EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit)
         {
             var vaccinationCenterFromTheDatabase = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerToEdit.Id).Single();
 
@@ -724,7 +724,7 @@ namespace VaccinationSystemApi.Repositories
                 vaccinationCenterFromTheDatabase.AvailableVaccines.Add(new Vaccine() { Id = v.Id });
             }
 
-            vaccinationCenterFromTheDatabase.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToEdit.OpeningHoursDays as  IList<OpeningHoursDTO>);
+            vaccinationCenterFromTheDatabase.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToEdit.OpeningHoursDays as  IList<OpeningHoursAdminDTO>);
             vaccinationCenterFromTheDatabase.Active = centerToEdit.Active;
 
             _dbContext.SaveChanges();

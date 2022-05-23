@@ -2,7 +2,7 @@
 
 namespace VaccinationSystemApi.Dtos.Admin
 {
-    public class VaccineDTO
+    public class VaccineAdminDTO
     {
         public Guid Id{ get; set; }
         public string Name { get; set; }
