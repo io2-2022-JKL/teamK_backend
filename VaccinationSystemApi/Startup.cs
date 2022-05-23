@@ -25,6 +25,7 @@ using VaccinationSystemApi.Configuration;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Net.Http.Headers;
 
 namespace VaccinationSystemApi
 {
@@ -120,6 +121,7 @@ namespace VaccinationSystemApi
                                       builder.AllowAnyOrigin();
                                       builder.AllowAnyMethod();
                                       builder.AllowAnyHeader();
+                                      builder.WithExposedHeaders(HeaderNames.Authorization);
                                   });
             });
         }
