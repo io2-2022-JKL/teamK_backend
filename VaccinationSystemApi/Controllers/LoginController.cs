@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -103,7 +104,7 @@ namespace VaccinationSystemApi.Controllers
                 else if (roles.Contains("Doctor")) userType = "Doctor";
                 else if (roles.Contains("Patient")) userType = "Patient";
 
-                HttpContext.Response.Headers.Add("Authorization", jwtToken);
+                HttpContext.Response.Headers.Add(HeaderNames.Authorization, jwtToken);
                 return Ok(new SignInResponse()
                 {
                     UserId = existingUser.Id,
