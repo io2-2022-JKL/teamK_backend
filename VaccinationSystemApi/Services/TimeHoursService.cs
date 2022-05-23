@@ -79,7 +79,7 @@ namespace VaccinationSystemApi.Services
             return null;
         }
 
-        public OpeningHours DTOToOpeningHours(IList<VaccinationSystemApi.Dtos.Admin.OpeningHoursDTO> hoursDtos)
+        public OpeningHours DTOToOpeningHours(IList<VaccinationSystemApi.Dtos.Admin.OpeningHoursAdminDTO> hoursDtos)
         {
             if (hoursDtos.Count() != 7)
                 throw new ArgumentException();

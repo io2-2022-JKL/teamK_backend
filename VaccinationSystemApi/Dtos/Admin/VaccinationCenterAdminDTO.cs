@@ -5,14 +5,14 @@ using VaccinationSystemApi.Models.Utils;
 
 namespace VaccinationSystemApi.Dtos.Admin
 {
-    public class VaccinationCenterDTO
+    public class VaccinationCenterAdminDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string City { get; set; }
         public string Street { get; set; }
-        public ICollection<VaccineDTO> Vaccines { get; set; }
-        public ICollection<OpeningHoursDTO> OpeningHoursDays { get; set; }
+        public ICollection<VaccineAdminDTO> Vaccines { get; set; }
+        public ICollection<OpeningHoursAdminDTO> OpeningHoursDays { get; set; }
         public bool Active { get; set; }
     }
 }

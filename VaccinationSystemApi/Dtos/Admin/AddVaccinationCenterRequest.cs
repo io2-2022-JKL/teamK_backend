@@ -9,7 +9,7 @@ namespace VaccinationSystemApi.Dtos.Admin
         public string City { get; set; }
         public string Street { get; set; }
         public ICollection<Guid> VaccineIds { get; set; }
-        public ICollection<OpeningHoursDTO> OpeningHoursDays { get; set; }
+        public ICollection<OpeningHoursAdminDTO> OpeningHoursDays { get; set; }
         public bool Active { get; set; }
     }
 }
