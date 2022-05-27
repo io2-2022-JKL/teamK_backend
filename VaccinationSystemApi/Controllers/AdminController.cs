@@ -231,5 +231,87 @@ namespace VaccinationSystemApi.Controllers
                 return NotFound();
             }
         }
+
+        [HttpGet("vaccines")]
+        public ActionResult<IEnumerable<VaccineExtendedDTO>> GetVaccines()
+        {
+            try
+            {
+                IEnumerable<Vaccine> vaccinesFromDb = _vaccinationService.GetExtendedVaccines();
+                List<VaccineExtendedDTO> vaccinesDto = new List<VaccineExtendedDTO>();
+
+                foreach (var v in vaccinesFromDb)
+                {
+                    vaccinesDto.Add(new VaccineExtendedDTO()
+                    {
+                        VaccineId = v.Id,
+                        Active = v.IsStillBeingUsed,
+                        Company = v.Company,
+                        MaxDaysBetweenDoses = v.MaxDaysBetweenDoses,
+                        MaxPatientAge = v.MaxPatientAge,
+                        MinDaysBetweenDoses = v.MinDaysBetweenDoses,
+                        MinPatientAge = v.MinPatientAge,
+                        Name = v.Name,
+                        NumberOfDoses = v.NumberOfDoses,
+                        Virus = v.Virus_.Name
+                    });
+                }
+
+                return Ok(vaccinesDto);
+            }
+            catch (ModelNotFoundException)
+            {
+                return NotFound("Data not found");
+            }
+        }
+        [HttpGet("vaccines/addVaccine")]
+        public ActionResult AddVaccine(AddVaccineRequest vaccineToAdd)
+        {
+            try
+            {
+                _vaccinationService.AddVaccine(vaccineToAdd);
+                return Ok();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest("Error, bad request syntax. Perhaps you tried to add a non-existant virus?");
+            }
+            catch (NoChangesInDatabaseException)
+            {
+                return NotFound();
+            }
+            
+        }
+        [HttpGet("vaccines/editVaccine")]
+        public ActionResult EditVaccine(VaccineExtendedDTO vaccine)
+        {
+            try
+            {
+                _vaccinationService.EditVaccine(vaccine);
+            }
+            catch (NoChangesInDatabaseException)
+            {
+                return NotFound("Error, no vaccine found to edit");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+        [HttpGet("vaccines/deletevaccine/{vaccineId}")]
+        public ActionResult DeleteVaccine(Guid vaccineId)
+        {
+            try
+            {
+                _vaccinationService.DeleteVaccine(vaccineId);
+            }
+            catch (NoChangesInDatabaseException)
+            {
+                return NotFound("Data not found");
+            }
+            return Ok();
+        }
     }
 }

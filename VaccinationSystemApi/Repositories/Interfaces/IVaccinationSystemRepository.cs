@@ -52,5 +52,9 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         void AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd);
         void EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit);
         void DeleteVaccinationCenter(Guid centerId);
+        IEnumerable<Vaccine> GetExtendedVaccines();
+        void AddVaccine(AddVaccineRequest vaccineToAdd);
+        void EditVaccine(VaccineExtendedDTO updatedVaccine);
+        void DeleteVaccine(Guid vaccineId);
     }
 }
