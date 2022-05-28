@@ -541,12 +541,27 @@ namespace VaccinationSystemApi.Repositories
         public bool EditPatient(PatientDTO patientToEdit, out bool patientFound)
         {
             var patientFromDb = _dbContext.Patients.Where(p => p.Id == Guid.Parse(patientToEdit.PatientId)).FirstOrDefault();
-            if(patientToEdit is null)
+            if (patientFromDb is null)
             {
+                Patient updatedPatient = new Patient()
+                {
+                    Active = patientToEdit.Active,
+                    DateOfBirth = patientToEdit.DateOfBirth,
+                    EMail = patientToEdit.Mail,
+                    FirstName = patientToEdit.FirstName,
+                    LastName = patientToEdit.LastName,
+                    Id = Guid.Parse(patientToEdit.PatientId),
+                    Pesel = patientToEdit.PESEL,
+                    PhoneNumber = patientToEdit.PhoneNumber,
+                };
+
+                _dbContext.Patients.Add(updatedPatient);
+
+                int entitiesUpdated = _dbContext.SaveChanges();
+
                 patientFound = false;
-                return false;
+                return true;
             }
-            patientFound = true;
 
             patientFromDb.Pesel = patientToEdit.PESEL;
             patientFromDb.Active = patientToEdit.Active;
@@ -556,9 +571,8 @@ namespace VaccinationSystemApi.Repositories
             patientFromDb.FirstName = patientToEdit.FirstName;
             patientFromDb.PhoneNumber = patientToEdit.PhoneNumber;
 
-            int entitiesUpdated = _dbContext.SaveChanges();
-
-            return entitiesUpdated > 0;
+            patientFound = true;
+            return true;
         }
 
         public bool RemovePatient(Guid patientId)
@@ -575,9 +589,9 @@ namespace VaccinationSystemApi.Repositories
             return _dbContext.Doctors.Include(d => d.VaccinationCenter_).ToArray();
         }
 
-        public bool EditDoctor(DoctorDTO doctorData, out bool doctorFound)
+        public bool EditDoctor(EditDoctorRequest doctorData, out bool doctorFound)
         {
-            var doctorToEdit = _dbContext.Doctors.Where(d => d.Id == doctorData.Id).FirstOrDefault();
+            var doctorToEdit = _dbContext.Doctors.Where(d => d.Id == doctorData.DoctorId).FirstOrDefault();
             if (doctorToEdit is null) 
             {
                 doctorFound = false;
@@ -602,6 +616,18 @@ namespace VaccinationSystemApi.Repositories
         public bool AddDoctor(Doctor doctorToAdd)
         {
             int entitiesChanged = -1;
+
+            var patient = _dbContext.Patients.Where(p => p.Id == doctorToAdd.PatientAccountId).FirstOrDefault();
+            doctorToAdd.EMail = patient.EMail;
+            doctorToAdd.Active = patient.Active;
+            doctorToAdd.DateOfBirth = patient.DateOfBirth;
+            doctorToAdd.FirstName = patient.FirstName;
+            doctorToAdd.LastName = patient.LastName;
+            doctorToAdd.Pesel = patient.Pesel;
+            doctorToAdd.PhoneNumber = patient.PhoneNumber;
+
+
+
             try
             {
                 _dbContext.Doctors.Add(doctorToAdd);

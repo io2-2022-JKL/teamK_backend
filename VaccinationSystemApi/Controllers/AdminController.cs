@@ -56,25 +56,39 @@ namespace VaccinationSystemApi.Controllers
             return Ok(patientsDtos);
         }
 
-        [HttpPost("editPatient")]
-        public ActionResult EditPatient(PatientDTO patientToEdit)
+        [HttpPost("patients/editPatient")]
+        public async Task<ActionResult> EditPatient(PatientDTO patientToEdit)
         {
             if (!ModelState.IsValid)
                 return BadRequest("BadData");
 
+            var user = await _userManager.FindByIdAsync(patientToEdit.PatientId);
+            if(user is null)
+            {
+                var newUser = new IdentityUser() { Email = patientToEdit.Mail, UserName = patientToEdit.PESEL, Id = patientToEdit.PatientId };
+                await _userManager.CreateAsync(newUser);
+                await _userManager.AddToRoleAsync(newUser, "Patient");
+            }
+
             bool result = _vaccinationService.EditPatient(patientToEdit, out bool wasPatientFound);
-            if (!wasPatientFound) return NotFound("Error, no patient found to edit");
+            
 
             return result ? Ok() : BadRequest("Bad data");
         }
 
-        [HttpDelete("deletePatient/{patientId}")]
-        public ActionResult DeletePatient(Guid patientId)
+        [HttpDelete("patients/deletePatient/{patientId}")]
+        public async Task<ActionResult> DeletePatient(Guid patientId)
         {
             if (!ModelState.IsValid)
                 return BadRequest("BadData");
 
             bool result = _vaccinationService.RemovePatient(patientId);
+            if (result)
+            {
+                var user = await _userManager.FindByIdAsync(patientId.ToString());
+                await _userManager.DeleteAsync(user);
+            }
+
             return result ? Ok() : NotFound();
         }
 
@@ -109,7 +123,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("doctors/editDoctor")]
-        public ActionResult EditDoctor(DoctorDTO doctorDto)
+        public ActionResult EditDoctor(EditDoctorRequest doctorDto)
         {
             bool result = _vaccinationService.EditDoctor(doctorDto, out bool doctorFound);
             if (!doctorFound)
