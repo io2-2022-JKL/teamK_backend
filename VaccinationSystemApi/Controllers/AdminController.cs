@@ -8,11 +8,14 @@ using VaccinationSystemApi.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using VaccinationSystemApi.Exceptions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace VaccinationSystemApi.Controllers
 {
     [ApiController]
     [Route("admin")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
@@ -53,25 +56,39 @@ namespace VaccinationSystemApi.Controllers
             return Ok(patientsDtos);
         }
 
-        [HttpPost("editPatient")]
-        public ActionResult EditPatient(PatientDTO patientToEdit)
+        [HttpPost("patients/editPatient")]
+        public async Task<ActionResult> EditPatient(PatientDTO patientToEdit)
         {
             if (!ModelState.IsValid)
                 return BadRequest("BadData");
 
+            var user = await _userManager.FindByIdAsync(patientToEdit.PatientId);
+            if(user is null)
+            {
+                var newUser = new IdentityUser() { Email = patientToEdit.Mail, UserName = patientToEdit.PESEL, Id = patientToEdit.PatientId };
+                await _userManager.CreateAsync(newUser);
+                await _userManager.AddToRoleAsync(newUser, "Patient");
+            }
+
             bool result = _vaccinationService.EditPatient(patientToEdit, out bool wasPatientFound);
-            if (!wasPatientFound) return NotFound("Error, no patient found to edit");
+            
 
             return result ? Ok() : BadRequest("Bad data");
         }
 
-        [HttpDelete("deletePatient/{patientId}")]
-        public ActionResult DeletePatient(Guid patientId)
+        [HttpDelete("patients/deletePatient/{patientId}")]
+        public async Task<ActionResult> DeletePatient(Guid patientId)
         {
             if (!ModelState.IsValid)
                 return BadRequest("BadData");
 
             bool result = _vaccinationService.RemovePatient(patientId);
+            if (result)
+            {
+                var user = await _userManager.FindByIdAsync(patientId.ToString());
+                await _userManager.DeleteAsync(user);
+            }
+
             return result ? Ok() : NotFound();
         }
 
@@ -106,7 +123,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("doctors/editDoctor")]
-        public ActionResult EditDoctor(DoctorDTO doctorDto)
+        public ActionResult EditDoctor(EditDoctorRequest doctorDto)
         {
             bool result = _vaccinationService.EditDoctor(doctorDto, out bool doctorFound);
             if (!doctorFound)
@@ -230,6 +247,88 @@ namespace VaccinationSystemApi.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpGet("vaccines")]
+        public ActionResult<IEnumerable<VaccineExtendedDTO>> GetVaccines()
+        {
+            try
+            {
+                IEnumerable<Vaccine> vaccinesFromDb = _vaccinationService.GetExtendedVaccines();
+                List<VaccineExtendedDTO> vaccinesDto = new List<VaccineExtendedDTO>();
+
+                foreach (var v in vaccinesFromDb)
+                {
+                    vaccinesDto.Add(new VaccineExtendedDTO()
+                    {
+                        VaccineId = v.Id,
+                        Active = v.IsStillBeingUsed,
+                        Company = v.Company,
+                        MaxDaysBetweenDoses = v.MaxDaysBetweenDoses,
+                        MaxPatientAge = v.MaxPatientAge,
+                        MinDaysBetweenDoses = v.MinDaysBetweenDoses,
+                        MinPatientAge = v.MinPatientAge,
+                        Name = v.Name,
+                        NumberOfDoses = v.NumberOfDoses,
+                        Virus = v.Virus_.Name
+                    });
+                }
+
+                return Ok(vaccinesDto);
+            }
+            catch (ModelNotFoundException)
+            {
+                return NotFound("Data not found");
+            }
+        }
+        [HttpGet("vaccines/addVaccine")]
+        public ActionResult AddVaccine(AddVaccineRequest vaccineToAdd)
+        {
+            try
+            {
+                _vaccinationService.AddVaccine(vaccineToAdd);
+                return Ok();
+            }
+            catch (InvalidOperationException)
+            {
+                return BadRequest("Error, bad request syntax. Perhaps you tried to add a non-existant virus?");
+            }
+            catch (NoChangesInDatabaseException)
+            {
+                return NotFound();
+            }
+            
+        }
+        [HttpGet("vaccines/editVaccine")]
+        public ActionResult EditVaccine(VaccineExtendedDTO vaccine)
+        {
+            try
+            {
+                _vaccinationService.EditVaccine(vaccine);
+            }
+            catch (NoChangesInDatabaseException)
+            {
+                return NotFound("Error, no vaccine found to edit");
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+        [HttpGet("vaccines/deletevaccine/{vaccineId}")]
+        public ActionResult DeleteVaccine(Guid vaccineId)
+        {
+            try
+            {
+                _vaccinationService.DeleteVaccine(vaccineId);
+            }
+            catch (NoChangesInDatabaseException)
+            {
+                return NotFound("Data not found");
+            }
+            return Ok();
         }
     }
 }

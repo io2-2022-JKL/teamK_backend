@@ -39,7 +39,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         bool EditPatient(PatientDTO patientToEdit, out bool wasPatientFound);
         bool RemovePatient(Guid patientId);
         IEnumerable<Doctor> GetDoctorsWithMatchingVaccinationCentres();
-        bool EditDoctor(DoctorDTO doctorData, out bool doctorFound);
+        bool EditDoctor(EditDoctorRequest doctorData, out bool doctorFound);
         bool AddDoctor(Doctor doctorToAdd);
         bool DeleteDoctor(Guid DoctorId, out bool doctorFound);
         void CreateCertificate(Certificate certificateToAdd);
@@ -52,5 +52,9 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         void AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd);
         void EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit);
         void DeleteVaccinationCenter(Guid centerId);
+        IEnumerable<Vaccine> GetExtendedVaccines();
+        void AddVaccine(AddVaccineRequest vaccineToAdd);
+        void EditVaccine(VaccineExtendedDTO updatedVaccine);
+        void DeleteVaccine(Guid vaccineId);
     }
 }
