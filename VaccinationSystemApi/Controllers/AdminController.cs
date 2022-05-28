@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using VaccinationSystemApi.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using VaccinationSystemApi.Services;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -22,13 +21,11 @@ namespace VaccinationSystemApi.Controllers
         private readonly IVaccinationSystemRepository _vaccinationService;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly TimeHoursService _timeHoursService;
         public AdminController(IVaccinationSystemRepository repo, RoleManager<IdentityRole> roleManager, UserManager<IdentityUser> userManager)
         {
             _vaccinationService = repo;
             _roleManager = roleManager;
             _userManager = userManager;
-            _timeHoursService = new TimeHoursService();
         }
     
         [HttpGet("patients")]
@@ -216,38 +213,7 @@ namespace VaccinationSystemApi.Controllers
             try
             {
                 var vaccinationCenters = _vaccinationService.GetVaccinationCenters();
-                List<VaccinationCenterAdminDTO> vaccCentersDtos = new List<VaccinationCenterAdminDTO>();
-                foreach (var vc in vaccinationCenters)
-                {
-                    List<VaccineAdminDTO> vaccineDtos = new List<VaccineAdminDTO>();
-
-                    foreach (var vaccine in vc.AvailableVaccines)
-                    {
-                        var vaccineDto = new VaccineAdminDTO()
-                        {
-                            CompanyName = vaccine.Company,
-                            Id = vaccine.Id,
-                            Name = vaccine.Name,
-                            Virus = vaccine.Virus_.Name,
-                        };
-                        vaccineDtos.Add(vaccineDto);
-                    }
-
-                    var openingHoursDto = _timeHoursService.OpeningHoursToDTO(vc.OpeningHours_);
-                    vaccCentersDtos.Add(
-                        new VaccinationCenterAdminDTO()
-                        {
-                            Active = vc.Active,
-                            City = vc.City,
-                            Id = vc.Id,
-                            Name = vc.Name,
-                            Street = vc.Address,
-                            OpeningHoursDays = _timeHoursService.DTOToAdminDTO(openingHoursDto),
-                            Vaccines = vaccineDtos
-                        });
-                }
-
-                return Ok(vaccCentersDtos);
+                return Ok(vaccinationCenters);
             }
             catch (ModelNotFoundException)
             {
@@ -315,7 +281,7 @@ namespace VaccinationSystemApi.Controllers
                 return NotFound("Data not found");
             }
         }
-        [HttpPost("vaccines/addVaccine")]
+        [HttpGet("vaccines/addVaccine")]
         public ActionResult AddVaccine(AddVaccineRequest vaccineToAdd)
         {
             try
@@ -333,7 +299,7 @@ namespace VaccinationSystemApi.Controllers
             }
             
         }
-        [HttpPost("vaccines/editVaccine")]
+        [HttpGet("vaccines/editVaccine")]
         public ActionResult EditVaccine(VaccineExtendedDTO vaccine)
         {
             try
@@ -351,7 +317,7 @@ namespace VaccinationSystemApi.Controllers
 
             return Ok();
         }
-        [HttpDelete("vaccines/deleteVaccine/{vaccineId}")]
+        [HttpGet("vaccines/deletevaccine/{vaccineId}")]
         public ActionResult DeleteVaccine(Guid vaccineId)
         {
             try
