@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using VaccinationSystemApi.Dtos.Patients;
+using VaccinationSystemApi.Dtos.Admin;
 using VaccinationSystemApi.Models;
 using VaccinationSystemApi.Models.Utils;
 
@@ -32,6 +33,24 @@ namespace VaccinationSystemApi.Services
                 Hour = hour,
                 Minutes = minute,
             };
+        }
+
+        public ICollection<OpeningHoursAdminDTO> DTOToAdminDTO(ICollection<OpeningHoursDTO> dtos)
+        {
+            var adminDtos = new List<OpeningHoursAdminDTO>();
+
+            foreach(var dto in dtos)
+            {
+                var adminDto = new OpeningHoursAdminDTO()
+                {
+                    From = dto.From,
+                    To = dto.To,
+                };
+
+                adminDtos.Add(adminDto);
+            }
+
+            return adminDtos;
         }
 
         public ICollection<OpeningHoursDTO> OpeningHoursToDTO(OpeningHours openingHours)
