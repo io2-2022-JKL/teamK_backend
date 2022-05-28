@@ -8,11 +8,14 @@ using VaccinationSystemApi.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Threading.Tasks;
 using VaccinationSystemApi.Exceptions;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace VaccinationSystemApi.Controllers
 {
     [ApiController]
     [Route("admin")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
