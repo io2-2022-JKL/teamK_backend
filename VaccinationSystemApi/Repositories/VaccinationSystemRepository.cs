@@ -754,27 +754,31 @@ namespace VaccinationSystemApi.Repositories
 
         public void EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit)
         {
-            var vaccinationCenterFromTheDatabase = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerToEdit.Id).Single();
+            var vaccinationCenterFromTheDatabase = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerToEdit.Id).Include(vc => vc.AvailableVaccines).Include(vc => vc.OpeningHours_).Single();
 
             vaccinationCenterFromTheDatabase.Name = centerToEdit.Name;
             vaccinationCenterFromTheDatabase.City = centerToEdit.City;
             vaccinationCenterFromTheDatabase.Address = centerToEdit.Street;
-            vaccinationCenterFromTheDatabase.AvailableVaccines = new List<Vaccine>();
 
-            foreach(var v in centerToEdit.Vaccines)
-            {
-                vaccinationCenterFromTheDatabase.AvailableVaccines.Add(new Vaccine() { Id = v.Id });
-            }
+            if (centerToEdit.Vaccines is not null)
+                vaccinationCenterFromTheDatabase.AvailableVaccines = new List<Vaccine>();
 
-            vaccinationCenterFromTheDatabase.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToEdit.OpeningHoursDays as  IList<OpeningHoursAdminDTO>);
+            if(centerToEdit.Vaccines is not null)
+                foreach(var v in centerToEdit.Vaccines)
+                {
+                    vaccinationCenterFromTheDatabase.AvailableVaccines.Add(new Vaccine() { Id = v.Id });
+                }
+
+            //vaccinationCenterFromTheDatabase.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToEdit.OpeningHoursDays as  IList<OpeningHoursAdminDTO>);
             vaccinationCenterFromTheDatabase.Active = centerToEdit.Active;
 
+            //_dbContext.VaccinationCenters.Update(vaccinationCenterFromTheDatabase);
             _dbContext.SaveChanges();
         }
 
         public void DeleteVaccinationCenter(Guid centerId)
         {
-            var vaccinationCenter = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerId).SingleOrDefault();
+            var vaccinationCenter = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerId).Include(vc => vc.AvailableVaccines).Include(vc => vc.OpeningHours_).SingleOrDefault();
             _dbContext.Remove(vaccinationCenter);
             int entitiesChanged = _dbContext.SaveChanges();
 
@@ -807,7 +811,7 @@ namespace VaccinationSystemApi.Repositories
                     MinPatientAge = vaccineToAdd.MinPatientAge,
                     Name = vaccineToAdd.Name,
                     NumberOfDoses = vaccineToAdd.NumberOfDoses,
-                    Virus_ = _dbContext.Viruses.Where(v => v.Name == vaccineToAdd.Name).Single(),
+                    Virus_ = _dbContext.Viruses.Where(v => v.Name == vaccineToAdd.Virus).Single(),
                 };
 
                 _dbContext.Add(vaccine);
