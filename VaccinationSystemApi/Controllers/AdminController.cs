@@ -221,6 +221,20 @@ namespace VaccinationSystemApi.Controllers
             }
         }
 
+        [HttpPost("vaccinationCenters/addVaccinationCenter")]
+        public ActionResult AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd)
+        {
+            try
+            {
+                _vaccinationService.AddVaccinationCenter(centerToAdd);
+                return Ok();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpPost("vaccinationCenters/editVaccinationCenter")]
         public ActionResult EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit)
         {
