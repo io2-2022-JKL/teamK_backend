@@ -100,9 +100,9 @@ namespace VaccinationSystemApi.Controllers
                 List<string> roles = new List<string>(roleList);
 
                 string userType = "";
-                if (roles.Contains("Admin")) userType = "Admin";
-                else if (roles.Contains("Doctor")) userType = "Doctor";
-                else if (roles.Contains("Patient")) userType = "Patient";
+                if (roles.Contains("Admin")) userType = "admin";
+                else if (roles.Contains("Doctor")) userType = "doctor";
+                else if (roles.Contains("Patient")) userType = "patient";
 
                 HttpContext.Response.Headers.Add(HeaderNames.Authorization, jwtToken);
                 return Ok(new SignInResponse()
