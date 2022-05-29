@@ -182,8 +182,8 @@ namespace VaccinationSystemApi.Controllers
         [HttpPost("doctor/timeSlot/create/{doctorId}")]
         public void CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {
-            var dateStart = request.From;
-            var timeSpan = TimeSpan.FromMinutes(request.Duration);
+            var dateStart = DateTime.ParseExact(request.windowBegin, "dd-MM-yyyy HH:mm", null);
+            var timeSpan = TimeSpan.FromMinutes(request.timeSlotDurationInMinutes);
             var slotsFromDb = _vaccinationService.GetDoctorActiveSlots(doctorId, dateStart.Date);
             if(slotsFromDb is null)
             {
@@ -198,7 +198,7 @@ namespace VaccinationSystemApi.Controllers
                 });
                 return;
             }
-            while(dateStart + timeSpan <= request.To)
+            while(dateStart + timeSpan <= DateTime.ParseExact(request.windowEnd, "dd-MM-yyyy HH:mm", null))
             {
                 TimeSlotValidator.Validate(dateStart, dateStart + timeSpan);
                 bool isFree = true;
