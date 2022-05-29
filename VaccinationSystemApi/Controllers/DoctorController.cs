@@ -61,7 +61,7 @@ namespace VaccinationSystemApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("doctor/formerAppointents/{doctorId}")]
+        [HttpGet("doctor/formerAppointments/{doctorId}")]
         public ActionResult<IEnumerable<GetFormerAppointmentsResponse>> GetFormerAppointments(Guid doctorId)
         {
             var doctorFromDb = _vaccinationService.GetDoctor(doctorId);
