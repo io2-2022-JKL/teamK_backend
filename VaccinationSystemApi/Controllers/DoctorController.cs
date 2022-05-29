@@ -180,7 +180,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("doctor/timeSlot/create/{doctorId}")]
-        public void CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
+        public ActionResult CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {
             var dateStart = DateTime.ParseExact(request.windowBegin, "dd-MM-yyyy HH:mm", null);
             var timeSpan = TimeSpan.FromMinutes(request.timeSlotDurationInMinutes);
@@ -196,7 +196,7 @@ namespace VaccinationSystemApi.Controllers
                     IsFree = true,
                     Id = Guid.NewGuid()
                 });
-                return;
+                return Ok();
             }
             while(dateStart + timeSpan <= DateTime.ParseExact(request.windowEnd, "dd-MM-yyyy HH:mm", null))
             {
@@ -225,6 +225,7 @@ namespace VaccinationSystemApi.Controllers
                 }
                 dateStart += timeSpan;
             }
+            return Ok();
         }
 
         [HttpPost("doctor/timeSlot/delete/{doctorId}")]
