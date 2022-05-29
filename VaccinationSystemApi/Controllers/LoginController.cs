@@ -45,15 +45,15 @@ namespace VaccinationSystemApi.Controllers
             if (ModelState.IsValid)
             {
                 // We can utilise the model
-                var existingUser = await _userManager.FindByEmailAsync(registerRequest.Mail);
+                var existingUser = await _userManager.FindByEmailAsync(registerRequest.mail);
 
                 if (existingUser != null)
                 {
                     return BadRequest("Unrecognised data format");
                 }
 
-                var newUser = new IdentityUser() { Email = registerRequest.Mail, UserName = registerRequest.PESEL };
-                var isCreated = await _userManager.CreateAsync(newUser, registerRequest.Password);
+                var newUser = new IdentityUser() { Email = registerRequest.mail, UserName = registerRequest.pesel };
+                var isCreated = await _userManager.CreateAsync(newUser, registerRequest.password);
                 var isCreatedInPatientTable = _vaccinationService.CreatePatient(registerRequest, Guid.Parse(newUser.Id));
 
                 bool creationSuccess = isCreated.Succeeded && isCreatedInPatientTable;

@@ -525,12 +525,12 @@ namespace VaccinationSystemApi.Repositories
            var result = _dbContext.Patients.Add(new Patient()
             {
                 Active = true,
-                DateOfBirth = registerRequest.DateOfBirth,
-                EMail = registerRequest.Mail,
-                FirstName = registerRequest.FirstName,
-                LastName = registerRequest.LastName,
-                PhoneNumber = registerRequest.PhoneNumber,
-                Pesel = registerRequest.PESEL,
+                DateOfBirth = DateTime.ParseExact(registerRequest.dateOfBirth, "dd-MM-yyyy", null),
+                EMail = registerRequest.mail,
+                FirstName = registerRequest.firstName,
+                LastName = registerRequest.lastName,
+                PhoneNumber = registerRequest.phoneNumber,
+                Pesel = registerRequest.pesel,
                 Id = guid
            });
 

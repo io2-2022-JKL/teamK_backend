@@ -179,7 +179,7 @@ namespace VaccinationSystemApi.Controllers
             return NotFound("No appointment with given id found for given doctor");
         }
 
-        [HttpPost("doctor/timeSlot/create/{doctorId}")]
+        [HttpPost("doctor/timeSlots/create/{doctorId}")]
         public ActionResult CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {
             var dateStart = DateTime.ParseExact(request.windowBegin, "dd-MM-yyyy HH:mm", null);
