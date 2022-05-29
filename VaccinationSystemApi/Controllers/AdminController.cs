@@ -295,7 +295,7 @@ namespace VaccinationSystemApi.Controllers
                 return NotFound("Data not found");
             }
         }
-        [HttpGet("vaccines/addVaccine")]
+        [HttpPost("vaccines/addVaccine")]
         public ActionResult AddVaccine(AddVaccineRequest vaccineToAdd)
         {
             try
@@ -313,7 +313,7 @@ namespace VaccinationSystemApi.Controllers
             }
             
         }
-        [HttpGet("vaccines/editVaccine")]
+        [HttpPost("vaccines/editVaccine")]
         public ActionResult EditVaccine(VaccineExtendedDTO vaccine)
         {
             try
@@ -331,7 +331,7 @@ namespace VaccinationSystemApi.Controllers
 
             return Ok();
         }
-        [HttpGet("vaccines/deletevaccine/{vaccineId}")]
+        [HttpDelete("vaccines/deletevaccine/{vaccineId}")]
         public ActionResult DeleteVaccine(Guid vaccineId)
         {
             try
