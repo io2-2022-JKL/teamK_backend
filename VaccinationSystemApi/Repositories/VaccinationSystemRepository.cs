@@ -709,9 +709,25 @@ namespace VaccinationSystemApi.Repositories
 
         public IEnumerable<VaccinationCenter> GetVaccinationCenters()
         {
-            var vaccinationCenters = _dbContext.VaccinationCenters.ToArray();
+            var vaccinationCenters = _dbContext.VaccinationCenters
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.MondayOpen)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.MondayClose)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.TuesdayOpen)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.TuesdayClose)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.WednesdayOpen)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.WednesdayClose)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.ThursdayOpen)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.ThursdayClose)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.FridayOpen)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.FridayClose)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.SaturdayOpen)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.SaturdayClose)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayOpen)
+                .Include(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayClose)
+                .Include(vc => vc.AvailableVaccines).ThenInclude(v => v.Virus_)
+                .ToList();
 
-            if (vaccinationCenters.Length == 0)
+            if (vaccinationCenters.Count == 0)
                 throw new ModelNotFoundException();
 
             return vaccinationCenters;
