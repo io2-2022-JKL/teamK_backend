@@ -572,6 +572,7 @@ namespace VaccinationSystemApi.Repositories
             patientFromDb.PhoneNumber = patientToEdit.PhoneNumber;
 
             patientFound = true;
+            _dbContext.SaveChanges();
             return true;
         }
 
