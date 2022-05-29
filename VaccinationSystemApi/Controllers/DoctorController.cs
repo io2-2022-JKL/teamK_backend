@@ -16,7 +16,7 @@ namespace VaccinationSystemApi.Controllers
 {
 
     [ApiController]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
     public class DoctorController: ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;

@@ -216,7 +216,7 @@ namespace VaccinationSystemApi.Repositories
                 .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayOpen)
                 .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayClose)
                 .Where(t => t.AssignedDoctor.VaccinationCenter_.City == city && t.From >= dateFrom
-                && t.To <= dateTo && t.AssignedDoctor.VaccinationCenter_.AvailableVaccines.Select(v => v.Virus_.Name == virus).Count() > 0).ToList();
+                && t.To <= dateTo).ToList();
             // timeSlot isn't directly related to virus
         }
 

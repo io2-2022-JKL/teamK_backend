@@ -178,12 +178,12 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpGet("timeSlots/Filter")]
-        public ActionResult<ICollection<FilterTimeslotsResponse>> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
+        public ActionResult<ICollection<FilterTimeslotsResponse>> FilterTimeslots(string city, string dateFrom, string dateTo, string virus)
         {
             IEnumerable <TimeSlot> timeslotsFromDb;
             try
             {
-                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, dateFrom, dateTo, virus);
+                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, DateTime.ParseExact(dateFrom, "dd-MM-yyyy", null), DateTime.ParseExact(dateTo, "dd-MM-yyyy", null), virus);
             }
             catch (Exception)
             {
@@ -201,8 +201,8 @@ namespace VaccinationSystemApi.Controllers
                     AvailableVaccines = VaccineCollectionToDTO(t.AssignedDoctor.VaccinationCenter_.AvailableVaccines),
                     DoctorFirstName = t.AssignedDoctor.FirstName,
                     DoctorLastName = t.AssignedDoctor.LastName,
-                    From = t.From,
-                    To = t.To,
+                    From = t.From.ToString("dd-MM-yyyy HH:mm:ss"),
+                    To = t.To.ToString("dd-MM-yyyy HH:mm:ss"),
                     openingHours = _timeHoursService.OpeningHoursToDTO(t.AssignedDoctor.VaccinationCenter_.OpeningHours_),
                     TimeSlotId = t.Id.ToString(),
                     VaccinationCenterCity = t.AssignedDoctor.VaccinationCenter_.City,
