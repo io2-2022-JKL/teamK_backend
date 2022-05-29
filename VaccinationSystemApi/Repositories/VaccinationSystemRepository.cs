@@ -138,10 +138,11 @@ namespace VaccinationSystemApi.Repositories
             slotFromDb.IsFree = false;
             _dbContext.SaveChanges();
         }
-        public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, string date)
+        public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, DateTime date)
         {
-            return _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId && x.From.ToShortDateString() == date
-                && x.Active == true);
+            var x = _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId && x.From.Date == date
+                && x.Active == true).ToList();
+            return x;
         }
 
         public IEnumerable<TimeSlot> GetDoctorTimeSlots(Guid doctorId)

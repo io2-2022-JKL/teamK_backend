@@ -16,7 +16,7 @@ namespace VaccinationSystemApi.Controllers
 {
 
     [ApiController]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Doctor")]
     public class DoctorController: ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
@@ -184,7 +184,20 @@ namespace VaccinationSystemApi.Controllers
         {
             var dateStart = request.From;
             var timeSpan = TimeSpan.FromMinutes(request.Duration);
-            var slotsFromDb = _vaccinationService.GetDoctorActiveSlots(doctorId, dateStart.ToShortDateString());
+            var slotsFromDb = _vaccinationService.GetDoctorActiveSlots(doctorId, dateStart.Date);
+            if(slotsFromDb is null)
+            {
+                _vaccinationService.CreateTimeSlot(new TimeSlot
+                {
+                    Active = true,
+                    AssignedDoctorId = doctorId,
+                    From = dateStart,
+                    To = dateStart + timeSpan,
+                    IsFree = true,
+                    Id = Guid.NewGuid()
+                });
+                return;
+            }
             while(dateStart + timeSpan <= request.To)
             {
                 TimeSlotValidator.Validate(dateStart, dateStart + timeSpan);
