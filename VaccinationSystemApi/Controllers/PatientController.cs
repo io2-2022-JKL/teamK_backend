@@ -141,8 +141,8 @@ namespace VaccinationSystemApi.Controllers
                     VaccineName = app.Vaccine_.Name,
                     VaccineVirus = app.Vaccine_.Virus_.Name,
                     WhichVaccineDose = app.WhichDose,
-                    WindowBegin = app.TimeSlot_.From,
-                    WindowEnd = app.TimeSlot_.To,
+                    WindowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
+                    WindowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
                 };
                 appointmentResponses.Add(appointmentDTO);
             }
@@ -169,8 +169,8 @@ namespace VaccinationSystemApi.Controllers
                     VaccineName = app.Vaccine_.Name,
                     VaccineVirus = app.Vaccine_.Virus_.Name,
                     WhichVaccineDose = app.WhichDose,
-                    WindowBegin = app.TimeSlot_.From,
-                    WindowEnd = app.TimeSlot_.To,
+                    WindowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
+                    WindowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
                 };
                 appointmentResponses.Add(appointmentDTO);
             }
@@ -201,8 +201,8 @@ namespace VaccinationSystemApi.Controllers
                     AvailableVaccines = VaccineCollectionToDTO(t.AssignedDoctor.VaccinationCenter_.AvailableVaccines),
                     DoctorFirstName = t.AssignedDoctor.FirstName,
                     DoctorLastName = t.AssignedDoctor.LastName,
-                    From = t.From.ToString("dd-MM-yyyy HH:mm:ss"),
-                    To = t.To.ToString("dd-MM-yyyy HH:mm:ss"),
+                    From = t.From.ToString("dd-MM-yyyy HH:mm"),
+                    To = t.To.ToString("dd-MM-yyyy HH:mm"),
                     openingHours = _timeHoursService.OpeningHoursToDTO(t.AssignedDoctor.VaccinationCenter_.OpeningHours_),
                     TimeSlotId = t.Id.ToString(),
                     VaccinationCenterCity = t.AssignedDoctor.VaccinationCenter_.City,
