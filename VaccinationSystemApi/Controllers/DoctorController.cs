@@ -103,7 +103,7 @@ namespace VaccinationSystemApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("doctor/incomingAppointents/{doctorId}")]
+        [HttpGet("doctor/incomingAppointments/{doctorId}")]
         public ActionResult<IEnumerable<GetIncomingAppointmentsResponse>> GetIncomingAppointments(Guid doctorId)
         {
             var doctorFromDb = _vaccinationService.GetDoctor(doctorId);
@@ -228,16 +228,17 @@ namespace VaccinationSystemApi.Controllers
             return Ok();
         }
 
-        [HttpPost("doctor/timeSlot/delete/{doctorId}")]
-        public void DeleteTimeSlots(Guid doctorId, DeleteTimeSlotsRequest request)
+        [HttpPost("doctor/timeSlots/delete/{doctorId}")]
+        public ActionResult DeleteTimeSlots(Guid doctorId, DeleteTimeSlotsRequest request)
         {
-            foreach(var slot in request.Slots)
+            foreach(var slot in request.id)
             {
                 if(_vaccinationService.GetDoctorByTimeSlot(slot).Id == doctorId)
                 {
                     _vaccinationService.DeleteTimeSlot(slot);
                 }
             }
+            return Ok();
         }
 
         [HttpPost("doctor/timeSlot/modify/{doctorId}/{timeSlotId}")]

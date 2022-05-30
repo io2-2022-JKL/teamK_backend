@@ -77,12 +77,12 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpDelete("patients/deletePatient/{patientId}")]
-        public async Task<ActionResult> DeletePatient(Guid patientId)
+        public async Task<ActionResult> DeletePatient(string patientId)
         {
             if (!ModelState.IsValid)
                 return BadRequest("BadData");
 
-            bool result = _vaccinationService.RemovePatient(patientId);
+            bool result = _vaccinationService.RemovePatient(Guid.Parse(patientId));
             if (result)
             {
                 var user = await _userManager.FindByIdAsync(patientId.ToString());
