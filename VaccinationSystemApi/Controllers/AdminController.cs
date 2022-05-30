@@ -164,7 +164,7 @@ namespace VaccinationSystemApi.Controllers
             return result ? Ok() : BadRequest();
         }
 
-        [HttpGet("doctors/Timeslots/{doctorId}")]
+        [HttpGet("doctors/timeSlots/{doctorId}")]
         public ActionResult<IEnumerable<TimeslotDTO>> GetTimeslots(Guid doctorId)
         {
             try
@@ -182,7 +182,7 @@ namespace VaccinationSystemApi.Controllers
             }
         }
 
-        [HttpPost("doctors/Timeslots/deleteTimeslots")]
+        [HttpPost("doctors/timeSlots/deleteTimeSlots")]
         public ActionResult DeleteTimeslots(IEnumerable<TimeslotIdWrapperDTO> timeslotsToDelete)
         {
             List<Guid> timeslotIds = new List<Guid>();
