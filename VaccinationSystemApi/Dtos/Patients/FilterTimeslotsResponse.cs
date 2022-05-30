@@ -8,8 +8,8 @@ namespace VaccinationSystemApi.Dtos.Patients
     public class FilterTimeslotsResponse
     {
         public string TimeSlotId { get; set; }
-        public DateTime From { get; set; }
-        public DateTime To { get; set; }
+        public string From { get; set; }
+        public string To { get; set; }
         public string VaccinationCenterName { get; set; }
         public string VaccinationCenterCity { get; set; }
         public string VaccinationCenterStreet { get; set; }

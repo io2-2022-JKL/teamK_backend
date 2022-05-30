@@ -7,8 +7,8 @@ namespace VaccinationSystemApi.Dtos.Doctors
 {
     public record CreateTimeSlotRequest
     {
-        public DateTime From { get; init; }
-        public DateTime To { get; init; }
-        public int Duration { get; init; }
+        public string windowBegin { get; init; }
+        public string windowEnd { get; init; }
+        public int timeSlotDurationInMinutes { get; init; }
     }
 }

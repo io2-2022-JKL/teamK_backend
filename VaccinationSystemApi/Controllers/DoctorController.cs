@@ -61,7 +61,7 @@ namespace VaccinationSystemApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("doctor/formerAppointents/{doctorId}")]
+        [HttpGet("doctor/formerAppointments/{doctorId}")]
         public ActionResult<IEnumerable<GetFormerAppointmentsResponse>> GetFormerAppointments(Guid doctorId)
         {
             var doctorFromDb = _vaccinationService.GetDoctor(doctorId);
@@ -103,7 +103,7 @@ namespace VaccinationSystemApi.Controllers
             return Ok(response);
         }
 
-        [HttpGet("doctor/incomingAppointents/{doctorId}")]
+        [HttpGet("doctor/incomingAppointments/{doctorId}")]
         public ActionResult<IEnumerable<GetIncomingAppointmentsResponse>> GetIncomingAppointments(Guid doctorId)
         {
             var doctorFromDb = _vaccinationService.GetDoctor(doctorId);
@@ -179,13 +179,26 @@ namespace VaccinationSystemApi.Controllers
             return NotFound("No appointment with given id found for given doctor");
         }
 
-        [HttpPost("doctor/timeSlot/create/{doctorId}")]
-        public void CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
+        [HttpPost("doctor/timeSlots/create/{doctorId}")]
+        public ActionResult CreateTimeSlot(Guid doctorId, CreateTimeSlotRequest request)
         {
-            var dateStart = request.From;
-            var timeSpan = TimeSpan.FromMinutes(request.Duration);
-            var slotsFromDb = _vaccinationService.GetDoctorActiveSlots(doctorId, dateStart.ToShortDateString());
-            while(dateStart + timeSpan <= request.To)
+            var dateStart = DateTime.ParseExact(request.windowBegin, "dd-MM-yyyy HH:mm", null);
+            var timeSpan = TimeSpan.FromMinutes(request.timeSlotDurationInMinutes);
+            var slotsFromDb = _vaccinationService.GetDoctorActiveSlots(doctorId, dateStart.Date);
+            if(slotsFromDb is null)
+            {
+                _vaccinationService.CreateTimeSlot(new TimeSlot
+                {
+                    Active = true,
+                    AssignedDoctorId = doctorId,
+                    From = dateStart,
+                    To = dateStart + timeSpan,
+                    IsFree = true,
+                    Id = Guid.NewGuid()
+                });
+                return Ok();
+            }
+            while(dateStart + timeSpan <= DateTime.ParseExact(request.windowEnd, "dd-MM-yyyy HH:mm", null))
             {
                 TimeSlotValidator.Validate(dateStart, dateStart + timeSpan);
                 bool isFree = true;
@@ -212,18 +225,20 @@ namespace VaccinationSystemApi.Controllers
                 }
                 dateStart += timeSpan;
             }
+            return Ok();
         }
 
-        [HttpPost("doctor/timeSlot/delete/{doctorId}")]
-        public void DeleteTimeSlots(Guid doctorId, DeleteTimeSlotsRequest request)
+        [HttpPost("doctor/timeSlots/delete/{doctorId}")]
+        public ActionResult DeleteTimeSlots(Guid doctorId, DeleteTimeSlotsRequest request)
         {
-            foreach(var slot in request.Slots)
+            foreach(var slot in request.id)
             {
                 if(_vaccinationService.GetDoctorByTimeSlot(slot).Id == doctorId)
                 {
                     _vaccinationService.DeleteTimeSlot(slot);
                 }
             }
+            return Ok();
         }
 
         [HttpPost("doctor/timeSlot/modify/{doctorId}/{timeSlotId}")]

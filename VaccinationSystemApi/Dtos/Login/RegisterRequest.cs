@@ -18,16 +18,16 @@ namespace VaccinationSystemApi.Dtos.Login
         "phoneNumber": 123234345*/
 
         [Required]
-        public string PESEL { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string pesel { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
         [Required]
         [EmailAddress]
-        public string Mail { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string mail { get; set; }
+        public string dateOfBirth { get; set; }
         [Required]
-        public string Password { get; set; }
-        public string PhoneNumber { get; set; }
+        public string password { get; set; }
+        public string phoneNumber { get; set; }
 
     }   
 }

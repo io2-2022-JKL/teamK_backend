@@ -12,8 +12,8 @@ namespace VaccinationSystemApi.Dtos.Patients
         public string VaccineVirus { get; set; }
         public int  WhichVaccineDose { get; set; }
         public string AppointmentId { get; set; }
-        public DateTime WindowBegin { get; set; }
-        public DateTime WindowEnd { get; set; }
+        public string WindowBegin { get; set; }
+        public string WindowEnd { get; set; }
         public string VaccinationCenterName { get; set; }
         public string VaccinationCenterCity { get; set; }
         public string VaccinationCenterStreet { get; set; }

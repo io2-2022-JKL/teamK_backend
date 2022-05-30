@@ -138,10 +138,11 @@ namespace VaccinationSystemApi.Repositories
             slotFromDb.IsFree = false;
             _dbContext.SaveChanges();
         }
-        public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, string date)
+        public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, DateTime date)
         {
-            return _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId && x.From.ToShortDateString() == date
-                && x.Active == true);
+            var x = _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId && x.From.Date == date
+                && x.Active == true).ToList();
+            return x;
         }
 
         public IEnumerable<TimeSlot> GetDoctorTimeSlots(Guid doctorId)
@@ -215,7 +216,7 @@ namespace VaccinationSystemApi.Repositories
                 .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayOpen)
                 .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayClose)
                 .Where(t => t.AssignedDoctor.VaccinationCenter_.City == city && t.From >= dateFrom
-                && t.To <= dateTo && t.AssignedDoctor.VaccinationCenter_.AvailableVaccines.Select(v => v.Virus_.Name == virus).Count() > 0).ToList();
+                && t.To <= dateTo).ToList();
             // timeSlot isn't directly related to virus
         }
 
@@ -524,12 +525,12 @@ namespace VaccinationSystemApi.Repositories
            var result = _dbContext.Patients.Add(new Patient()
             {
                 Active = true,
-                DateOfBirth = registerRequest.DateOfBirth,
-                EMail = registerRequest.Mail,
-                FirstName = registerRequest.FirstName,
-                LastName = registerRequest.LastName,
-                PhoneNumber = registerRequest.PhoneNumber,
-                Pesel = registerRequest.PESEL,
+                DateOfBirth = DateTime.ParseExact(registerRequest.dateOfBirth, "dd-MM-yyyy", null),
+                EMail = registerRequest.mail,
+                FirstName = registerRequest.firstName,
+                LastName = registerRequest.lastName,
+                PhoneNumber = registerRequest.phoneNumber,
+                Pesel = registerRequest.pesel,
                 Id = guid
            });
 
@@ -572,6 +573,7 @@ namespace VaccinationSystemApi.Repositories
             patientFromDb.PhoneNumber = patientToEdit.PhoneNumber;
 
             patientFound = true;
+            _dbContext.SaveChanges();
             return true;
         }
 

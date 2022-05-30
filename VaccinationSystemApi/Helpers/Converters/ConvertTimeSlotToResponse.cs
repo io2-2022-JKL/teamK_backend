@@ -10,8 +10,8 @@ namespace VaccinationSystemApi.Helpers.Converters
             GetTimeSlotsResponse response = new()
             {
                 Id = timeSlot.Id.ToString(),
-                From = timeSlot.From.ToString(),
-                To = timeSlot.To.ToString(),
+                From = timeSlot.From.ToString("dd-MM-yyyy HH:mm"),
+                To = timeSlot.To.ToString("dd-MM-yyyy HH:mm"),
                 IsFree = timeSlot.IsFree,
             };
 

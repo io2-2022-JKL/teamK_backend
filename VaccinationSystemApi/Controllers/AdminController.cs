@@ -80,12 +80,12 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpDelete("patients/deletePatient/{patientId}")]
-        public async Task<ActionResult> DeletePatient(Guid patientId)
+        public async Task<ActionResult> DeletePatient(string patientId)
         {
             if (!ModelState.IsValid)
                 return BadRequest("BadData");
 
-            bool result = _vaccinationService.RemovePatient(patientId);
+            bool result = _vaccinationService.RemovePatient(Guid.Parse(patientId));
             if (result)
             {
                 var user = await _userManager.FindByIdAsync(patientId.ToString());
@@ -167,7 +167,7 @@ namespace VaccinationSystemApi.Controllers
             return result ? Ok() : BadRequest();
         }
 
-        [HttpGet("doctors/Timeslots/{doctorId}")]
+        [HttpGet("doctors/timeSlots/{doctorId}")]
         public ActionResult<IEnumerable<TimeslotDTO>> GetTimeslots(Guid doctorId)
         {
             try
@@ -185,7 +185,7 @@ namespace VaccinationSystemApi.Controllers
             }
         }
 
-        [HttpPost("doctors/Timeslots/deleteTimeslots")]
+        [HttpPost("doctors/timeSlots/deleteTimeSlots")]
         public ActionResult DeleteTimeslots(IEnumerable<TimeslotIdWrapperDTO> timeslotsToDelete)
         {
             List<Guid> timeslotIds = new List<Guid>();
@@ -365,6 +365,7 @@ namespace VaccinationSystemApi.Controllers
 
             return Ok();
         }
+
         [HttpDelete("vaccines/deleteVaccine/{vaccineId}")]
         public ActionResult DeleteVaccine(Guid vaccineId)
         {
