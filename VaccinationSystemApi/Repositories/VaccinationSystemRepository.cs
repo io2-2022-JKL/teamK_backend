@@ -539,19 +539,19 @@ namespace VaccinationSystemApi.Repositories
             return entries > 0;
         }
 
-        public bool EditPatient(PatientDTO patientToEdit, out bool patientFound)
+        public bool EditPatient(EditPatientRequest patientToEdit, out bool patientFound)
         {
-            var patientFromDb = _dbContext.Patients.Where(p => p.Id == Guid.Parse(patientToEdit.PatientId)).FirstOrDefault();
+            var patientFromDb = _dbContext.Patients.Where(p => p.Id == Guid.Parse(patientToEdit.Id)).FirstOrDefault();
             if (patientFromDb is null)
             {
                 Patient updatedPatient = new Patient()
                 {
                     Active = patientToEdit.Active,
-                    DateOfBirth = patientToEdit.DateOfBirth,
+                    DateOfBirth = DateTime.ParseExact(patientToEdit.DateOfBirth, "dd-MM-yyyy", null), 
                     EMail = patientToEdit.Mail,
                     FirstName = patientToEdit.FirstName,
                     LastName = patientToEdit.LastName,
-                    Id = Guid.Parse(patientToEdit.PatientId),
+                    Id = Guid.Parse(patientToEdit.Id),
                     Pesel = patientToEdit.PESEL,
                     PhoneNumber = patientToEdit.PhoneNumber,
                 };
@@ -566,7 +566,7 @@ namespace VaccinationSystemApi.Repositories
 
             patientFromDb.Pesel = patientToEdit.PESEL;
             patientFromDb.Active = patientToEdit.Active;
-            patientFromDb.DateOfBirth = patientToEdit.DateOfBirth;
+            patientFromDb.DateOfBirth = DateTime.ParseExact(patientToEdit.DateOfBirth, "dd-MM-yyyy", null);
             patientFromDb.EMail = patientToEdit.Mail;
             patientFromDb.LastName = patientToEdit.LastName;
             patientFromDb.FirstName = patientToEdit.FirstName;

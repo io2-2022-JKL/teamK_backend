@@ -36,7 +36,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId);
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus);
         bool CreatePatient(RegisterRequest registerRequest, Guid guid = default(Guid));
-        bool EditPatient(PatientDTO patientToEdit, out bool wasPatientFound);
+        bool EditPatient(EditPatientRequest patientToEdit, out bool wasPatientFound);
         bool RemovePatient(Guid patientId);
         IEnumerable<Doctor> GetDoctorsWithMatchingVaccinationCentres();
         bool EditDoctor(EditDoctorRequest doctorData, out bool doctorFound);

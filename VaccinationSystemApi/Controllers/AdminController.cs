@@ -32,26 +32,24 @@ namespace VaccinationSystemApi.Controllers
         }
     
         [HttpGet("patients")]
-        public ActionResult<IEnumerable<PatientDTO>> GetPatients()
+        public ActionResult<IEnumerable<EditPatientRequest>> GetPatients()
         {
             var patientsFromDb = _vaccinationService.GetPatients();
-            List<PatientDTO> patientsDtos = new List<PatientDTO>();
+            List<EditPatientRequest> patientsDtos = new List<EditPatientRequest>();
             foreach(var patient in patientsFromDb)
             {
-                patientsDtos.Add(new PatientDTO()
+                patientsDtos.Add(new EditPatientRequest()
                 {
-                    PatientId = patient.Id.ToString(),
+                    Id = patient.Id.ToString(),
                     PESEL = patient.Pesel,
                     PhoneNumber = patient.PhoneNumber,
                     Mail = patient.EMail,
                     FirstName = patient.FirstName,
                     LastName = patient.LastName,
-                    DateOfBirth = patient.DateOfBirth,
+                    DateOfBirth = patient.DateOfBirth.ToString("dd-MM-yyyy"),
                     Active = patient.Active,
                 });
             }
-
-            //Unauthorized, Forbidden
 
             if (patientsDtos.Count == 0)
                 return (NotFound("Error, no matching patient found"));
@@ -60,17 +58,15 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("patients/editPatient")]
-        public async Task<ActionResult> EditPatient(PatientDTO patientToEdit)
+        public async Task<ActionResult> EditPatient(EditPatientRequest patientToEdit)
         {
             if (!ModelState.IsValid)
                 return BadRequest("BadData");
 
-            var user = await _userManager.FindByIdAsync(patientToEdit.PatientId);
+            var user = await _userManager.FindByIdAsync(patientToEdit.Id);
             if(user is null)
             {
-                var newUser = new IdentityUser() { Email = patientToEdit.Mail, UserName = patientToEdit.PESEL, Id = patientToEdit.PatientId };
-                await _userManager.CreateAsync(newUser);
-                await _userManager.AddToRoleAsync(newUser, "Patient");
+                return NotFound("Patient to edit not found");
             }
 
             bool result = _vaccinationService.EditPatient(patientToEdit, out bool wasPatientFound);
@@ -172,8 +168,25 @@ namespace VaccinationSystemApi.Controllers
         {
             try
             {
+                List<TimeslotDTO> timeslotsDtos = new List<TimeslotDTO>();
                 var timeslots = _vaccinationService.GetDoctorsTimeSlots(doctorId);
-                return Ok(timeslots);
+
+                foreach(var timeslot in timeslots)
+                {
+                    var timeslotDto = new TimeslotDTO()
+                    {
+                        Active = timeslot.Active,
+                        From = timeslot.From.ToString("dd-MM-yyyy HH:mm"),
+                        To = timeslot.To.ToString("dd-MM-yyyy HH:mm"),
+                        Id = timeslot.Id,
+                        IsFree = timeslot.IsFree,
+                    };
+
+                    timeslotsDtos.Add(timeslotDto);
+                }
+
+
+                return Ok(timeslotsDtos);
             }
             catch (ModelNotFoundException)
             {
