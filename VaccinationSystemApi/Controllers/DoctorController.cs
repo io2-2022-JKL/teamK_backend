@@ -69,7 +69,7 @@ namespace VaccinationSystemApi.Controllers
                 return BadRequest();
 
             List<GetFormerAppointmentsResponse> response = new List<GetFormerAppointmentsResponse>();
-            var appointmentsFromDb = _vaccinationService.GetAppointments();
+            var appointmentsFromDb = _vaccinationService.GetNotCancelledAppointments();
 
             foreach (var appointment in appointmentsFromDb)
             {
@@ -111,7 +111,7 @@ namespace VaccinationSystemApi.Controllers
                 return BadRequest();
 
             List<GetIncomingAppointmentsResponse> response = new List<GetIncomingAppointmentsResponse>();
-            var appointmentsFromDb = _vaccinationService.GetAppointments();
+            var appointmentsFromDb = _vaccinationService.GetNotCancelledAppointments();
 
             foreach (var appointment in appointmentsFromDb)
             {
@@ -148,7 +148,7 @@ namespace VaccinationSystemApi.Controllers
         {
             if (_vaccinationService.GetDoctor(doctorId) is null)
                 return BadRequest("Doctor with given id doesn't exist");
-            var appointmentsFromDb = _vaccinationService.GetAppointments();
+            var appointmentsFromDb = _vaccinationService.GetNotCancelledAppointments();
             List<Appointment> doctorAppointments = new List<Appointment>();
             foreach(var appointment in appointmentsFromDb)
             {

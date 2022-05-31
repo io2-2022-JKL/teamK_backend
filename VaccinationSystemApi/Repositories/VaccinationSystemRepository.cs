@@ -80,9 +80,10 @@ namespace VaccinationSystemApi.Repositories
             return _dbContext.TimeSlots.ToList();
         }
 
-        public IEnumerable<Appointment> GetAppointments()
+        public IEnumerable<Appointment> GetNotCancelledAppointments()
         {
-            return _dbContext.Appointments.Include(a => a.Patient_).Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).ToList();
+            return _dbContext.Appointments.Where(a => a.Status != AppointmentStatus.Cancelled)
+                .Include(a => a.Patient_).Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).ToList();
         }
 
         public IEnumerable<Certificate> GetPatientCertificates(Guid patientId)
@@ -120,7 +121,15 @@ namespace VaccinationSystemApi.Repositories
         public void CancelAppointment(Guid id)
         {
             var appointmentFromDb = _dbContext.Appointments.Where(x => x.Id == id).SingleOrDefault();
+
+            var timeslotOfAppointment = _dbContext.TimeSlots
+                .Include(t => t.AppointmentSigned)
+                .Where(t => t.AppointmentSigned.Id == id)
+                .SingleOrDefault();
+
             appointmentFromDb.Status = AppointmentStatus.Cancelled;
+            timeslotOfAppointment.AppointmentSigned = null;
+
             _dbContext.SaveChanges();
         }
 
@@ -165,6 +174,7 @@ namespace VaccinationSystemApi.Repositories
         public IEnumerable<Appointment> GetIncomingAppointments(Guid patientId)
         {
             return _dbContext.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.Now)
+                .Where(a => a.Status != AppointmentStatus.Cancelled)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
                 .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_);
         }
@@ -172,6 +182,7 @@ namespace VaccinationSystemApi.Repositories
         public IEnumerable<Appointment> GetFormerAppointments(Guid patientId)
         {
             return _dbContext.Appointments.Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From < DateTime.Now)
+                .Where(a => a.Status != AppointmentStatus.Cancelled)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
                 .Include(a => a.Vaccine_);
         }

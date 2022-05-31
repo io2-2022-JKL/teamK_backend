@@ -113,12 +113,15 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpDelete("appointments/incomingAppointments/cancelAppointments/{patientId}/{id}")]
-        public void CancelAppointment(Guid id)
+        public ActionResult CancelAppointment(Guid id)
         {
             var appointmentFromDb = _vaccinationService.GetAppointment(id);
-            if (appointmentFromDb is null) return;
+            
+            if (appointmentFromDb is null) 
+                return NotFound("Error, incoming appointment has not been found");
 
             _vaccinationService.CancelAppointment(id);
+            return Ok();
         }
 
         [HttpGet("appointments/incomingAppointments/{patientId}")]
