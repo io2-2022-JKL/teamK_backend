@@ -69,34 +69,31 @@ namespace VaccinationSystemApi.Controllers
                 return BadRequest();
 
             List<GetFormerAppointmentsResponse> response = new List<GetFormerAppointmentsResponse>();
-            var appointmentsFromDb = _vaccinationService.GetNotCancelledAppointments();
+            var appointmentsFromDb = _vaccinationService.GetDoctorsFormerAppointments(doctorId);
 
             foreach (var appointment in appointmentsFromDb)
             {
-                var slotFromDb = _vaccinationService.GetTimeSlot(appointment.TimeslotId);
-                if (slotFromDb.AssignedDoctorId == doctorId)
+                if (appointment.TimeSlot_.AssignedDoctorId == doctorId)
                 {
-                    
-                    if(slotFromDb.To < DateTime.UtcNow)
+                    if (appointment.Patient_ is null) continue;
+
+                    response.Add(new GetFormerAppointmentsResponse()
                     {
-                        if (appointment.Patient_ is null) continue;
-                        response.Add(new GetFormerAppointmentsResponse()
-                        {
-                            PatientFirstName = appointment.Patient_.FirstName,
-                            PatientLastName = appointment.Patient_.LastName,
-                            AppointmentId = appointment.Id.ToString(),
-                            BatchNumber = appointment.VaccineBatchNumber,
-                            CertifyState = "",
-                            From = slotFromDb.From.ToString(),
-                            To = slotFromDb.To.ToString(),
-                            Pesel = appointment.Patient_.Pesel,
-                            State = "",
-                            VaccineCompany = appointment.Vaccine_.Company,
-                            VaccineDose = appointment.WhichDose,
-                            VaccineName = appointment.Vaccine_.Name,
-                            VaccineVirus = appointment.Vaccine_.Virus_.Name,
-                        });
-                    }
+                        PatientFirstName = appointment.Patient_.FirstName,
+                        PatientLastName = appointment.Patient_.LastName,
+                        AppointmentId = appointment.Id.ToString(),
+                        BatchNumber = appointment.VaccineBatchNumber,
+                        CertifyState = "",
+                        From = appointment.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
+                        To = appointment.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
+                        Pesel = appointment.Patient_.Pesel,
+                        State = appointment.Status.ToString(),
+                        VaccineCompany = appointment.Vaccine_.Company,
+                        VaccineDose = appointment.WhichDose,
+                        VaccineName = appointment.Vaccine_.Name,
+                        VaccineVirus = appointment.Vaccine_.Virus_.Name,
+                    });
+
                 }
             }
 
@@ -246,7 +243,9 @@ namespace VaccinationSystemApi.Controllers
         {
             if(_vaccinationService.GetDoctorByTimeSlot(timeSlotId).Id == doctorId)
             {
-                _vaccinationService.ModifyTimeSlot(timeSlotId, request.From, request.To);
+                _vaccinationService.ModifyTimeSlot(timeSlotId,
+                    DateTime.ParseExact(request.From, "dd--MM-yyyy HH:mm", null),
+                    DateTime.ParseExact(request.To, "dd--MM-yyyy HH:mm", null));
             }
         }
 
@@ -257,12 +256,16 @@ namespace VaccinationSystemApi.Controllers
             var appointmentFromDb = _vaccinationService.GetAppointment(appointmentId);
             if (appointmentFromDb is null)
                 return BadRequest("Appointment with given id doesn't exist");
+
             if (appointmentFromDb.TimeSlot_.AssignedDoctor.Id != doctorId)
                 return Forbid("User forbidden to confirm vaccination");
-            if (appointmentFromDb.TimeSlot_.From >= DateTime.UtcNow)
-                return Forbid("This appointment is in the future");
+
+            /*if (appointmentFromDb.TimeSlot_.From >= DateTime.UtcNow)
+                return Forbid("This appointment is in the future");*/
+
             _vaccinationService.ConfirmVaccination(appointmentId);
-            var patientFormerAppointmentsFromDb = _vaccinationService.GetFormerAppointments(appointmentFromDb.Patient_.Id);
+            var patientFormerAppointmentsFromDb = _vaccinationService.GetPatientsFormerAppointments(appointmentFromDb.Patient_.Id);
+
             int finishedDoses = 0;
             foreach(var appointment in patientFormerAppointmentsFromDb)
             {
@@ -275,6 +278,8 @@ namespace VaccinationSystemApi.Controllers
             {
                 canCertify = isLastDose,
             };
+
+
             return Ok(response); 
         }
 
@@ -283,6 +288,7 @@ namespace VaccinationSystemApi.Controllers
         public ActionResult CancelVaccination(Guid doctorId, Guid appointmentId)
         {
             var appointmentFromDb = _vaccinationService.GetAppointment(appointmentId);
+
             if(appointmentFromDb is null)
                 return BadRequest("Appointment with given id doesn't exist");
 
@@ -304,7 +310,7 @@ namespace VaccinationSystemApi.Controllers
                 return Forbid("User forbidden to confirm vaccination");
 
             int finishedDoses = 0;
-            var patientFormerAppointmentsFromDb = _vaccinationService.GetFormerAppointments(appointmentFromDb.Patient_.Id);
+            var patientFormerAppointmentsFromDb = _vaccinationService.GetPatientsFormerAppointments(appointmentFromDb.Patient_.Id);
             foreach (var appointment in patientFormerAppointmentsFromDb)
             {
                 if (appointment.Vaccine_.Id == appointmentFromDb.Vaccine_.Id && appointment.Status == AppointmentStatus.Finished)
