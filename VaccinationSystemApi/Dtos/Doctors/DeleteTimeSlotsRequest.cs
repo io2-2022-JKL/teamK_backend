@@ -7,6 +7,6 @@ namespace VaccinationSystemApi.Dtos.Doctors
 {
     public record DeleteTimeSlotsRequest
     {
-        public List<Guid> id { get; init; }
+        public Guid id { get; init; }
     }
 }

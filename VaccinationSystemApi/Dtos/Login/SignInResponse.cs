@@ -4,6 +4,5 @@
     {
         public string UserId { get; set; }
         public string UserType { get; set; }
-        //public string Jwt { get; set; }
     }
 }

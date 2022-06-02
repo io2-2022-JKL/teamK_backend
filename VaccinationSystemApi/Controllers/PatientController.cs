@@ -33,23 +33,30 @@ namespace VaccinationSystemApi.Controllers
         [HttpGet("info/{patientId}")]
         public ActionResult<BrowsePatientByIdResponse> GetPatientInfo(Guid patientId)
         {
-            var patientFromDb = _vaccinationService.GetPatient(patientId);
-            if (patientFromDb is null)
-                return NotFound();
-            BrowsePatientByIdResponse patientResponse = new()
+            try
             {
-                dateOfBirth = patientFromDb.DateOfBirth,
-                mail = patientFromDb.EMail,
-                firstName = patientFromDb.FirstName,
-                lastName = patientFromDb.LastName,
-                PESEL = patientFromDb.Pesel,
-                phoneNumber = patientFromDb.PhoneNumber
-            };
+                var patientFromDb = _vaccinationService.GetPatient(patientId);
+                if (patientFromDb is null)
+                    return NotFound();
+                BrowsePatientByIdResponse patientResponse = new()
+                {
+                    dateOfBirth = patientFromDb.DateOfBirth.ToString("dd-MM-yyyy HH:mm"),
+                    mail = patientFromDb.EMail,
+                    firstName = patientFromDb.FirstName,
+                    lastName = patientFromDb.LastName,
+                    PESEL = patientFromDb.Pesel,
+                    phoneNumber = patientFromDb.PhoneNumber
+                };
 
-            return Ok(patientResponse);
+                return Ok(patientResponse);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
-        [HttpGet("centers/{city}")]
+        /*[HttpGet("centers/{city}")]
         public IEnumerable<BrowseVaccinationCentersResponse> BrowseVaccinationCenters(string city)
         {
             
@@ -70,21 +77,29 @@ namespace VaccinationSystemApi.Controllers
             };
 
             return centers;
-        }
+        }*/
 
         [HttpGet("certificates/{patientId}")]
         public ActionResult<IEnumerable<BrowseCertificateResponse>> GetPatientCertificates(Guid patientId)
         {
-            var patientFromDb = _vaccinationService.GetPatient(patientId);
-            if (patientFromDb is null)
-                return BadRequest();
+            try
+            {
+                var patientFromDb = _vaccinationService.GetPatient(patientId);
+                if (patientFromDb is null)
+                    return BadRequest();
 
-            if(patientFromDb.Certificates is null)
-                return NotFound();
-            return Ok(patientFromDb.Certificates);
+                if (patientFromDb.Certificates is null)
+                    return NotFound();
+
+                return Ok(patientFromDb.Certificates);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
         }
 
-        [HttpGet("timeSlots/{id}")]
+       /* [HttpGet("timeSlots/{id}")]
         public IEnumerable<TimeHoursResponse> GetTimeSlots(Guid id, DateTime date)
         {
             var slotsFromDb = _vaccinationService.GetTimeSlots();
@@ -104,77 +119,109 @@ namespace VaccinationSystemApi.Controllers
             };
 
             return searched;
-        }
+        }*/
 
         [HttpPost("timeSlots/Book/{patientId}/{timeSlotId}/{vaccineId}")]
-        public Guid MakeAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
+        public ActionResult<Guid> MakeAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
         {
-            return _vaccinationService.CreateAppointment(patientId, timeSlotId, vaccineId);
+            try
+            {
+                var appointmentId = _vaccinationService.CreateAppointment(patientId, timeSlotId, vaccineId);
+                return Ok(appointmentId);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("appointments/incomingAppointments/cancelAppointments/{patientId}/{id}")]
-        public void CancelAppointment(Guid id)
+        public ActionResult CancelAppointment(Guid id)
         {
-            var appointmentFromDb = _vaccinationService.GetAppointment(id);
-            if (appointmentFromDb is null) return;
+            try
+            {
+                var appointmentFromDb = _vaccinationService.GetAppointment(id);
 
-            _vaccinationService.CancelAppointment(id);
+                if (appointmentFromDb is null)
+                    return NotFound("Error, incoming appointment has not been found");
+
+                _vaccinationService.CancelAppointment(id);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("appointments/incomingAppointments/{patientId}")]
-        public ICollection<AppointmentResponse> GetIncomingAppointments(Guid patientId)
+        public ActionResult<ICollection<AppointmentResponse>> GetIncomingAppointments(Guid patientId)
         {
-            var incomingAppointments = _vaccinationService.GetIncomingAppointments(patientId);
-            var appointmentResponses = new List<AppointmentResponse>();
-
-            foreach(var app in incomingAppointments)
+            try
             {
-                var appointmentDTO = new AppointmentResponse()
+                var incomingAppointments = _vaccinationService.GetPatientsIncomingAppointments(patientId);
+                var appointmentResponses = new List<AppointmentResponse>();
+
+                foreach (var app in incomingAppointments)
                 {
-                    AppointmentId = app.Id.ToString(),
-                    DoctorFirstName = app.TimeSlot_.AssignedDoctor.FirstName,
-                    DoctorLastName = app.TimeSlot_.AssignedDoctor.LastName,
-                    VaccinationCenterCity = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.City,
-                    VaccinationCenterName = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Name,
-                    VaccinationCenterStreet = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Address,
-                    VaccineCompany = app.Vaccine_.Company,
-                    VaccineName = app.Vaccine_.Name,
-                    VaccineVirus = app.Vaccine_.Virus_.Name,
-                    WhichVaccineDose = app.WhichDose,
-                    WindowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
-                    WindowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
-                };
-                appointmentResponses.Add(appointmentDTO);
+                    var appointmentDTO = new AppointmentResponse()
+                    {
+                        AppointmentId = app.Id.ToString(),
+                        DoctorFirstName = app.TimeSlot_.AssignedDoctor.FirstName,
+                        DoctorLastName = app.TimeSlot_.AssignedDoctor.LastName,
+                        VaccinationCenterCity = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.City,
+                        VaccinationCenterName = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Name,
+                        VaccinationCenterStreet = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Address,
+                        VaccineCompany = app.Vaccine_.Company,
+                        VaccineName = app.Vaccine_.Name,
+                        VaccineVirus = app.Vaccine_.Virus_.Name,
+                        WhichVaccineDose = app.WhichDose,
+                        WindowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
+                        WindowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
+                    };
+                    appointmentResponses.Add(appointmentDTO);
+                }
+                return Ok(appointmentResponses);
             }
-            return appointmentResponses;
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("appointments/formerAppointments/{patientId}")]
-        public ICollection<AppointmentResponse> GetFormerAppointments(Guid patientId)
+        public ActionResult<ICollection<AppointmentResponse>> GetFormerAppointments(Guid patientId)
         {
-            var formerAppointments = _vaccinationService.GetFormerAppointments(patientId);
-            var appointmentResponses = new List<AppointmentResponse>();
-
-            foreach (var app in formerAppointments)
+            try
             {
-                var appointmentDTO = new AppointmentResponse()
+                var formerAppointments = _vaccinationService.GetPatientsFormerAppointments(patientId);
+                var appointmentResponses = new List<AppointmentResponse>();
+
+                foreach (var app in formerAppointments)
                 {
-                    AppointmentId = app.Id.ToString(),
-                    DoctorFirstName = app.TimeSlot_.AssignedDoctor.FirstName,
-                    DoctorLastName = app.TimeSlot_.AssignedDoctor.LastName,
-                    VaccinationCenterCity = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.City,
-                    VaccinationCenterName = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Name,
-                    VaccinationCenterStreet = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Address,
-                    VaccineCompany = app.Vaccine_.Company,
-                    VaccineName = app.Vaccine_.Name,
-                    VaccineVirus = app.Vaccine_.Virus_.Name,
-                    WhichVaccineDose = app.WhichDose,
-                    WindowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
-                    WindowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
-                };
-                appointmentResponses.Add(appointmentDTO);
+                    var appointmentDTO = new AppointmentResponse()
+                    {
+                        AppointmentId = app.Id.ToString(),
+                        DoctorFirstName = app.TimeSlot_.AssignedDoctor.FirstName,
+                        DoctorLastName = app.TimeSlot_.AssignedDoctor.LastName,
+                        VaccinationCenterCity = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.City,
+                        VaccinationCenterName = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Name,
+                        VaccinationCenterStreet = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Address,
+                        VaccineCompany = app.Vaccine_.Company,
+                        VaccineName = app.Vaccine_.Name,
+                        VaccineVirus = app.Vaccine_.Virus_.Name,
+                        WhichVaccineDose = app.WhichDose,
+                        WindowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
+                        WindowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
+                    };
+                    appointmentResponses.Add(appointmentDTO);
+                }
+                return appointmentResponses;
             }
-            return appointmentResponses;
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("timeSlots/Filter")]
@@ -184,10 +231,13 @@ namespace VaccinationSystemApi.Controllers
             try
             {
                 timeslotsFromDb = _vaccinationService.FilterTimeslots(city, DateTime.ParseExact(dateFrom, "dd-MM-yyyy", null), DateTime.ParseExact(dateTo, "dd-MM-yyyy", null), virus);
+                if (timeslotsFromDb.Count() == 0)
+                    return NotFound();
+            
             }
             catch (Exception)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var responses = new List<FilterTimeslotsResponse>();
@@ -216,11 +266,12 @@ namespace VaccinationSystemApi.Controllers
 
         private ICollection<VaccineDTO> VaccineCollectionToDTO(ICollection<Vaccine> vaccines)
         {
-            var result = new List<VaccineDTO>();    
-            foreach(var v in vaccines)
+            var result = new List<VaccineDTO>();
+            foreach (var v in vaccines)
             {
                 result.Add(VaccineToDTO(v));
             }
+
             return result;
         }
         private VaccineDTO VaccineToDTO(Vaccine vaccine)
