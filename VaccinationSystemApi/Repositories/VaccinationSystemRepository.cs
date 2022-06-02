@@ -176,7 +176,9 @@ namespace VaccinationSystemApi.Repositories
             return _dbContext.Appointments.Where(a => a.Patient_.Id == patientId)
                 .Where(a => a.Status == AppointmentStatus.Planned)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
-                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).ToList();
+                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_)
+                .Include(a => a.Patient_)
+                .ToList();
         }
 
         public IEnumerable<Appointment> GetPatientsFormerAppointments(Guid patientId)
@@ -184,7 +186,9 @@ namespace VaccinationSystemApi.Repositories
             return _dbContext.Appointments.Where(a => a.Patient_.Id == patientId)
                 .Where(a => a.Status == AppointmentStatus.Cancelled || a.Status == AppointmentStatus.Finished)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
-                .Include(a => a.Vaccine_).ToList();
+                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_)
+                .Include(a => a.Patient_)
+                .ToList();
         }
 
         public IEnumerable<Appointment> GetDoctorsIncomingAppointments(Guid doctorId)
@@ -192,7 +196,9 @@ namespace VaccinationSystemApi.Repositories
             return _dbContext.Appointments.Where(a => a.TimeSlot_.AssignedDoctorId == doctorId)
                 .Where(a => a.Status == AppointmentStatus.Planned)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
-                .Include(a => a.Vaccine_).ToList();
+                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_)
+                .Include(a => a.Patient_)
+                .ToList();
         }
 
         public IEnumerable<Appointment> GetDoctorsFormerAppointments(Guid doctorId)
@@ -200,7 +206,9 @@ namespace VaccinationSystemApi.Repositories
             return _dbContext.Appointments.Where(a => a.TimeSlot_.AssignedDoctorId == doctorId)
                 .Where(a => a.Status == AppointmentStatus.Cancelled || a.Status == AppointmentStatus.Finished)
                 .Include(a => a.TimeSlot_).ThenInclude(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_)
-                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).Include(a => a.Patient_).ToList();
+                .Include(a => a.Vaccine_).ThenInclude(v => v.Virus_)
+                .Include(a => a.Patient_)
+                .ToList();
         }
 
         public void ConfirmVaccination(Guid appointmentId)
@@ -607,8 +615,11 @@ namespace VaccinationSystemApi.Repositories
         public bool RemovePatient(Guid patientId)
         {
             var appointments = _dbContext.Appointments.Include(a=>a.Patient_).Where(a => a.Patient_.Id == patientId);
-            
             _dbContext.Appointments.RemoveRange(appointments);
+
+            var certificates = _dbContext.Certificates.Include(c => c.Owner).Where(c => c.Owner.Id == patientId);
+            _dbContext.Certificates.RemoveRange(certificates);
+
             Patient patientToRemove = _dbContext.Patients.Where(p => p.Id == patientId).SingleOrDefault();
             _dbContext.Patients.Remove(patientToRemove);
 
@@ -636,7 +647,7 @@ namespace VaccinationSystemApi.Repositories
             doctorToEdit.FirstName = doctorData.FirstName;
             doctorToEdit.LastName = doctorData.LastName;
             doctorToEdit.EMail = doctorData.Mail;
-            doctorToEdit.DateOfBirth = DateTime.ParseExact(doctorData.DateOfBirth, "dd-MM-yyyy HH:mm", null);
+            doctorToEdit.DateOfBirth = DateTime.ParseExact(doctorData.DateOfBirth, "dd-MM-yyyy", null);
             doctorToEdit.PhoneNumber = doctorData.PhoneNumber;
             doctorToEdit.Active = doctorData.Active;
             doctorToEdit.VaccinationCenterId = doctorData.VaccinationCenterID;

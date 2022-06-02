@@ -42,7 +42,7 @@ namespace VaccinationSystemApi.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterRequest registerRequest)
         {
-            if (ModelState.IsValid)
+            try
             {
                 // We can utilise the model
                 var existingUser = await _userManager.FindByEmailAsync(registerRequest.mail);
@@ -71,14 +71,16 @@ namespace VaccinationSystemApi.Controllers
                     return BadRequest("Unrecognised data format");
                 }
             }
-
-            return BadRequest("Unrecognised data format");
+            catch (Exception ex)
+            {
+                return BadRequest("Unrecognised data format");
+            }
         }
 
         [HttpPost("signin")]
         public async Task<ActionResult<SignInResponse>> SignIn(SignInRequest signInRequest)
         {
-            if (ModelState.IsValid)
+            try
             {
                 var existingUser = await _userManager.FindByEmailAsync(signInRequest.Mail);
 
@@ -111,16 +113,13 @@ namespace VaccinationSystemApi.Controllers
                     UserType = userType,
                 });
             }
+            catch (Exception ex)
+            {
+                return BadRequest("Unrecognised data format");
+            }
 
-            return BadRequest("Unrecognised data format");
+            
         }
-
-        [HttpGet("/user/logout/{userId}")]
-        public void Logout(int userId)
-        {
-            // empty
-        }
-
         private async Task<string> GenerateJwtToken(IdentityUser user)
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();

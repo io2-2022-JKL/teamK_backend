@@ -34,131 +34,176 @@ namespace VaccinationSystemApi.Controllers
         [HttpGet("patients")]
         public ActionResult<IEnumerable<EditPatientRequest>> GetPatients()
         {
-            var patientsFromDb = _vaccinationService.GetPatients();
-            List<EditPatientRequest> patientsDtos = new List<EditPatientRequest>();
-            foreach(var patient in patientsFromDb)
+            try
             {
-                patientsDtos.Add(new EditPatientRequest()
+                var patientsFromDb = _vaccinationService.GetPatients();
+                List<EditPatientRequest> patientsDtos = new List<EditPatientRequest>();
+                foreach (var patient in patientsFromDb)
                 {
-                    Id = patient.Id.ToString(),
-                    PESEL = patient.Pesel,
-                    PhoneNumber = patient.PhoneNumber,
-                    Mail = patient.EMail,
-                    FirstName = patient.FirstName,
-                    LastName = patient.LastName,
-                    DateOfBirth = patient.DateOfBirth.ToString("dd-MM-yyyy"),
-                    Active = patient.Active,
-                });
+                    patientsDtos.Add(new EditPatientRequest()
+                    {
+                        Id = patient.Id.ToString(),
+                        PESEL = patient.Pesel,
+                        PhoneNumber = patient.PhoneNumber,
+                        Mail = patient.EMail,
+                        FirstName = patient.FirstName,
+                        LastName = patient.LastName,
+                        DateOfBirth = patient.DateOfBirth.ToString("dd-MM-yyyy"),
+                        Active = patient.Active,
+                    });
+                }
+
+                if (patientsDtos.Count == 0)
+                    return (NotFound("Error, no matching patient found"));
+
+                return Ok(patientsDtos);
             }
-
-            if (patientsDtos.Count == 0)
-                return (NotFound("Error, no matching patient found"));
-
-            return Ok(patientsDtos);
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost("patients/editPatient")]
         public async Task<ActionResult> EditPatient(EditPatientRequest patientToEdit)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("BadData");
-
-            var user = await _userManager.FindByIdAsync(patientToEdit.Id);
-            if(user is null)
+            try
             {
-                return NotFound("Patient to edit not found");
+                var user = await _userManager.FindByIdAsync(patientToEdit.Id);
+                if (user is null)
+                {
+                    return NotFound("Patient to edit not found");
+                }
+
+                bool result = _vaccinationService.EditPatient(patientToEdit, out bool wasPatientFound);
+
+
+                return result ? Ok() : BadRequest("Bad data");
             }
-
-            bool result = _vaccinationService.EditPatient(patientToEdit, out bool wasPatientFound);
-            
-
-            return result ? Ok() : BadRequest("Bad data");
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("patients/deletePatient/{patientId}")]
         public async Task<ActionResult> DeletePatient(string patientId)
         {
-
-            bool result = _vaccinationService.RemovePatient(Guid.Parse(patientId));
-            if (result)
+            try
             {
-                var user = await _userManager.FindByIdAsync(patientId.ToString());
-                await _userManager.DeleteAsync(user);
-            }
+                bool result = _vaccinationService.RemovePatient(Guid.Parse(patientId));
+                if (result)
+                {
+                    var user = await _userManager.FindByIdAsync(patientId.ToString());
+                    await _userManager.DeleteAsync(user);
+                }
 
-            return result ? Ok() : NotFound();
+                return result ? Ok() : NotFound();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("doctors")]
         public ActionResult<IEnumerable<DoctorWithCenterDTO>> GetDoctors()
         {
-            var doctorsFromDb = _vaccinationService.GetDoctorsWithMatchingVaccinationCentres();
-            var doctorDtos = new List<DoctorWithCenterDTO>();
-
-            foreach(var doctor in doctorsFromDb)
+            try
             {
-                doctorDtos.Add(new DoctorWithCenterDTO
-                {
-                    Id = doctor.Id,
-                    FirstName = doctor.FirstName,
-                    LastName = doctor.LastName,
-                    Active = doctor.Active,
-                    DateOfBirth = doctor.DateOfBirth,
-                    Mail = doctor.EMail,
-                    PESEL = doctor.Pesel,
-                    PhoneNumber = doctor.PhoneNumber,
-                    VaccinationCenterID = doctor.VaccinationCenterId,
-                    City = doctor.VaccinationCenter_.City,
-                    Name = doctor.VaccinationCenter_.Name,
-                    Street = doctor.VaccinationCenter_.Address,
-                });
-            }
-            if (doctorDtos.Count == 0)
-                return NotFound("Error, no matching doctor found");
+                var doctorsFromDb = _vaccinationService.GetDoctorsWithMatchingVaccinationCentres();
+                var doctorDtos = new List<DoctorWithCenterDTO>();
 
-            return Ok(doctorDtos);
+                foreach (var doctor in doctorsFromDb)
+                {
+                    doctorDtos.Add(new DoctorWithCenterDTO
+                    {
+                        Id = doctor.Id,
+                        FirstName = doctor.FirstName,
+                        LastName = doctor.LastName,
+                        Active = doctor.Active,
+                        DateOfBirth = doctor.DateOfBirth,
+                        Mail = doctor.EMail,
+                        PESEL = doctor.Pesel,
+                        PhoneNumber = doctor.PhoneNumber,
+                        VaccinationCenterID = doctor.VaccinationCenterId,
+                        City = doctor.VaccinationCenter_.City,
+                        Name = doctor.VaccinationCenter_.Name,
+                        Street = doctor.VaccinationCenter_.Address,
+                    });
+                }
+                if (doctorDtos.Count == 0)
+                    return NotFound("Error, no matching doctor found");
+
+                return Ok(doctorDtos);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpPost("doctors/editDoctor")]
         public ActionResult EditDoctor(EditDoctorRequest doctorDto)
         {
-            bool result = _vaccinationService.EditDoctor(doctorDto, out bool doctorFound);
-            if (!doctorFound)
-                return NotFound();
+            try
+            {
+                bool result = _vaccinationService.EditDoctor(doctorDto, out bool doctorFound);
+                if (!doctorFound)
+                    return NotFound();
 
-            return result ? Ok() : BadRequest();
+                return result ? Ok() : BadRequest();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
         [HttpPost("doctors/addDoctor")]
         public async Task<ActionResult> AddDoctor(AddDoctorDTO addDoctorDTO)
         {
-            var identityUser = await _userManager.FindByIdAsync(addDoctorDTO.PatientId.ToString());
-
-            if (identityUser is null)
-                return BadRequest("");
-
-            await _userManager.AddToRoleAsync(identityUser, "Doctor");
-
-            var doctorToAdd = new Doctor()
+            try
             {
-                Id = addDoctorDTO.PatientId,
-                PatientAccountId = addDoctorDTO.PatientId,
-                VaccinationCenterId = addDoctorDTO.VaccinationCenterId
-            };
+                var identityUser = await _userManager.FindByIdAsync(addDoctorDTO.PatientId.ToString());
 
-            bool result = _vaccinationService.AddDoctor(doctorToAdd);
-            
-            return result ? Ok() : BadRequest();
+                if (identityUser is null)
+                    return BadRequest("");
+
+                await _userManager.AddToRoleAsync(identityUser, "Doctor");
+
+                var doctorToAdd = new Doctor()
+                {
+                    Id = addDoctorDTO.PatientId,
+                    PatientAccountId = addDoctorDTO.PatientId,
+                    VaccinationCenterId = addDoctorDTO.VaccinationCenterId
+                };
+
+                bool result = _vaccinationService.AddDoctor(doctorToAdd);
+
+                return result ? Ok() : BadRequest();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpDelete("doctors/deleteDoctor/{doctorId}")]
         public ActionResult DeleteDoctor(Guid doctorId)
         {
-            bool result = _vaccinationService.DeleteDoctor(doctorId, out bool wasDoctorFound);
+            try
+            {
+                bool result = _vaccinationService.DeleteDoctor(doctorId, out bool wasDoctorFound);
 
-            if (!wasDoctorFound)
-                return NotFound("Error, no doctor found to delete");
+                if (!wasDoctorFound)
+                    return NotFound("Error, no doctor found to delete");
 
-            return result ? Ok() : BadRequest();
+                return result ? Ok() : BadRequest();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
         }
 
         [HttpGet("doctors/timeSlots/{doctorId}")]
@@ -383,12 +428,13 @@ namespace VaccinationSystemApi.Controllers
             try
             {
                 _vaccinationService.DeleteVaccine(vaccineId);
+                return Ok();
             }
             catch (NoChangesInDatabaseException)
             {
                 return NotFound("Data not found");
             }
-            return Ok();
+            
         }
     }
 }
