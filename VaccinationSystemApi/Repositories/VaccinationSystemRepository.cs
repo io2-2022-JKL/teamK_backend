@@ -90,7 +90,7 @@ namespace VaccinationSystemApi.Repositories
         {
             var patientFromDb = this.GetPatient(patientId);
 
-            return patientFromDb.Certificates;
+            return _dbContext.Certificates.Where(c => c.Owner == patientFromDb);
         }
         public void ReserveTimeSlot(Guid id)
         {
@@ -232,9 +232,15 @@ namespace VaccinationSystemApi.Repositories
 
         public void CreateCertificate(Certificate certificateToAdd)
         {
-            _dbContext.Add(certificateToAdd);
+            _dbContext.Certificates.Add(certificateToAdd);
             _dbContext.SaveChanges();
         }
+
+        public IEnumerable<Appointment> GetLastAppointments(Guid patientid)
+        {
+            return _dbContext.Appointments.Where(a => a.Patient_.Id == patientid && a.Status == AppointmentStatus.Finished).Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).ToList();
+        }
+
 
 
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)

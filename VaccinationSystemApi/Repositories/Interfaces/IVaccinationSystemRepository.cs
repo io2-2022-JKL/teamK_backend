@@ -59,6 +59,6 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         void AddVaccine(AddVaccineRequest vaccineToAdd);
         void EditVaccine(VaccineExtendedDTO updatedVaccine);
         void DeleteVaccine(Guid vaccineId);
-        
+        IEnumerable<Appointment> GetLastAppointments(Guid patientid);
     }
 }
