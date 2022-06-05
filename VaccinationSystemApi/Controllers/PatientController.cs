@@ -127,7 +127,7 @@ namespace VaccinationSystemApi.Controllers
             var slotFromDb = _vaccinationService.GetTimeSlot(timeSlotId);
             if (slotFromDb is null)
                 return NotFound();
-            if (slotFromDb.IsFree == false)
+            if (slotFromDb.IsFree == false || slotFromDb.Active == false)
                 return Forbid();
             try
             {

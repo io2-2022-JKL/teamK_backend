@@ -621,14 +621,15 @@ namespace VaccinationSystemApi.Repositories
 
         public bool RemovePatient(Guid patientId)
         {
-            var appointments = _dbContext.Appointments.Include(a=>a.Patient_).Where(a => a.Patient_.Id == patientId);
-            _dbContext.Appointments.RemoveRange(appointments);
+            var appointmentsFromDb = _dbContext.Appointments.Include(a=>a.Patient_).Include(a => a.TimeSlot_).Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.UtcNow);
+            foreach(var appointment in appointmentsFromDb)
+            {
+                appointment.Status = AppointmentStatus.Cancelled;
+                appointment.TimeSlot_.Active = false;
+            }
 
-            var certificates = _dbContext.Certificates.Include(c => c.Owner).Where(c => c.Owner.Id == patientId);
-            _dbContext.Certificates.RemoveRange(certificates);
-
-            Patient patientToRemove = _dbContext.Patients.Where(p => p.Id == patientId).SingleOrDefault();
-            _dbContext.Patients.Remove(patientToRemove);
+            Patient patientFromDb = _dbContext.Patients.Where(p => p.Id == patientId).SingleOrDefault();
+            patientFromDb.Active = false;
 
             int entitiesModified = _dbContext.SaveChanges();
             return entitiesModified > 0;
