@@ -73,7 +73,7 @@ namespace VaccinationSystemApi.Repositories
 
         public TimeSlot GetTimeSlot(Guid timeSlotId)
         {
-            return _dbContext.TimeSlots.Where(t => t.Id == timeSlotId).SingleOrDefault();
+            return _dbContext.TimeSlots.Where(t => t.Id == timeSlotId).Include(t => t.AppointmentSigned).SingleOrDefault();
         }
         public IEnumerable<TimeSlot> GetTimeSlots()
         {
@@ -91,6 +91,13 @@ namespace VaccinationSystemApi.Repositories
             var patientFromDb = this.GetPatient(patientId);
 
             return patientFromDb.Certificates;
+        }
+        public void ReserveTimeSlot(Guid id)
+        {
+            var slotFromDb = this.GetTimeSlot(id);
+            slotFromDb.IsFree = false;
+
+            _dbContext.SaveChanges();
         }
 
         public Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)

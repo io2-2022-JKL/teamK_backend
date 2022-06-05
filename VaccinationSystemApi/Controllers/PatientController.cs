@@ -122,12 +122,18 @@ namespace VaccinationSystemApi.Controllers
         }*/
 
         [HttpPost("timeSlots/Book/{patientId}/{timeSlotId}/{vaccineId}")]
-        public ActionResult<Guid> MakeAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
+        public ActionResult MakeAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
         {
+            var slotFromDb = _vaccinationService.GetTimeSlot(timeSlotId);
+            if (slotFromDb is null)
+                return NotFound();
+            if (slotFromDb.IsFree == false)
+                return Forbid();
             try
             {
                 var appointmentId = _vaccinationService.CreateAppointment(patientId, timeSlotId, vaccineId);
-                return Ok(appointmentId);
+                _vaccinationService.ReserveTimeSlot(timeSlotId);
+                return Ok();
             }
             catch(Exception ex)
             {
