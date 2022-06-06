@@ -73,7 +73,7 @@ namespace VaccinationSystemApi.Repositories
 
         public TimeSlot GetTimeSlot(Guid timeSlotId)
         {
-            return _dbContext.TimeSlots.Where(t => t.Id == timeSlotId).SingleOrDefault();
+            return _dbContext.TimeSlots.Where(t => t.Id == timeSlotId).Include(t => t.AppointmentSigned).SingleOrDefault();
         }
         public IEnumerable<TimeSlot> GetTimeSlots()
         {
@@ -90,7 +90,14 @@ namespace VaccinationSystemApi.Repositories
         {
             var patientFromDb = this.GetPatient(patientId);
 
-            return patientFromDb.Certificates;
+            return _dbContext.Certificates.Where(c => c.Owner == patientFromDb);
+        }
+        public void ReserveTimeSlot(Guid id)
+        {
+            var slotFromDb = this.GetTimeSlot(id);
+            slotFromDb.IsFree = false;
+
+            _dbContext.SaveChanges();
         }
 
         public Guid CreateAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
@@ -225,9 +232,15 @@ namespace VaccinationSystemApi.Repositories
 
         public void CreateCertificate(Certificate certificateToAdd)
         {
-            _dbContext.Add(certificateToAdd);
+            _dbContext.Certificates.Add(certificateToAdd);
             _dbContext.SaveChanges();
         }
+
+        public IEnumerable<Appointment> GetLastAppointments(Guid patientid)
+        {
+            return _dbContext.Appointments.Where(a => a.Patient_.Id == patientid && a.Status == AppointmentStatus.Finished).Include(a => a.Vaccine_).ThenInclude(v => v.Virus_).ToList();
+        }
+
 
 
         public IEnumerable<TimeSlot> FilterTimeslots(string city, DateTime dateFrom, DateTime dateTo, string virus)
@@ -251,7 +264,7 @@ namespace VaccinationSystemApi.Repositories
                 .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayOpen)
                 .Include(t => t.AssignedDoctor).ThenInclude(d => d.VaccinationCenter_).ThenInclude(vc => vc.OpeningHours_).ThenInclude(oh => oh.SundayClose)
                 .Where(t => t.AssignedDoctor.VaccinationCenter_.City == city && t.From >= dateFrom
-                && t.To <= dateTo).ToList();
+                && t.To <= dateTo && t.Active == true && t.IsFree == true).ToList();
             // timeSlot isn't directly related to virus
         }
 
@@ -614,14 +627,15 @@ namespace VaccinationSystemApi.Repositories
 
         public bool RemovePatient(Guid patientId)
         {
-            var appointments = _dbContext.Appointments.Include(a=>a.Patient_).Where(a => a.Patient_.Id == patientId);
-            _dbContext.Appointments.RemoveRange(appointments);
+            var appointmentsFromDb = _dbContext.Appointments.Include(a=>a.Patient_).Include(a => a.TimeSlot_).Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.UtcNow);
+            foreach(var appointment in appointmentsFromDb)
+            {
+                appointment.Status = AppointmentStatus.Cancelled;
+                appointment.TimeSlot_.Active = false;
+            }
 
-            var certificates = _dbContext.Certificates.Include(c => c.Owner).Where(c => c.Owner.Id == patientId);
-            _dbContext.Certificates.RemoveRange(certificates);
-
-            Patient patientToRemove = _dbContext.Patients.Where(p => p.Id == patientId).SingleOrDefault();
-            _dbContext.Patients.Remove(patientToRemove);
+            Patient patientFromDb = _dbContext.Patients.Where(p => p.Id == patientId).SingleOrDefault();
+            patientFromDb.Active = false;
 
             int entitiesModified = _dbContext.SaveChanges();
             return entitiesModified > 0;
