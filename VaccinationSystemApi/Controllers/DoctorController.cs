@@ -330,7 +330,7 @@ namespace VaccinationSystemApi.Controllers
                         finishedDoses++;
                 }
                 _vaccinationService.AddVaccinationBatchNumber(appointmentId, batchId);
-                bool isLastDose = finishedDoses == appointmentFromDb.Vaccine_.NumberOfDoses;
+                bool isLastDose = finishedDoses >= appointmentFromDb.Vaccine_.NumberOfDoses;
                 ConfirmVaccinationResponse response = new()
                 {
                     canCertify = isLastDose,
@@ -387,7 +387,7 @@ namespace VaccinationSystemApi.Controllers
                     if (appointment.Vaccine_.Id == appointmentFromDb.Vaccine_.Id && appointment.Status == AppointmentStatus.Finished)
                         finishedDoses++;
                 }
-                bool canBeCertified = finishedDoses == appointmentFromDb.Vaccine_.NumberOfDoses;
+                bool canBeCertified = finishedDoses >= appointmentFromDb.Vaccine_.NumberOfDoses;
                 if (!canBeCertified)
                     return BadRequest("That wasn't the lat dose");
 
