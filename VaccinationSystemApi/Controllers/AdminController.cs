@@ -16,7 +16,7 @@ namespace VaccinationSystemApi.Controllers
 {
     [ApiController]
     [Route("admin")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;

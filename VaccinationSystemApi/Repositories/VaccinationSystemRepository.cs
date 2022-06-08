@@ -786,12 +786,15 @@ namespace VaccinationSystemApi.Repositories
             vaccinationCenter.Active = centerToAdd.Active;
             vaccinationCenter.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToAdd.OpeningHoursDays as IList<OpeningHoursAdminDTO>);
 
-            var vaccinesFromDb = _dbContext.Vaccines.ToList();
             foreach (var id in centerToAdd.VaccineIds)
             {
                 var vaccine = _dbContext.Vaccines.Where(v => v.Id == id).SingleOrDefault();
-                if (vaccine.VaccinationCenterId is null)
-                    vaccine.VaccinationCenterId = vaccinationCenter.Id;
+                _dbContext.VaccinesToCenters.Add(new()
+                {
+                    Id = Guid.NewGuid(),
+                    VaccinationCenter_ = vaccinationCenter,
+                    Vaccine_ = vaccine
+                });
             }
 
 

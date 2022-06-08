@@ -17,6 +17,5 @@ namespace VaccinationSystemApi.Models
         public int MinPatientAge { get; set; }
         public int MaxPatientAge { get; set; }
         public bool IsStillBeingUsed { get; set; }
-        public Guid? VaccinationCenterId { get; set; }
     }
 }
