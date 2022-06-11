@@ -886,8 +886,8 @@ namespace VaccinationSystemApi.Repositories
 
         public void DeleteVaccinationCenter(Guid centerId)
         {
-            var vaccinationCenter = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerId).Include(vc => vc.AvailableVaccines).Include(vc => vc.OpeningHours_).SingleOrDefault();
-            _dbContext.Remove(vaccinationCenter);
+            var vaccinationCenter = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerId).SingleOrDefault();
+            vaccinationCenter.Active = false;
             int entitiesChanged = _dbContext.SaveChanges();
 
             if (entitiesChanged <= 0)
