@@ -402,7 +402,8 @@ namespace VaccinationSystemApi.Controllers
                 {
                     Id = Guid.NewGuid(),
                     Owner = appointmentFromDb.Patient_,
-                    Url = ""
+                    Vaccine_ = appointmentFromDb.Vaccine_,
+                    Url = "",
                 });
                 return Ok();
             }
@@ -410,7 +411,6 @@ namespace VaccinationSystemApi.Controllers
             {
                 return BadRequest();
             }
-
         }
 
     }

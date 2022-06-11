@@ -93,17 +93,15 @@ namespace VaccinationSystemApi.Controllers
                 if (cert is null)
                     return NotFound();
 
-                var appointmentsFromDb = _vaccinationService.GetLastAppointments(patientId);
-                var lastAppointment = appointmentsFromDb.ElementAt(0);
                 List<BrowseCertificateResponse> response = new List<BrowseCertificateResponse>();
                 foreach(var c in cert)
                 {
                     response.Add(new()
                     {
                         Url = c.Url,
-                        VaccineCompany = lastAppointment.Vaccine_.Company,
-                        VaccineName = lastAppointment.Vaccine_.Name,
-                        VirusType = lastAppointment.Vaccine_.Virus_.Name
+                        VaccineCompany = c.Vaccine_.Company,
+                        VaccineName = c.Vaccine_.Name,
+                        VirusType = c.Vaccine_.Virus_.Name
                     });
                 }
 

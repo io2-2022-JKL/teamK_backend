@@ -90,7 +90,7 @@ namespace VaccinationSystemApi.Repositories
         {
             var patientFromDb = this.GetPatient(patientId);
 
-            return _dbContext.Certificates.Where(c => c.Owner == patientFromDb);
+            return _dbContext.Certificates.Include(c => c.Vaccine_).ThenInclude(v => v.Virus_).Where(c => c.Owner == patientFromDb).ToList();
         }
         public void ReserveTimeSlot(Guid id)
         {
