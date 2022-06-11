@@ -9,7 +9,7 @@ namespace VaccinationSystemApi.Models
     public class Patient: User
     {
         public ICollection<Appointment> Appointments { get; set; }
-        public ICollection<Certificate> Certificates { get; set; }
+        //public ICollection<Certificate> Certificates { get; set; }
         public bool Active { get; set; }
     }
 }

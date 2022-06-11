@@ -92,11 +92,8 @@ namespace VaccinationSystemApi.Controllers
             try
             {
                 bool result = _vaccinationService.RemovePatient(Guid.Parse(patientId));
-                if (result)
-                {
-                    var user = await _userManager.FindByIdAsync(patientId.ToString());
-                    await _userManager.DeleteAsync(user);
-                }
+                var user = await _userManager.FindByIdAsync(patientId.ToString());
+                await _userManager.DeleteAsync(user);
 
                 return result ? Ok() : NotFound();
             }

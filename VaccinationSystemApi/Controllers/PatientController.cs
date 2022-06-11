@@ -88,10 +88,26 @@ namespace VaccinationSystemApi.Controllers
                 if (patientFromDb is null)
                     return BadRequest();
 
-                if (patientFromDb.Certificates is null)
+                var cert = _vaccinationService.GetPatientCertificates(patientId);
+
+                if (cert is null)
                     return NotFound();
 
-                return Ok(patientFromDb.Certificates);
+                var appointmentsFromDb = _vaccinationService.GetLastAppointments(patientId);
+                var lastAppointment = appointmentsFromDb.ElementAt(0);
+                List<BrowseCertificateResponse> response = new List<BrowseCertificateResponse>();
+                foreach(var c in cert)
+                {
+                    response.Add(new()
+                    {
+                        Url = c.Url,
+                        VaccineCompany = lastAppointment.Vaccine_.Company,
+                        VaccineName = lastAppointment.Vaccine_.Name,
+                        VirusType = lastAppointment.Vaccine_.Virus_.Name
+                    });
+                }
+
+                return Ok(response);
             }
             catch (Exception)
             {
@@ -122,12 +138,18 @@ namespace VaccinationSystemApi.Controllers
         }*/
 
         [HttpPost("timeSlots/Book/{patientId}/{timeSlotId}/{vaccineId}")]
-        public ActionResult<Guid> MakeAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
+        public ActionResult MakeAppointment(Guid patientId, Guid timeSlotId, Guid vaccineId)
         {
+            var slotFromDb = _vaccinationService.GetTimeSlot(timeSlotId);
+            if (slotFromDb is null)
+                return NotFound();
+            if (slotFromDb.IsFree == false || slotFromDb.Active == false)
+                return Forbid();
             try
             {
                 var appointmentId = _vaccinationService.CreateAppointment(patientId, timeSlotId, vaccineId);
-                return Ok(appointmentId);
+                _vaccinationService.ReserveTimeSlot(timeSlotId);
+                return Ok();
             }
             catch(Exception ex)
             {
@@ -224,13 +246,13 @@ namespace VaccinationSystemApi.Controllers
             }
         }
 
-        [HttpGet("timeSlots/Filter")]
+        [HttpGet("timeSlots/filter")]
         public ActionResult<ICollection<FilterTimeslotsResponse>> FilterTimeslots(string city, string dateFrom, string dateTo, string virus)
         {
             IEnumerable <TimeSlot> timeslotsFromDb;
             try
             {
-                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, DateTime.ParseExact(dateFrom, "dd-MM-yyyy", null), DateTime.ParseExact(dateTo, "dd-MM-yyyy", null), virus);
+                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, DateTime.ParseExact(dateFrom, "dd-MM-yyyy HH:mm", null), DateTime.ParseExact(dateTo, "dd-MM-yyyy HH:mm", null), virus);
                 if (timeslotsFromDb.Count() == 0)
                     return NotFound();
             

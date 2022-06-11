@@ -44,7 +44,6 @@ namespace VaccinationSystemApi.Controllers
         {
             try
             {
-                // We can utilise the model
                 var existingUser = await _userManager.FindByEmailAsync(registerRequest.mail);
 
                 if (existingUser != null)
@@ -68,6 +67,7 @@ namespace VaccinationSystemApi.Controllers
                 }
                 else
                 {
+                    await _userManager.DeleteAsync(existingUser);
                     return BadRequest("Unrecognised data format");
                 }
             }

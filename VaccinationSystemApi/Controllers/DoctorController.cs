@@ -10,6 +10,7 @@ using VaccinationSystemApi.Helpers.Converters;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using VaccinationSystemApi.Models.Utils;
+using VaccinationSystemApi.Services;
 
 
 namespace VaccinationSystemApi.Controllers
@@ -20,7 +21,12 @@ namespace VaccinationSystemApi.Controllers
     public class DoctorController: ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
-        public DoctorController(IVaccinationSystemRepository repo) => _vaccinationService = repo;
+        private readonly MailService _mailService;
+        public DoctorController(IVaccinationSystemRepository repo, MailService mailService)
+        {
+            _vaccinationService = repo;
+            _mailService = mailService;
+        }
 
         [HttpGet("doctor/info/{doctorId}")]
         public ActionResult<GetDoctorInfoResponse> GetDoctorInfo(Guid doctorId)
@@ -336,7 +342,7 @@ namespace VaccinationSystemApi.Controllers
                     canCertify = isLastDose,
                 };
 
-
+                _mailService.SendConfirmVaccinationMail(appointmentFromDb.Patient_.EMail);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -360,6 +366,7 @@ namespace VaccinationSystemApi.Controllers
                     return Forbid("User forbidden to confirm vaccination");
 
                 _vaccinationService.CancelAppointment(appointmentId);
+                _mailService.SendCancelVaccinationMail(appointmentFromDb.Patient_.EMail);
                 return Ok();
             }
             catch(Exception ex)

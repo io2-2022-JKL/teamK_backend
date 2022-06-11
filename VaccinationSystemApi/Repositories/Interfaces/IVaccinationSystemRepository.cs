@@ -29,6 +29,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         void ConfirmVaccination(Guid appointmentId);
         Doctor GetDoctorByTimeSlot(Guid id);
         void DeleteTimeSlot(Guid id);
+        void ReserveTimeSlot(Guid id);
         void ModifyTimeSlot(Guid timeSlotId, DateTime from, DateTime to);
         public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, DateTime date);
         public IEnumerable<TimeSlot> GetDoctorTimeSlots(Guid doctorId);
@@ -58,6 +59,6 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         void AddVaccine(AddVaccineRequest vaccineToAdd);
         void EditVaccine(VaccineExtendedDTO updatedVaccine);
         void DeleteVaccine(Guid vaccineId);
-        
+        IEnumerable<Appointment> GetLastAppointments(Guid patientid);
     }
 }
