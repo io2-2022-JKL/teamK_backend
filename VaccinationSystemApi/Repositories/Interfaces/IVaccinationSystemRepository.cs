@@ -52,7 +52,7 @@ namespace VaccinationSystemApi.Repositories.Interfaces
         void DeleteTimeslots(IEnumerable<Guid> TimeslotIds);
         IEnumerable<VaccinationCenter> GetVaccinationCenters();
         void AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd);
-        void EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit);
+        void EditVaccinationCenter(EditVaccinationCenterAdminRequest centerToEdit);
         void DeleteVaccinationCenter(Guid centerId);
         IEnumerable<Vaccine> GetExtendedVaccines();
         void AddVaccine(AddVaccineRequest vaccineToAdd);

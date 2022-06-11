@@ -326,7 +326,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("vaccinationCenters/editVaccinationCenter")]
-        public ActionResult EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit)
+        public ActionResult EditVaccinationCenter(EditVaccinationCenterAdminRequest centerToEdit)
         {
             try
             {

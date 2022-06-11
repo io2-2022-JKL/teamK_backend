@@ -806,7 +806,12 @@ namespace VaccinationSystemApi.Repositories
                 throw new NoChangesInDatabaseException();
         }
 
-        public void EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit)
+        public IEnumerable<VaccinesToCenters> GetCenterVaccines(Guid centerId)
+        {
+            return _dbContext.VaccinesToCenters.Where(vtc => vtc.VaccinationCenter_.Id == centerId);
+        }
+
+        public void EditVaccinationCenter(EditVaccinationCenterAdminRequest centerToEdit)
         {
             var vaccinationCenterFromTheDatabase = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerToEdit.Id).Include(vc => vc.AvailableVaccines).Include(vc => vc.OpeningHours_).Single();
 
@@ -814,13 +819,19 @@ namespace VaccinationSystemApi.Repositories
             vaccinationCenterFromTheDatabase.City = centerToEdit.City;
             vaccinationCenterFromTheDatabase.Address = centerToEdit.Street;
 
-            if (centerToEdit.Vaccines is not null)
-                vaccinationCenterFromTheDatabase.AvailableVaccines = new List<Vaccine>();
+            var vaccinesFromDb = this.GetCenterVaccines(centerToEdit.Id);
+            var centerFromDb = this.GetCenter(centerToEdit.Id);
+            _dbContext.VaccinesToCenters.RemoveRange(vaccinesFromDb);
 
-            if(centerToEdit.Vaccines is not null)
-                foreach(var v in centerToEdit.Vaccines)
+            if(centerToEdit.VaccineIds is not null)
+                foreach(var vaccineId in centerToEdit.VaccineIds)
                 {
-                    vaccinationCenterFromTheDatabase.AvailableVaccines.Add(new Vaccine() { Id = v.Id });
+                    _dbContext.VaccinesToCenters.Add(new()
+                    {
+                        Id = Guid.NewGuid(),
+                        VaccinationCenter_ = centerFromDb,
+                        Vaccine_ = _dbContext.Vaccines.Where(v => v.Id == vaccineId).SingleOrDefault()
+                    });
                 }
 
             //vaccinationCenterFromTheDatabase.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToEdit.OpeningHoursDays as  IList<OpeningHoursAdminDTO>);
