@@ -21,6 +21,7 @@ namespace VaccinationSystemApi.Data
         public DbSet<VaccinationCenter> VaccinationCenters { get; set; }
         public DbSet<Vaccine> Vaccines { get; set; }
         public DbSet<Virus> Viruses { get; set; }
+        public DbSet<VaccinesToCenters> VaccinesToCenters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -51,6 +52,7 @@ namespace VaccinationSystemApi.Data
             modelBuilder.Entity<VaccinationCenter>().ToTable("VaccinationCenter");
             modelBuilder.Entity<Vaccine>().ToTable("Vaccine");
             modelBuilder.Entity<Virus>().ToTable("Virus");
+            modelBuilder.Entity<VaccinesToCenters>().ToTable("VaccinesToCenters");
 
             //SeedData(modelBuilder);
             //modelBuilder.Entity<Models.Utils.TimeHours>().HasOne(th => th.OpeningHours).WithOne().OnDelete(DeleteBehavior.Restrict);

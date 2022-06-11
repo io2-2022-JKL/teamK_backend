@@ -16,7 +16,7 @@ namespace VaccinationSystemApi.Controllers
 {
     [ApiController]
     [Route("admin")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
@@ -119,7 +119,7 @@ namespace VaccinationSystemApi.Controllers
                         FirstName = doctor.FirstName,
                         LastName = doctor.LastName,
                         Active = doctor.Active,
-                        DateOfBirth = doctor.DateOfBirth,
+                        DateOfBirth = doctor.DateOfBirth.ToString("dd-MM-yyyy"),
                         Mail = doctor.EMail,
                         PESEL = doctor.Pesel,
                         PhoneNumber = doctor.PhoneNumber,
@@ -323,7 +323,7 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("vaccinationCenters/editVaccinationCenter")]
-        public ActionResult EditVaccinationCenter(VaccinationCenterAdminDTO centerToEdit)
+        public ActionResult EditVaccinationCenter(EditVaccinationCenterAdminRequest centerToEdit)
         {
             try
             {

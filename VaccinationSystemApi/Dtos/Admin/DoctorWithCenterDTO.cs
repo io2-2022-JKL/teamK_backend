@@ -9,7 +9,7 @@ namespace VaccinationSystemApi.Dtos.Admin
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Mail { get; set; }
-        public DateTime DateOfBirth { get; set; }
+        public string DateOfBirth { get; set; }
         public string PhoneNumber { get; set; }
         public bool Active { get; set; }
         public Guid VaccinationCenterID { get; set; }
