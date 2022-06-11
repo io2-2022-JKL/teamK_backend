@@ -565,7 +565,7 @@ namespace VaccinationSystemApi.Repositories
                 FirstName = registerRequest.firstName,
                 LastName = registerRequest.lastName,
                 PhoneNumber = registerRequest.phoneNumber,
-                Pesel = registerRequest.pesel,
+                Pesel = registerRequest.PESEL,
                 Id = guid
            });
 

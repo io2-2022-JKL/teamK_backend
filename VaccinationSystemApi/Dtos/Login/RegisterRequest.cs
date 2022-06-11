@@ -9,7 +9,7 @@ namespace VaccinationSystemApi.Dtos.Login
     public class RegisterRequest
     {
         [Required]
-        public string pesel { get; set; }
+        public string PESEL { get; set; }
         public string firstName { get; set; }
         public string lastName { get; set; }
         [Required]

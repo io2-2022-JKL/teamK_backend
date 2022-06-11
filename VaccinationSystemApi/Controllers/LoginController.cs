@@ -52,7 +52,7 @@ namespace VaccinationSystemApi.Controllers
                     return BadRequest("Unrecognised data format");
                 }
 
-                var newUser = new IdentityUser() { Email = registerRequest.mail, UserName = registerRequest.pesel };
+                var newUser = new IdentityUser() { Email = registerRequest.mail, UserName = registerRequest.PESEL };
                 var isCreated = await _userManager.CreateAsync(newUser, registerRequest.password);
                 var isCreatedInPatientTable = _vaccinationService.CreatePatient(registerRequest, Guid.Parse(newUser.Id));
 
