@@ -570,21 +570,47 @@ namespace VaccinationSystemApi.Repositories
             if (guid == default(Guid))
                 guid = Guid.NewGuid();
 
-           var result = _dbContext.Patients.Add(new Patient()
+            Patient existingPatient = _dbContext.Patients.Where(p => p.EMail == registerRequest.mail).FirstOrDefault();
+            if(existingPatient != null)
             {
-                Active = true,
-                DateOfBirth = DateTime.ParseExact(registerRequest.dateOfBirth, "dd-MM-yyyy", null),
-                EMail = registerRequest.mail,
-                FirstName = registerRequest.firstName,
-                LastName = registerRequest.lastName,
-                PhoneNumber = registerRequest.phoneNumber,
-                Pesel = registerRequest.pesel,
-                Id = guid
-           });
+                if (existingPatient.Active)
+                {
+                    return false;
+                }
+                
+                EditPatient(new EditPatientRequest()
+                {
+                    Active = true,
+                    DateOfBirth = registerRequest.dateOfBirth,
+                    FirstName = registerRequest.firstName,
+                    LastName = registerRequest.lastName,
+                    Mail = registerRequest.mail,
+                    Id = existingPatient.Id.ToString(),
+                    PESEL = registerRequest.pesel,
+                    PhoneNumber = registerRequest.phoneNumber
+                },
+                out bool found);
+                return true;
+            }
+            else
+            {
+                var result = _dbContext.Patients.Add(new Patient()
+                {
+                    Active = true,
+                    DateOfBirth = DateTime.ParseExact(registerRequest.dateOfBirth, "dd-MM-yyyy", null),
+                    EMail = registerRequest.mail,
+                    FirstName = registerRequest.firstName,
+                    LastName = registerRequest.lastName,
+                    PhoneNumber = registerRequest.phoneNumber,
+                    Pesel = registerRequest.pesel,
+                    Id = guid
+                });
 
-            int entries = _dbContext.SaveChanges();
+                int entries = _dbContext.SaveChanges();
 
-            return entries > 0;
+                return entries > 0;
+            }
+           
         }
 
         public bool EditPatient(EditPatientRequest patientToEdit, out bool patientFound)
@@ -627,7 +653,7 @@ namespace VaccinationSystemApi.Repositories
 
         public bool RemovePatient(Guid patientId)
         {
-            var appointmentsFromDb = _dbContext.Appointments.Include(a=>a.Patient_).Include(a => a.TimeSlot_).Where(a => a.Patient_.Id == patientId && a.TimeSlot_.From > DateTime.UtcNow);
+            var appointmentsFromDb = _dbContext.Appointments.Include(a=>a.Patient_).Include(a => a.TimeSlot_).Where(a => a.Patient_.Id == patientId);
             foreach(var appointment in appointmentsFromDb)
             {
                 appointment.Status = AppointmentStatus.Cancelled;
@@ -635,6 +661,10 @@ namespace VaccinationSystemApi.Repositories
             }
 
             Patient patientFromDb = _dbContext.Patients.Where(p => p.Id == patientId).SingleOrDefault();
+
+            if (patientFromDb == null)
+                return false;
+
             patientFromDb.Active = false;
 
             int entitiesModified = _dbContext.SaveChanges();

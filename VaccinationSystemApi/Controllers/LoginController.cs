@@ -44,7 +44,6 @@ namespace VaccinationSystemApi.Controllers
         {
             try
             {
-                // We can utilise the model
                 var existingUser = await _userManager.FindByEmailAsync(registerRequest.mail);
 
                 if (existingUser != null)
