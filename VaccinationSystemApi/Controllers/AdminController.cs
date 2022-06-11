@@ -309,14 +309,24 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("vaccinationCenters/addVaccinationCenter")]
-        public ActionResult AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd)
+        public ActionResult<AddVaccinationCenterResponse> AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd)
         {
             try
             {
                 _vaccinationService.AddVaccinationCenter(centerToAdd);
                 return Ok();
+                AddVaccinationCenterResponse respone = new()
+                {
+                    city = centerToAdd.City,
+                    active = centerToAdd.Active,
+                    name = centerToAdd.Name,
+                    openingHoursDays = centerToAdd.OpeningHoursDays,
+                    street = centerToAdd.Street,
+                    vaccineIds = centerToAdd.VaccineIds
+                };
+                return Ok(respone);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest();
             }
