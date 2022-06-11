@@ -246,13 +246,13 @@ namespace VaccinationSystemApi.Controllers
             }
         }
 
-        [HttpGet("timeSlots/Filter")]
+        [HttpGet("timeSlots/filter")]
         public ActionResult<ICollection<FilterTimeslotsResponse>> FilterTimeslots(string city, string dateFrom, string dateTo, string virus)
         {
             IEnumerable <TimeSlot> timeslotsFromDb;
             try
             {
-                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, DateTime.ParseExact(dateFrom, "dd-MM-yyyy", null), DateTime.ParseExact(dateTo, "dd-MM-yyyy", null), virus);
+                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, DateTime.ParseExact(dateFrom, "dd-MM-yyyy HH:mm", null), DateTime.ParseExact(dateTo, "dd-MM-yyyy HH:mm", null), virus);
                 if (timeslotsFromDb.Count() == 0)
                     return NotFound();
             
