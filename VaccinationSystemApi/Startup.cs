@@ -26,6 +26,7 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Net.Http.Headers;
+using VaccinationSystemApi.Services;
 
 namespace VaccinationSystemApi
 {
@@ -124,6 +125,9 @@ namespace VaccinationSystemApi
                                       builder.WithExposedHeaders(HeaderNames.Authorization);
                                   });
             });
+
+            services.Configure<MailConfig>(Configuration.GetSection("MailConfig"));
+            services.AddSingleton<MailService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

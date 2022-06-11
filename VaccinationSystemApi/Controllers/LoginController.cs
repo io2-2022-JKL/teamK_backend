@@ -68,6 +68,7 @@ namespace VaccinationSystemApi.Controllers
                 }
                 else
                 {
+                    await _userManager.DeleteAsync(existingUser);
                     return BadRequest("Unrecognised data format");
                 }
             }

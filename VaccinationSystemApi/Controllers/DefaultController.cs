@@ -6,6 +6,7 @@ using VaccinationSystemApi.Models;
 using VaccinationSystemApi.Repositories.Interfaces;
 using VaccinationSystemApi.Dtos.Default;
 using VaccinationSystemApi.Services;
+using System.Threading.Tasks;
 
 namespace VaccinationSystemApi.Controllers
 {
@@ -13,7 +14,12 @@ namespace VaccinationSystemApi.Controllers
     public class DefaultController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
-        public DefaultController(IVaccinationSystemRepository repo) => _vaccinationService = repo;
+        private readonly MailService _mailService;
+        public DefaultController(IVaccinationSystemRepository repo, MailService mailService)
+        {
+            _vaccinationService = repo;
+            _mailService = mailService;
+        }
 
         [HttpGet("viruses")]
         public ActionResult<IEnumerable<VirusDTO>> GetViruses()
@@ -39,6 +45,13 @@ namespace VaccinationSystemApi.Controllers
                 cityDtos.Add(new CityDTO() { City = name });
             }
             return Ok(cityDtos);
+        }
+
+        [HttpGet("send")]
+        public async Task<ActionResult> SendMail()
+        {
+            _mailService.Send("drabarekpaw@gmail.com", "ŁAŁŁŁć", "ŁAŁŁŁć");
+            return Ok();
         }
     }
 }
