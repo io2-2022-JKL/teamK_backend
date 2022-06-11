@@ -273,15 +273,15 @@ namespace VaccinationSystemApi.Controllers
                 foreach (var vc in vaccinationCenters)
                 {
                     List<VaccineAdminDTO> vaccineDtos = new List<VaccineAdminDTO>();
-
-                    foreach (var vaccine in vc.AvailableVaccines)
+                    var vaccinesFromDb = _vaccinationService.GetVaccinesInCenter(vc.Id);
+                    foreach (var vaccine in vaccinesFromDb)
                     {
                         var vaccineDto = new VaccineAdminDTO()
                         {
                             CompanyName = vaccine.Company,
                             Id = vaccine.Id,
                             Name = vaccine.Name,
-                            Virus = vaccine.Virus_.Name,
+                            Virus = _vaccinationService.GetVaccineVirus(vaccine.Id).Name,
                         };
                         vaccineDtos.Add(vaccineDto);
                     }

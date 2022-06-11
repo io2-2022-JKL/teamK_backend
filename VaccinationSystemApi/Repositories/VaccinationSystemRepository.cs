@@ -894,6 +894,23 @@ namespace VaccinationSystemApi.Repositories
                 throw new NoChangesInDatabaseException();
         }
 
+        public IEnumerable<Vaccine> GetVaccinesInCenter(Guid centerId)
+        {
+            List<Vaccine> vaccinesFromDb = new List<Vaccine>();
+            var vaccineIdsFromDb = _dbContext.VaccinesToCenters.Include(v => v.Vaccine_).Where(vtc => vtc.VaccinationCenter_.Id == centerId).ToList();
+            foreach (var rec in vaccineIdsFromDb)
+            {
+                vaccinesFromDb.Add(rec.Vaccine_);
+            }
+            return vaccinesFromDb;
+        }
+
+        public Virus GetVaccineVirus(Guid vaccineId)
+        {
+            var vaccineFromDb = _dbContext.Vaccines.Include(v => v.Virus_).Where(v => v.Id == vaccineId).SingleOrDefault();
+            return vaccineFromDb.Virus_;
+        }
+
         public IEnumerable<Vaccine> GetExtendedVaccines()
         {
             var vaccinesFromDb = _dbContext.Vaccines.Include(v => v.Virus_).ToList();
