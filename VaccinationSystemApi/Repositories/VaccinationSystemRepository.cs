@@ -557,21 +557,47 @@ namespace VaccinationSystemApi.Repositories
             if (guid == default(Guid))
                 guid = Guid.NewGuid();
 
-           var result = _dbContext.Patients.Add(new Patient()
+            Patient existingPatient = _dbContext.Patients.Where(p => p.EMail == registerRequest.mail).FirstOrDefault();
+            if (existingPatient != null)
             {
-                Active = true,
-                DateOfBirth = DateTime.ParseExact(registerRequest.dateOfBirth, "dd-MM-yyyy", null),
-                EMail = registerRequest.mail,
-                FirstName = registerRequest.firstName,
-                LastName = registerRequest.lastName,
-                PhoneNumber = registerRequest.phoneNumber,
-                Pesel = registerRequest.PESEL,
-                Id = guid
-           });
+                if (existingPatient.Active)
+                {
+                    return false;
+                }
 
-            int entries = _dbContext.SaveChanges();
+                EditPatient(new EditPatientRequest()
+                {
+                    Active = true,
+                    DateOfBirth = registerRequest.dateOfBirth,
+                    FirstName = registerRequest.firstName,
+                    LastName = registerRequest.lastName,
+                    Mail = registerRequest.mail,
+                    Id = existingPatient.Id.ToString(),
+                    PESEL = registerRequest.PESEL,
+                    PhoneNumber = registerRequest.phoneNumber
+                },
+                out bool found);
+                return true;
+            }
+            else
+            {
+                var result = _dbContext.Patients.Add(new Patient()
+                {
+                    Active = true,
+                    DateOfBirth = DateTime.ParseExact(registerRequest.dateOfBirth, "dd-MM-yyyy", null),
+                    EMail = registerRequest.mail,
+                    FirstName = registerRequest.firstName,
+                    LastName = registerRequest.lastName,
+                    PhoneNumber = registerRequest.phoneNumber,
+                    Pesel = registerRequest.PESEL,
+                    Id = guid
+                });
 
-            return entries > 0;
+                int entries = _dbContext.SaveChanges();
+
+                return entries > 0;
+            }
+
         }
 
         public bool EditPatient(EditPatientRequest patientToEdit, out bool patientFound)
@@ -582,7 +608,7 @@ namespace VaccinationSystemApi.Repositories
                 Patient updatedPatient = new Patient()
                 {
                     Active = patientToEdit.Active,
-                    DateOfBirth = DateTime.ParseExact(patientToEdit.DateOfBirth, "dd-MM-yyyy", null), 
+                    DateOfBirth = DateTime.ParseExact(patientToEdit.DateOfBirth, "dd-MM-yyyy", null),
                     EMail = patientToEdit.Mail,
                     FirstName = patientToEdit.FirstName,
                     LastName = patientToEdit.LastName,
