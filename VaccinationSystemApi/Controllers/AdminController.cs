@@ -122,7 +122,7 @@ namespace VaccinationSystemApi.Controllers
                         FirstName = doctor.FirstName,
                         LastName = doctor.LastName,
                         Active = doctor.Active,
-                        DateOfBirth = doctor.DateOfBirth,
+                        DateOfBirth = doctor.DateOfBirth.ToString("dd-MM-yyyy"),
                         Mail = doctor.EMail,
                         PESEL = doctor.Pesel,
                         PhoneNumber = doctor.PhoneNumber,
