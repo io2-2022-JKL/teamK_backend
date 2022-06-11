@@ -976,9 +976,8 @@ namespace VaccinationSystemApi.Repositories
 
         public void DeleteVaccine(Guid vaccineId)
         {
-            Vaccine idHolder = new Vaccine() { Id = vaccineId };
-            _dbContext.Entry(idHolder).State = EntityState.Deleted;
-
+            var vaccineFromDb = _dbContext.Vaccines.Where(v => v.Id == vaccineId).SingleOrDefault();
+            vaccineFromDb.IsStillBeingUsed = false;
             int entitiesChanged = _dbContext.SaveChanges();
 
             if (entitiesChanged == 0)
