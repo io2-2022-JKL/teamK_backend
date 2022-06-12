@@ -4,9 +4,9 @@ namespace VaccinationSystemApi.Dtos.Admin
 {
     public class VaccineAdminDTO
     {
-        public Guid Id{ get; set; }
-        public string Name { get; set; }
-        public string CompanyName { get; set; }
-        public string Virus { get; set; }
+        public Guid id{ get; set; }
+        public string name { get; set; }
+        public string companyName { get; set; }
+        public string virus { get; set; }
     }
 }

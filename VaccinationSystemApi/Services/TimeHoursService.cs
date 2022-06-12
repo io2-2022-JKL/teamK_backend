@@ -43,8 +43,8 @@ namespace VaccinationSystemApi.Services
             {
                 var adminDto = new OpeningHoursAdminDTO()
                 {
-                    From = dto.From,
-                    To = dto.To,
+                    from = dto.From,
+                    to = dto.To,
                 };
 
                 adminDtos.Add(adminDto);
@@ -105,20 +105,20 @@ namespace VaccinationSystemApi.Services
 
             var openingHours = new OpeningHours();
             openingHours.Id = Guid.NewGuid();
-            openingHours.MondayOpen = TimeHoursFromHourString(hoursDtos[0].From);
-            openingHours.MondayClose = TimeHoursFromHourString(hoursDtos[0].To);
-            openingHours.TuesdayOpen = TimeHoursFromHourString(hoursDtos[1].From);
-            openingHours.TuesdayClose = TimeHoursFromHourString(hoursDtos[1].To);
-            openingHours.WednesdayOpen = TimeHoursFromHourString(hoursDtos[2].From);
-            openingHours.WednesdayClose = TimeHoursFromHourString(hoursDtos[2].To);
-            openingHours.ThursdayOpen = TimeHoursFromHourString(hoursDtos[3].From);
-            openingHours.ThursdayClose = TimeHoursFromHourString(hoursDtos[3].To);
-            openingHours.FridayOpen = TimeHoursFromHourString(hoursDtos[4].From);
-            openingHours.FridayClose = TimeHoursFromHourString(hoursDtos[4].To);
-            openingHours.SaturdayOpen = TimeHoursFromHourString(hoursDtos[5].From);
-            openingHours.SaturdayClose = TimeHoursFromHourString(hoursDtos[5].To);
-            openingHours.SundayOpen = TimeHoursFromHourString(hoursDtos[6].From);
-            openingHours.SundayClose = TimeHoursFromHourString(hoursDtos[6].To);
+            openingHours.MondayOpen = TimeHoursFromHourString(hoursDtos[0].from);
+            openingHours.MondayClose = TimeHoursFromHourString(hoursDtos[0].to);
+            openingHours.TuesdayOpen = TimeHoursFromHourString(hoursDtos[1].from);
+            openingHours.TuesdayClose = TimeHoursFromHourString(hoursDtos[1].to);
+            openingHours.WednesdayOpen = TimeHoursFromHourString(hoursDtos[2].from);
+            openingHours.WednesdayClose = TimeHoursFromHourString(hoursDtos[2].to);
+            openingHours.ThursdayOpen = TimeHoursFromHourString(hoursDtos[3].from);
+            openingHours.ThursdayClose = TimeHoursFromHourString(hoursDtos[3].to);
+            openingHours.FridayOpen = TimeHoursFromHourString(hoursDtos[4].from);
+            openingHours.FridayClose = TimeHoursFromHourString(hoursDtos[4].to);
+            openingHours.SaturdayOpen = TimeHoursFromHourString(hoursDtos[5].from);
+            openingHours.SaturdayClose = TimeHoursFromHourString(hoursDtos[5].to);
+            openingHours.SundayOpen = TimeHoursFromHourString(hoursDtos[6].from);
+            openingHours.SundayClose = TimeHoursFromHourString(hoursDtos[6].to);
 
             return openingHours;
         }
