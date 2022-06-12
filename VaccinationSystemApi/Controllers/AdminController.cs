@@ -16,7 +16,7 @@ namespace VaccinationSystemApi.Controllers
 {
     [ApiController]
     [Route("admin")]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
@@ -273,15 +273,15 @@ namespace VaccinationSystemApi.Controllers
                 foreach (var vc in vaccinationCenters)
                 {
                     List<VaccineAdminDTO> vaccineDtos = new List<VaccineAdminDTO>();
-
-                    foreach (var vaccine in vc.AvailableVaccines)
+                    var vaccinesFromDb = _vaccinationService.GetVaccinesInCenter(vc.Id);
+                    foreach (var vaccine in vaccinesFromDb)
                     {
                         var vaccineDto = new VaccineAdminDTO()
                         {
                             companyName = vaccine.Company,
                             id = vaccine.Id,
                             name = vaccine.Name,
-                            virus = vaccine.Virus_.Name,
+                            virus = _vaccinationService.GetVaccineVirus(vaccine.Id).Name,
                         };
                         vaccineDtos.Add(vaccineDto);
                     }
@@ -309,14 +309,24 @@ namespace VaccinationSystemApi.Controllers
         }
 
         [HttpPost("vaccinationCenters/addVaccinationCenter")]
-        public ActionResult AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd)
+        public ActionResult<AddVaccinationCenterResponse> AddVaccinationCenter(AddVaccinationCenterRequest centerToAdd)
         {
             try
             {
                 _vaccinationService.AddVaccinationCenter(centerToAdd);
                 return Ok();
+                AddVaccinationCenterResponse respone = new()
+                {
+                    city = centerToAdd.city,
+                    active = centerToAdd.active,
+                    name = centerToAdd.name,
+                    openingHoursDays = centerToAdd.openingHoursDays,
+                    street = centerToAdd.street,
+                    vaccineIds = centerToAdd.vaccineIds
+                };
+                return Ok(respone);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest();
             }

@@ -82,37 +82,27 @@ namespace VaccinationSystemApi.Controllers
         [HttpGet("certificates/{patientId}")]
         public ActionResult<IEnumerable<BrowseCertificateResponse>> GetPatientCertificates(Guid patientId)
         {
-            try
-            {
                 var patientFromDb = _vaccinationService.GetPatient(patientId);
                 if (patientFromDb is null)
                     return BadRequest();
 
                 var cert = _vaccinationService.GetPatientCertificates(patientId);
 
-                if (cert is null)
+                if (cert.Count() == 0)
                     return NotFound();
 
-                var appointmentsFromDb = _vaccinationService.GetLastAppointments(patientId);
-                var lastAppointment = appointmentsFromDb.ElementAt(0);
                 List<BrowseCertificateResponse> response = new List<BrowseCertificateResponse>();
                 foreach(var c in cert)
                 {
                     response.Add(new()
                     {
                         url = c.Url,
-                        vaccineCompany = lastAppointment.Vaccine_.Company,
-                        vaccineName = lastAppointment.Vaccine_.Name,
-                        virusType = lastAppointment.Vaccine_.Virus_.Name
+                        vaccineCompany = c.Vaccine_.Company,
+                        vaccineName = c.Vaccine_.Name,
+                        virusType = c.Vaccine_.Virus_.Name
                     });
                 }
-
                 return Ok(response);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
         }
 
        /* [HttpGet("timeSlots/{id}")]

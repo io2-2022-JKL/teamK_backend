@@ -90,7 +90,7 @@ namespace VaccinationSystemApi.Repositories
         {
             var patientFromDb = this.GetPatient(patientId);
 
-            return _dbContext.Certificates.Where(c => c.Owner == patientFromDb);
+            return _dbContext.Certificates.Include(c => c.Vaccine_).ThenInclude(v => v.Virus_).Where(c => c.Owner == patientFromDb).ToList();
         }
         public void ReserveTimeSlot(Guid id)
         {
@@ -886,12 +886,29 @@ namespace VaccinationSystemApi.Repositories
 
         public void DeleteVaccinationCenter(Guid centerId)
         {
-            var vaccinationCenter = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerId).Include(vc => vc.AvailableVaccines).Include(vc => vc.OpeningHours_).SingleOrDefault();
-            _dbContext.Remove(vaccinationCenter);
+            var vaccinationCenter = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerId).SingleOrDefault();
+            vaccinationCenter.Active = false;
             int entitiesChanged = _dbContext.SaveChanges();
 
             if (entitiesChanged <= 0)
                 throw new NoChangesInDatabaseException();
+        }
+
+        public IEnumerable<Vaccine> GetVaccinesInCenter(Guid centerId)
+        {
+            List<Vaccine> vaccinesFromDb = new List<Vaccine>();
+            var vaccineIdsFromDb = _dbContext.VaccinesToCenters.Include(v => v.Vaccine_).Where(vtc => vtc.VaccinationCenter_.Id == centerId).ToList();
+            foreach (var rec in vaccineIdsFromDb)
+            {
+                vaccinesFromDb.Add(rec.Vaccine_);
+            }
+            return vaccinesFromDb;
+        }
+
+        public Virus GetVaccineVirus(Guid vaccineId)
+        {
+            var vaccineFromDb = _dbContext.Vaccines.Include(v => v.Virus_).Where(v => v.Id == vaccineId).SingleOrDefault();
+            return vaccineFromDb.Virus_;
         }
 
         public IEnumerable<Vaccine> GetExtendedVaccines()
@@ -959,9 +976,8 @@ namespace VaccinationSystemApi.Repositories
 
         public void DeleteVaccine(Guid vaccineId)
         {
-            Vaccine idHolder = new Vaccine() { Id = vaccineId };
-            _dbContext.Entry(idHolder).State = EntityState.Deleted;
-
+            var vaccineFromDb = _dbContext.Vaccines.Where(v => v.Id == vaccineId).SingleOrDefault();
+            vaccineFromDb.IsStillBeingUsed = false;
             int entitiesChanged = _dbContext.SaveChanges();
 
             if (entitiesChanged == 0)
