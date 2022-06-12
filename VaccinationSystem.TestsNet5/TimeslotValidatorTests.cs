@@ -40,6 +40,6 @@ namespace VaccinationSystem.TestsNet5
             else
                 Assert.Null(exception);
         }
-            
+
     }
 }
