@@ -82,15 +82,13 @@ namespace VaccinationSystemApi.Controllers
         [HttpGet("certificates/{patientId}")]
         public ActionResult<IEnumerable<BrowseCertificateResponse>> GetPatientCertificates(Guid patientId)
         {
-            try
-            {
                 var patientFromDb = _vaccinationService.GetPatient(patientId);
                 if (patientFromDb is null)
                     return BadRequest();
 
                 var cert = _vaccinationService.GetPatientCertificates(patientId);
 
-                if (cert is null)
+                if (cert.Count() == 0)
                     return NotFound();
 
                 List<BrowseCertificateResponse> response = new List<BrowseCertificateResponse>();
@@ -104,13 +102,7 @@ namespace VaccinationSystemApi.Controllers
                         VirusType = c.Vaccine_.Virus_.Name
                     });
                 }
-
                 return Ok(response);
-            }
-            catch (Exception)
-            {
-                return BadRequest();
-            }
         }
 
        /* [HttpGet("timeSlots/{id}")]
