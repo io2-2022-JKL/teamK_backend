@@ -12,7 +12,7 @@ namespace VaccinationSystemApi.Dtos.Admin
         public string dateOfBirth { get; set; }
         public string phoneNumber { get; set; }
         public bool active { get; set; }
-        public Guid vaccinationCenterID { get; set; }
+        public Guid vaccinationCenterId { get; set; }
         public string name { get; set; }
         public string city { get; set; }
         public string street { get; set; }

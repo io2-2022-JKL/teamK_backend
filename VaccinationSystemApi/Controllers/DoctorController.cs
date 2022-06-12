@@ -41,11 +41,11 @@ namespace VaccinationSystemApi.Controllers
 
                 GetDoctorInfoResponse response = new()
                 {
-                    PatientAccountId = doctorFromDb.PatientAccountId.ToString(),
-                    VaccinationCenterId = doctorFromDb.VaccinationCenterId.ToString(),
-                    VaccinationCenterName = centerFromDb.Name,
-                    VaccinationCenterStreet = centerFromDb.Address,
-                    VaccinationCenterCity = centerFromDb.City,
+                    patientAccountId = doctorFromDb.PatientAccountId.ToString(),
+                    vaccinationCenterId = doctorFromDb.VaccinationCenterId.ToString(),
+                    vaccinationCenterName = centerFromDb.Name,
+                    vaccinationCenterStreet = centerFromDb.Address,
+                    vaccinationCenterCity = centerFromDb.City,
                 };
 
                 return Ok(response);
@@ -102,19 +102,19 @@ namespace VaccinationSystemApi.Controllers
 
                         response.Add(new GetFormerAppointmentsResponse()
                         {
-                            PatientFirstName = appointment.Patient_.FirstName,
-                            PatientLastName = appointment.Patient_.LastName,
-                            AppointmentId = appointment.Id.ToString(),
-                            BatchNumber = appointment.VaccineBatchNumber,
-                            CertifyState = "",
-                            From = appointment.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
-                            To = appointment.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
-                            Pesel = appointment.Patient_.Pesel,
-                            State = appointment.Status.ToString(),
-                            VaccineCompany = appointment.Vaccine_.Company,
-                            VaccineDose = appointment.WhichDose,
-                            VaccineName = appointment.Vaccine_.Name,
-                            VaccineVirus = appointment.Vaccine_.Virus_.Name,
+                            patientFirstName = appointment.Patient_.FirstName,
+                            patientLastName = appointment.Patient_.LastName,
+                            appointmentId = appointment.Id.ToString(),
+                            batchNumber = appointment.VaccineBatchNumber,
+                            certifyState = "",
+                            from = appointment.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
+                            to = appointment.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
+                            PESEL = appointment.Patient_.Pesel,
+                            state = appointment.Status.ToString(),
+                            vaccineCompany = appointment.Vaccine_.Company,
+                            vaccineDose = appointment.WhichDose,
+                            vaccineName = appointment.Vaccine_.Name,
+                            vaccineVirus = appointment.Vaccine_.Virus_.Name,
                         });
 
                     }
@@ -193,7 +193,7 @@ namespace VaccinationSystemApi.Controllers
                             numberOfDoses = appointment.Vaccine_.NumberOfDoses,
                             patientFirstName = appointment.Patient_.FirstName,
                             patientLastName = appointment.Patient_.LastName,
-                            pesel = appointment.Patient_.Pesel,
+                            PESEL = appointment.Patient_.Pesel,
                             to = slotFromDb.To.ToString(),
                             vaccineCompany = appointment.Vaccine_.Company,
                             vaccineName = appointment.Vaccine_.Name,
@@ -295,8 +295,8 @@ namespace VaccinationSystemApi.Controllers
                 if (_vaccinationService.GetDoctorByTimeSlot(timeSlotId).Id == doctorId)
                 {
                     _vaccinationService.ModifyTimeSlot(timeSlotId,
-                        DateTime.ParseExact(request.TimeFrom, "dd-MM-yyyy HH:mm", null),
-                        DateTime.ParseExact(request.TimeTo, "dd-MM-yyyy HH:mm", null));
+                        DateTime.ParseExact(request.timeFrom, "dd-MM-yyyy HH:mm", null),
+                        DateTime.ParseExact(request.timeTo, "dd-MM-yyyy HH:mm", null));
 
                     return Ok();
                 }

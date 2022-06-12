@@ -17,7 +17,7 @@ namespace VaccinationSystemApi.Dtos.Doctors
         public int maxPatientAge { get; init; }
         public string patientFirstName { get; init; }
         public string patientLastName { get; init; }
-        public string pesel { get; init; }
+        public string PESEL { get; init; }
         public string dateOfBirth { get; init; }
         public string from { get; init; }
         public string to { get; init; }

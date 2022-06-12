@@ -123,7 +123,7 @@ namespace VaccinationSystemApi.Controllers
                         mail = doctor.EMail,
                         PESEL = doctor.Pesel,
                         phoneNumber = doctor.PhoneNumber,
-                        vaccinationCenterID = doctor.VaccinationCenterId,
+                        vaccinationCenterId = doctor.VaccinationCenterId,
                         city = doctor.VaccinationCenter_.City,
                         name = doctor.VaccinationCenter_.Name,
                         street = doctor.VaccinationCenter_.Address,

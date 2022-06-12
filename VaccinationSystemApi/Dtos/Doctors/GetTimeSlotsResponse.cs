@@ -7,9 +7,9 @@ namespace VaccinationSystemApi.Dtos.Doctors
 {
     public record GetTimeSlotsResponse
     {
-        public string Id { get; init; }
-        public string From { get; init; }
-        public string To { get; init; }
-        public bool IsFree { get; init; }
+        public string id { get; init; }
+        public string from { get; init; }
+        public string to { get; init; }
+        public bool isFree { get; init; }
     }
 }

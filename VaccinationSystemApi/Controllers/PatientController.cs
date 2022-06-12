@@ -100,10 +100,10 @@ namespace VaccinationSystemApi.Controllers
                 {
                     response.Add(new()
                     {
-                        Url = c.Url,
-                        VaccineCompany = lastAppointment.Vaccine_.Company,
-                        VaccineName = lastAppointment.Vaccine_.Name,
-                        VirusType = lastAppointment.Vaccine_.Virus_.Name
+                        url = c.Url,
+                        vaccineCompany = lastAppointment.Vaccine_.Company,
+                        vaccineName = lastAppointment.Vaccine_.Name,
+                        virusType = lastAppointment.Vaccine_.Virus_.Name
                     });
                 }
 
@@ -188,18 +188,18 @@ namespace VaccinationSystemApi.Controllers
                 {
                     var appointmentDTO = new AppointmentResponse()
                     {
-                        AppointmentId = app.Id.ToString(),
-                        DoctorFirstName = app.TimeSlot_.AssignedDoctor.FirstName,
-                        DoctorLastName = app.TimeSlot_.AssignedDoctor.LastName,
-                        VaccinationCenterCity = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.City,
-                        VaccinationCenterName = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Name,
-                        VaccinationCenterStreet = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Address,
-                        VaccineCompany = app.Vaccine_.Company,
-                        VaccineName = app.Vaccine_.Name,
-                        VaccineVirus = app.Vaccine_.Virus_.Name,
-                        WhichVaccineDose = app.WhichDose,
-                        WindowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
-                        WindowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
+                        appointmentId = app.Id.ToString(),
+                        doctorFirstName = app.TimeSlot_.AssignedDoctor.FirstName,
+                        doctorLastName = app.TimeSlot_.AssignedDoctor.LastName,
+                        vaccinationCenterCity = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.City,
+                        vaccinationCenterName = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Name,
+                        vaccinationCenterStreet = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Address,
+                        vaccineCompany = app.Vaccine_.Company,
+                        vaccineName = app.Vaccine_.Name,
+                        vaccineVirus = app.Vaccine_.Virus_.Name,
+                        whichVaccineDose = app.WhichDose,
+                        windowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
+                        windowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
                     };
                     appointmentResponses.Add(appointmentDTO);
                 }
@@ -223,18 +223,18 @@ namespace VaccinationSystemApi.Controllers
                 {
                     var appointmentDTO = new AppointmentResponse()
                     {
-                        AppointmentId = app.Id.ToString(),
-                        DoctorFirstName = app.TimeSlot_.AssignedDoctor.FirstName,
-                        DoctorLastName = app.TimeSlot_.AssignedDoctor.LastName,
-                        VaccinationCenterCity = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.City,
-                        VaccinationCenterName = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Name,
-                        VaccinationCenterStreet = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Address,
-                        VaccineCompany = app.Vaccine_.Company,
-                        VaccineName = app.Vaccine_.Name,
-                        VaccineVirus = app.Vaccine_.Virus_.Name,
-                        WhichVaccineDose = app.WhichDose,
-                        WindowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
-                        WindowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
+                        appointmentId = app.Id.ToString(),
+                        doctorFirstName = app.TimeSlot_.AssignedDoctor.FirstName,
+                        doctorLastName = app.TimeSlot_.AssignedDoctor.LastName,
+                        vaccinationCenterCity = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.City,
+                        vaccinationCenterName = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Name,
+                        vaccinationCenterStreet = app.TimeSlot_.AssignedDoctor.VaccinationCenter_.Address,
+                        vaccineCompany = app.Vaccine_.Company,
+                        vaccineName = app.Vaccine_.Name,
+                        vaccineVirus = app.Vaccine_.Virus_.Name,
+                        whichVaccineDose = app.WhichDose,
+                        windowBegin = app.TimeSlot_.From.ToString("dd-MM-yyyy HH:mm"),
+                        windowEnd = app.TimeSlot_.To.ToString("dd-MM-yyyy HH:mm"),
                     };
                     appointmentResponses.Add(appointmentDTO);
                 }
@@ -270,16 +270,16 @@ namespace VaccinationSystemApi.Controllers
 
                 var filterTimeslotResponse = new FilterTimeslotsResponse()
                 {
-                    AvailableVaccines = VaccineCollectionToDTO(t.AssignedDoctor.VaccinationCenter_.AvailableVaccines),
-                    DoctorFirstName = t.AssignedDoctor.FirstName,
-                    DoctorLastName = t.AssignedDoctor.LastName,
-                    From = t.From.ToString("dd-MM-yyyy HH:mm"),
-                    To = t.To.ToString("dd-MM-yyyy HH:mm"),
+                    availableVaccines = VaccineCollectionToDTO(t.AssignedDoctor.VaccinationCenter_.AvailableVaccines),
+                    doctorFirstName = t.AssignedDoctor.FirstName,
+                    doctorLastName = t.AssignedDoctor.LastName,
+                    from = t.From.ToString("dd-MM-yyyy HH:mm"),
+                    to = t.To.ToString("dd-MM-yyyy HH:mm"),
                     openingHours = _timeHoursService.OpeningHoursToDTO(t.AssignedDoctor.VaccinationCenter_.OpeningHours_),
-                    TimeSlotId = t.Id.ToString(),
-                    VaccinationCenterCity = t.AssignedDoctor.VaccinationCenter_.City,
-                    VaccinationCenterName = t.AssignedDoctor.VaccinationCenter_.Name,
-                    VaccinationCenterStreet = t.AssignedDoctor.VaccinationCenter_.Address,
+                    timeSlotId = t.Id.ToString(),
+                    vaccinationCenterCity = t.AssignedDoctor.VaccinationCenter_.City,
+                    vaccinationCenterName = t.AssignedDoctor.VaccinationCenter_.Name,
+                    vaccinationCenterStreet = t.AssignedDoctor.VaccinationCenter_.Address,
                 };
                 responses.Add(filterTimeslotResponse);
             }
@@ -300,15 +300,15 @@ namespace VaccinationSystemApi.Controllers
         {
             return new VaccineDTO()
             {
-                Company = vaccine.Company,
-                MaxDaysBetweenDoses = vaccine.MaxDaysBetweenDoses,
-                MaxPatientAge = vaccine.MaxPatientAge,
-                MinDaysBetweenDoses = vaccine.MinDaysBetweenDoses,
-                MinPatientAge = vaccine.MinPatientAge,
-                Name = vaccine.Name,
-                NumberOfDoses = vaccine.NumberOfDoses,
-                VaccineId = vaccine.Id.ToString(),
-                Virus = vaccine.Virus_.Name
+                company = vaccine.Company,
+                maxDaysBetweenDoses = vaccine.MaxDaysBetweenDoses,
+                maxPatientAge = vaccine.MaxPatientAge,
+                minDaysBetweenDoses = vaccine.MinDaysBetweenDoses,
+                minPatientAge = vaccine.MinPatientAge,
+                name = vaccine.Name,
+                numberOfDoses = vaccine.NumberOfDoses,
+                vaccineId = vaccine.Id.ToString(),
+                virus = vaccine.Virus_.Name
             };
         }
 
