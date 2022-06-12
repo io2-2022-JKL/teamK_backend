@@ -16,7 +16,7 @@ namespace VaccinationSystemApi.Controllers
 {
     [ApiController]
     [Route("admin")]
-    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
@@ -123,7 +123,7 @@ namespace VaccinationSystemApi.Controllers
                         Mail = doctor.EMail,
                         PESEL = doctor.Pesel,
                         PhoneNumber = doctor.PhoneNumber,
-                        VaccinationCenterID = doctor.VaccinationCenterId,
+                        VaccinationCenterId = doctor.VaccinationCenterId,
                         City = doctor.VaccinationCenter_.City,
                         Name = doctor.VaccinationCenter_.Name,
                         Street = doctor.VaccinationCenter_.Address,
