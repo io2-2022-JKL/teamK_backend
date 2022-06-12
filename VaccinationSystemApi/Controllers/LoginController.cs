@@ -45,13 +45,28 @@ namespace VaccinationSystemApi.Controllers
             try
             {
                 var existingUser = await _userManager.FindByEmailAsync(registerRequest.mail);
+                var existingUserFromPatientsTable = _vaccinationService.GetPatientByEmail(registerRequest.mail);
 
                 if (existingUser != null)
                 {
                     return BadRequest("Unrecognised data format");
                 }
 
-                var newUser = new IdentityUser() { Email = registerRequest.mail, UserName = registerRequest.PESEL };
+                string id = null;
+                if(existingUserFromPatientsTable != null)
+                {
+                    if (existingUserFromPatientsTable.Active == true)
+                        return BadRequest("User already exists");
+
+                    id = existingUserFromPatientsTable.Id.ToString();
+                }
+
+                var newUser = new IdentityUser() { 
+                    Email = registerRequest.mail,
+                    UserName = registerRequest.PESEL,
+                    Id = id is null? Guid.NewGuid().ToString() : id
+                };
+
                 var isCreated = await _userManager.CreateAsync(newUser, registerRequest.password);
                 var isCreatedInPatientTable = _vaccinationService.CreatePatient(registerRequest, Guid.Parse(newUser.Id));
 
