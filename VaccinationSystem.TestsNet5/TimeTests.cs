@@ -49,32 +49,32 @@ namespace VaccinationSystem.TestsNet5
             List<OpeningHoursDTO> result = timeHoursService.OpeningHoursToDTO(timeHours).ToList();
             List<OpeningHoursDTO> should = new List<OpeningHoursDTO>(){
             new OpeningHoursDTO() {
-                From = "03:32",
-                To = "18:21"
+                from = "03:32",
+                to = "18:21"
             },
             new OpeningHoursDTO() {
-                From = "05:22",
-                To = "19:07"
+                from = "05:22",
+                to = "19:07"
             },
             new OpeningHoursDTO() {
-                From = "04:08",
-                To = "21:59"
+                from = "04:08",
+                to = "21:59"
             },
             new OpeningHoursDTO() {
-                From = "04:09",
-                To = "21:33"
+                from = "04:09",
+                to = "21:33"
             },
             new OpeningHoursDTO() {
-                From = "15:15",
-                To = "15:30"
+                from = "15:15",
+                to = "15:30"
             },
             new OpeningHoursDTO() {
-                From = "01:00",
-                To = "15:00"
+                from = "01:00",
+                to = "15:00"
             },
             new OpeningHoursDTO() {
-                From = "02:00",
-                To = "22:00"
+                from = "02:00",
+                to = "22:00"
             },
         };
 

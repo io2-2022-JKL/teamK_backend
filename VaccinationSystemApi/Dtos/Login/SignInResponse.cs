@@ -2,7 +2,7 @@
 {
     public class SignInResponse
     {
-        public string UserId { get; set; }
-        public string UserType { get; set; }
+        public string userId { get; set; }
+        public string userType { get; set; }
     }
 }

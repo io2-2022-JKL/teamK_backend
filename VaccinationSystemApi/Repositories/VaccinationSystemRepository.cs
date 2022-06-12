@@ -580,14 +580,14 @@ namespace VaccinationSystemApi.Repositories
                 
                 EditPatient(new EditPatientRequest()
                 {
-                    Active = true,
-                    DateOfBirth = registerRequest.dateOfBirth,
-                    FirstName = registerRequest.firstName,
-                    LastName = registerRequest.lastName,
-                    Mail = registerRequest.mail,
-                    Id = existingPatient.Id.ToString(),
+                    active = true,
+                    dateOfBirth = registerRequest.dateOfBirth,
+                    firstName = registerRequest.firstName,
+                    lastName = registerRequest.lastName,
+                    mail = registerRequest.mail,
+                    id = existingPatient.Id.ToString(),
                     PESEL = registerRequest.PESEL,
-                    PhoneNumber = registerRequest.phoneNumber
+                    phoneNumber = registerRequest.phoneNumber
                 },
                 out bool found);
                 return true;
@@ -614,19 +614,19 @@ namespace VaccinationSystemApi.Repositories
 
         public bool EditPatient(EditPatientRequest patientToEdit, out bool patientFound)
         {
-            var patientFromDb = _dbContext.Patients.Where(p => p.Id == Guid.Parse(patientToEdit.Id)).FirstOrDefault();
+            var patientFromDb = _dbContext.Patients.Where(p => p.Id == Guid.Parse(patientToEdit.id)).FirstOrDefault();
             if (patientFromDb is null)
             {
                 Patient updatedPatient = new Patient()
                 {
-                    Active = patientToEdit.Active,
-                    DateOfBirth = DateTime.ParseExact(patientToEdit.DateOfBirth, "dd-MM-yyyy", null),
-                    EMail = patientToEdit.Mail,
-                    FirstName = patientToEdit.FirstName,
-                    LastName = patientToEdit.LastName,
-                    Id = Guid.Parse(patientToEdit.Id),
+                    Active = patientToEdit.active,
+                    DateOfBirth = DateTime.ParseExact(patientToEdit.dateOfBirth, "dd-MM-yyyy", null),
+                    EMail = patientToEdit.mail,
+                    FirstName = patientToEdit.firstName,
+                    LastName = patientToEdit.lastName,
+                    Id = Guid.Parse(patientToEdit.id),
                     Pesel = patientToEdit.PESEL,
-                    PhoneNumber = patientToEdit.PhoneNumber,
+                    PhoneNumber = patientToEdit.phoneNumber,
                 };
 
                 _dbContext.Patients.Add(updatedPatient);
@@ -638,12 +638,12 @@ namespace VaccinationSystemApi.Repositories
             }
 
             patientFromDb.Pesel = patientToEdit.PESEL;
-            patientFromDb.Active = patientToEdit.Active;
-            patientFromDb.DateOfBirth = DateTime.ParseExact(patientToEdit.DateOfBirth, "dd-MM-yyyy", null);
-            patientFromDb.EMail = patientToEdit.Mail;
-            patientFromDb.LastName = patientToEdit.LastName;
-            patientFromDb.FirstName = patientToEdit.FirstName;
-            patientFromDb.PhoneNumber = patientToEdit.PhoneNumber;
+            patientFromDb.Active = patientToEdit.active;
+            patientFromDb.DateOfBirth = DateTime.ParseExact(patientToEdit.dateOfBirth, "dd-MM-yyyy", null);
+            patientFromDb.EMail = patientToEdit.mail;
+            patientFromDb.LastName = patientToEdit.lastName;
+            patientFromDb.FirstName = patientToEdit.firstName;
+            patientFromDb.PhoneNumber = patientToEdit.phoneNumber;
 
             patientFound = true;
             _dbContext.SaveChanges();
@@ -677,7 +677,7 @@ namespace VaccinationSystemApi.Repositories
 
         public bool EditDoctor(EditDoctorRequest doctorData, out bool doctorFound)
         {
-            var doctorToEdit = _dbContext.Doctors.Where(d => d.Id == doctorData.DoctorId).FirstOrDefault();
+            var doctorToEdit = _dbContext.Doctors.Where(d => d.Id == doctorData.doctorId).FirstOrDefault();
             if (doctorToEdit is null) 
             {
                 doctorFound = false;
@@ -687,13 +687,13 @@ namespace VaccinationSystemApi.Repositories
             doctorFound = true;
 
             doctorToEdit.Pesel = doctorData.PESEL;
-            doctorToEdit.FirstName = doctorData.FirstName;
-            doctorToEdit.LastName = doctorData.LastName;
-            doctorToEdit.EMail = doctorData.Mail;
-            doctorToEdit.DateOfBirth = DateTime.ParseExact(doctorData.DateOfBirth, "dd-MM-yyyy", null);
-            doctorToEdit.PhoneNumber = doctorData.PhoneNumber;
-            doctorToEdit.Active = doctorData.Active;
-            doctorToEdit.VaccinationCenterId = doctorData.VaccinationCenterID;
+            doctorToEdit.FirstName = doctorData.firstName;
+            doctorToEdit.LastName = doctorData.lastName;
+            doctorToEdit.EMail = doctorData.mail;
+            doctorToEdit.DateOfBirth = DateTime.ParseExact(doctorData.dateOfBirth, "dd-MM-yyyy", null);
+            doctorToEdit.PhoneNumber = doctorData.phoneNumber;
+            doctorToEdit.Active = doctorData.active;
+            doctorToEdit.VaccinationCenterId = doctorData.vaccinationCenterId;
 
             int entitiesChanged = _dbContext.SaveChanges();
             return entitiesChanged > 0;
@@ -823,13 +823,13 @@ namespace VaccinationSystemApi.Repositories
         {
             VaccinationCenter vaccinationCenter = new VaccinationCenter();
             vaccinationCenter.Id = Guid.NewGuid();
-            vaccinationCenter.Name = centerToAdd.Name;
-            vaccinationCenter.City = centerToAdd.City;
-            vaccinationCenter.Address = centerToAdd.Street;
-            vaccinationCenter.Active = centerToAdd.Active;
-            vaccinationCenter.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToAdd.OpeningHoursDays as IList<OpeningHoursAdminDTO>);
+            vaccinationCenter.Name = centerToAdd.name;
+            vaccinationCenter.City = centerToAdd.city;
+            vaccinationCenter.Address = centerToAdd.street;
+            vaccinationCenter.Active = centerToAdd.active;
+            vaccinationCenter.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToAdd.openingHoursDays as IList<OpeningHoursAdminDTO>);
 
-            foreach (var id in centerToAdd.VaccineIds)
+            foreach (var id in centerToAdd.vaccineIds)
             {
                 var vaccine = _dbContext.Vaccines.Where(v => v.Id == id).SingleOrDefault();
                 _dbContext.VaccinesToCenters.Add(new()
@@ -856,18 +856,18 @@ namespace VaccinationSystemApi.Repositories
 
         public void EditVaccinationCenter(EditVaccinationCenterAdminRequest centerToEdit)
         {
-            var vaccinationCenterFromTheDatabase = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerToEdit.Id).Include(vc => vc.AvailableVaccines).Include(vc => vc.OpeningHours_).Single();
+            var vaccinationCenterFromTheDatabase = _dbContext.VaccinationCenters.Where(vc => vc.Id == centerToEdit.id).Include(vc => vc.AvailableVaccines).Include(vc => vc.OpeningHours_).Single();
 
-            vaccinationCenterFromTheDatabase.Name = centerToEdit.Name;
-            vaccinationCenterFromTheDatabase.City = centerToEdit.City;
-            vaccinationCenterFromTheDatabase.Address = centerToEdit.Street;
+            vaccinationCenterFromTheDatabase.Name = centerToEdit.name;
+            vaccinationCenterFromTheDatabase.City = centerToEdit.city;
+            vaccinationCenterFromTheDatabase.Address = centerToEdit.street;
 
-            var vaccinesFromDb = this.GetCenterVaccines(centerToEdit.Id);
-            var centerFromDb = this.GetCenter(centerToEdit.Id);
+            var vaccinesFromDb = this.GetCenterVaccines(centerToEdit.id);
+            var centerFromDb = this.GetCenter(centerToEdit.id);
             _dbContext.VaccinesToCenters.RemoveRange(vaccinesFromDb);
 
-            if(centerToEdit.VaccineIds is not null)
-                foreach(var vaccineId in centerToEdit.VaccineIds)
+            if(centerToEdit.vaccineIds is not null)
+                foreach(var vaccineId in centerToEdit.vaccineIds)
                 {
                     _dbContext.VaccinesToCenters.Add(new()
                     {
@@ -878,7 +878,7 @@ namespace VaccinationSystemApi.Repositories
                 }
 
             //vaccinationCenterFromTheDatabase.OpeningHours_ = _timeHoursService.DTOToOpeningHours(centerToEdit.OpeningHoursDays as  IList<OpeningHoursAdminDTO>);
-            vaccinationCenterFromTheDatabase.Active = centerToEdit.Active;
+            vaccinationCenterFromTheDatabase.Active = centerToEdit.active;
 
             //_dbContext.VaccinationCenters.Update(vaccinationCenterFromTheDatabase);
             _dbContext.SaveChanges();
@@ -927,16 +927,16 @@ namespace VaccinationSystemApi.Repositories
             {
                 Vaccine vaccine = new Vaccine()
                 {
-                    Company = vaccineToAdd.Company,
+                    Company = vaccineToAdd.company,
                     Id = Guid.NewGuid(),
-                    IsStillBeingUsed = vaccineToAdd.Active,
-                    MaxDaysBetweenDoses = vaccineToAdd.MaxDaysBetweenDoses,
-                    MinDaysBetweenDoses = vaccineToAdd.MinDaysBetweenDoses,
-                    MaxPatientAge = vaccineToAdd.MaxPatientAge,
-                    MinPatientAge = vaccineToAdd.MinPatientAge,
-                    Name = vaccineToAdd.Name,
-                    NumberOfDoses = vaccineToAdd.NumberOfDoses,
-                    Virus_ = _dbContext.Viruses.Where(v => v.Name == vaccineToAdd.Virus).Single(),
+                    IsStillBeingUsed = vaccineToAdd.active,
+                    MaxDaysBetweenDoses = vaccineToAdd.maxDaysBetweenDoses,
+                    MinDaysBetweenDoses = vaccineToAdd.minDaysBetweenDoses,
+                    MaxPatientAge = vaccineToAdd.maxPatientAge,
+                    MinPatientAge = vaccineToAdd.minPatientAge,
+                    Name = vaccineToAdd.name,
+                    NumberOfDoses = vaccineToAdd.numberOfDoses,
+                    Virus_ = _dbContext.Viruses.Where(v => v.Name == vaccineToAdd.virus).Single(),
                 };
 
                 _dbContext.Add(vaccine);
@@ -955,17 +955,17 @@ namespace VaccinationSystemApi.Repositories
 
         public void EditVaccine(VaccineExtendedDTO updatedVaccine)
         {
-            Vaccine vaccineToEdit = _dbContext.Vaccines.Where(v => v.Id == updatedVaccine.VaccineId).Single();
+            Vaccine vaccineToEdit = _dbContext.Vaccines.Where(v => v.Id == updatedVaccine.vaccineId).Single();
 
-            vaccineToEdit.Name = updatedVaccine.Name;
-            vaccineToEdit.IsStillBeingUsed = updatedVaccine.Active;
-            vaccineToEdit.MaxDaysBetweenDoses = updatedVaccine.MaxDaysBetweenDoses;
-            vaccineToEdit.MinDaysBetweenDoses = updatedVaccine.MinDaysBetweenDoses;
-            vaccineToEdit.MinPatientAge = updatedVaccine.MinPatientAge;
-            vaccineToEdit.MaxPatientAge = updatedVaccine.MaxPatientAge;
-            vaccineToEdit.Virus_ = _dbContext.Viruses.Where(v => v.Name == updatedVaccine.Virus).SingleOrDefault();
-            vaccineToEdit.Company = updatedVaccine.Company;
-            vaccineToEdit.NumberOfDoses = updatedVaccine.NumberOfDoses;
+            vaccineToEdit.Name = updatedVaccine.name;
+            vaccineToEdit.IsStillBeingUsed = updatedVaccine.active;
+            vaccineToEdit.MaxDaysBetweenDoses = updatedVaccine.maxDaysBetweenDoses;
+            vaccineToEdit.MinDaysBetweenDoses = updatedVaccine.minDaysBetweenDoses;
+            vaccineToEdit.MinPatientAge = updatedVaccine.minPatientAge;
+            vaccineToEdit.MaxPatientAge = updatedVaccine.maxPatientAge;
+            vaccineToEdit.Virus_ = _dbContext.Viruses.Where(v => v.Name == updatedVaccine.virus).SingleOrDefault();
+            vaccineToEdit.Company = updatedVaccine.company;
+            vaccineToEdit.NumberOfDoses = updatedVaccine.numberOfDoses;
 
             int entitiesChanged = _dbContext.SaveChanges();
 

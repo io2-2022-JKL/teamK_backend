@@ -2,14 +2,14 @@
 {
     public class AddVaccineRequest
     {
-        public string Company { get; set; }
-        public string Name { get; set; }
-        public int NumberOfDoses { get; set; }
-        public int MinDaysBetweenDoses { get; set; }
-        public int MaxDaysBetweenDoses { get; set; }
-        public string Virus { get; set; }
-        public int MaxPatientAge { get; set; }
-        public int MinPatientAge { get; set; }
-        public bool Active { get; set; }
+        public string company { get; set; }
+        public string name { get; set; }
+        public int numberOfDoses { get; set; }
+        public int minDaysBetweenDoses { get; set; }
+        public int maxDaysBetweenDoses { get; set; }
+        public string virus { get; set; }
+        public int maxPatientAge { get; set; }
+        public int minPatientAge { get; set; }
+        public bool active { get; set; }
     }
 }

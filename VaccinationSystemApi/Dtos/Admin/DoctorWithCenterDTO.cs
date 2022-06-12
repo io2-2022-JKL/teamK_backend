@@ -4,17 +4,17 @@ namespace VaccinationSystemApi.Dtos.Admin
 {
     public class DoctorWithCenterDTO
     {
-        public Guid Id { get; set; }
+        public Guid id { get; set; }
         public string PESEL { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Mail { get; set; }
-        public string DateOfBirth { get; set; }
-        public string PhoneNumber { get; set; }
-        public bool Active { get; set; }
-        public Guid VaccinationCenterId { get; set; }
-        public string Name { get; set; }
-        public string City { get; set; }
-        public string Street { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string mail { get; set; }
+        public string dateOfBirth { get; set; }
+        public string phoneNumber { get; set; }
+        public bool active { get; set; }
+        public Guid vaccinationCenterId { get; set; }
+        public string name { get; set; }
+        public string city { get; set; }
+        public string street { get; set; }
     }
 }

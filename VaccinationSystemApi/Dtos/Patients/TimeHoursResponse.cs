@@ -7,8 +7,8 @@ namespace VaccinationSystemApi.Dtos.Patients
 {
     public record TimeHoursResponse
     {
-        public Guid Id { get; init; }
-        public DateTime From { get; init; }
-        public DateTime To { get; init; }
+        public Guid id { get; init; }
+        public DateTime from { get; init; }
+        public DateTime to { get; init; }
     }
 }
