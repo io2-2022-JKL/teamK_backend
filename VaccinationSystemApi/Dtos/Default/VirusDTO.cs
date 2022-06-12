@@ -2,6 +2,6 @@
 {
     public class VirusDTO
     {
-        public string Virus { get; set; }
+        public string virus { get; set; }
     }
 }
