@@ -317,12 +317,12 @@ namespace VaccinationSystemApi.Controllers
                 return Ok();
                 AddVaccinationCenterResponse respone = new()
                 {
-                    city = centerToAdd.City,
-                    active = centerToAdd.Active,
-                    name = centerToAdd.Name,
-                    openingHoursDays = centerToAdd.OpeningHoursDays,
-                    street = centerToAdd.Street,
-                    vaccineIds = centerToAdd.VaccineIds
+                    city = centerToAdd.city,
+                    active = centerToAdd.active,
+                    name = centerToAdd.name,
+                    openingHoursDays = centerToAdd.openingHoursDays,
+                    street = centerToAdd.street,
+                    vaccineIds = centerToAdd.vaccineIds
                 };
                 return Ok(respone);
             }
