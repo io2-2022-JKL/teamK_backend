@@ -590,6 +590,8 @@ namespace VaccinationSystemApi.Repositories
                     phoneNumber = registerRequest.phoneNumber
                 },
                 out bool found);
+
+                
                 return true;
             }
             else
@@ -984,6 +986,9 @@ namespace VaccinationSystemApi.Repositories
                 throw new NoChangesInDatabaseException();
         }
 
-        
+        public Patient GetPatientByEmail(string email)
+        {
+            return _dbContext.Patients.Where(p => p.EMail == email).FirstOrDefault();
+        }
     }
 }
