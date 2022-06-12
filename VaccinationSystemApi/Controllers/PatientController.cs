@@ -17,7 +17,7 @@ namespace VaccinationSystemApi.Controllers
 
     [ApiController]
     [Route("patient")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Patient")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Patient")]
     public class PatientController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
@@ -242,7 +242,7 @@ namespace VaccinationSystemApi.Controllers
             IEnumerable <TimeSlot> timeslotsFromDb;
             try
             {
-                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, DateTime.ParseExact(dateFrom, "dd-MM-yyyy HH:mm", null), DateTime.ParseExact(dateTo, "dd-MM-yyyy HH:mm", null), virus);
+                timeslotsFromDb = _vaccinationService.FilterTimeslots(city, DateTime.ParseExact(dateFrom, "dd-MM-yyyy", null), DateTime.ParseExact(dateTo, "dd-MM-yyyy", null), virus);
                 if (timeslotsFromDb.Count() == 0)
                     return NotFound();
             
