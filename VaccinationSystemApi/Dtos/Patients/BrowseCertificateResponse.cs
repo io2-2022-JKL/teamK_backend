@@ -7,9 +7,9 @@ namespace VaccinationSystemApi.Dtos.Patients
 {
     public record BrowseCertificateResponse
     {
-        public string Url { get; init; }
-        public string VaccineName { get; init; }
-        public string VaccineCompany { get; init; }
-        public string VirusType { get; init; }
+        public string url { get; init; }
+        public string vaccineName { get; init; }
+        public string vaccineCompany { get; init; }
+        public string virusType { get; init; }
     }
 }

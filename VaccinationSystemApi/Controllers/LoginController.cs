@@ -82,14 +82,14 @@ namespace VaccinationSystemApi.Controllers
         {
             try
             {
-                var existingUser = await _userManager.FindByEmailAsync(signInRequest.Mail);
+                var existingUser = await _userManager.FindByEmailAsync(signInRequest.mail);
 
                 if (existingUser == null)
                 {
                     return BadRequest("Unrecognised data format");
                 }
 
-                var isCorrect = await _userManager.CheckPasswordAsync(existingUser, signInRequest.Password);
+                var isCorrect = await _userManager.CheckPasswordAsync(existingUser, signInRequest.password);
 
                 if (!isCorrect)
                 {
@@ -109,8 +109,8 @@ namespace VaccinationSystemApi.Controllers
                 HttpContext.Response.Headers.Add(HeaderNames.Authorization, jwtToken);
                 return Ok(new SignInResponse()
                 {
-                    UserId = existingUser.Id,
-                    UserType = userType,
+                    userId = existingUser.Id,
+                    userType = userType,
                 });
             }
             catch (Exception ex)

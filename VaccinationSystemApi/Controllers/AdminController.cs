@@ -42,14 +42,14 @@ namespace VaccinationSystemApi.Controllers
                 {
                     patientsDtos.Add(new EditPatientRequest()
                     {
-                        Id = patient.Id.ToString(),
+                        id = patient.Id.ToString(),
                         PESEL = patient.Pesel,
-                        PhoneNumber = patient.PhoneNumber,
-                        Mail = patient.EMail,
-                        FirstName = patient.FirstName,
-                        LastName = patient.LastName,
-                        DateOfBirth = patient.DateOfBirth.ToString("dd-MM-yyyy"),
-                        Active = patient.Active,
+                        phoneNumber = patient.PhoneNumber,
+                        mail = patient.EMail,
+                        firstName = patient.FirstName,
+                        lastName = patient.LastName,
+                        dateOfBirth = patient.DateOfBirth.ToString("dd-MM-yyyy"),
+                        active = patient.Active,
                     });
                 }
 
@@ -69,7 +69,7 @@ namespace VaccinationSystemApi.Controllers
         {
             try
             {
-                var user = await _userManager.FindByIdAsync(patientToEdit.Id);
+                var user = await _userManager.FindByIdAsync(patientToEdit.id);
                 if (user is null)
                 {
                     return NotFound("Patient to edit not found");
@@ -115,18 +115,18 @@ namespace VaccinationSystemApi.Controllers
                 {
                     doctorDtos.Add(new DoctorWithCenterDTO
                     {
-                        Id = doctor.Id,
-                        FirstName = doctor.FirstName,
-                        LastName = doctor.LastName,
-                        Active = doctor.Active,
-                        DateOfBirth = doctor.DateOfBirth.ToString("dd-MM-yyyy"),
-                        Mail = doctor.EMail,
+                        id = doctor.Id,
+                        firstName = doctor.FirstName,
+                        lastName = doctor.LastName,
+                        active = doctor.Active,
+                        dateOfBirth = doctor.DateOfBirth.ToString("dd-MM-yyyy"),
+                        mail = doctor.EMail,
                         PESEL = doctor.Pesel,
-                        PhoneNumber = doctor.PhoneNumber,
-                        VaccinationCenterID = doctor.VaccinationCenterId,
-                        City = doctor.VaccinationCenter_.City,
-                        Name = doctor.VaccinationCenter_.Name,
-                        Street = doctor.VaccinationCenter_.Address,
+                        phoneNumber = doctor.PhoneNumber,
+                        vaccinationCenterId = doctor.VaccinationCenterId,
+                        city = doctor.VaccinationCenter_.City,
+                        name = doctor.VaccinationCenter_.Name,
+                        street = doctor.VaccinationCenter_.Address,
                     });
                 }
                 if (doctorDtos.Count == 0)
@@ -161,7 +161,7 @@ namespace VaccinationSystemApi.Controllers
         {
             try
             {
-                var identityUser = await _userManager.FindByIdAsync(addDoctorDTO.PatientId.ToString());
+                var identityUser = await _userManager.FindByIdAsync(addDoctorDTO.patientId.ToString());
 
                 if (identityUser is null)
                     return BadRequest("");
@@ -170,9 +170,9 @@ namespace VaccinationSystemApi.Controllers
 
                 var doctorToAdd = new Doctor()
                 {
-                    Id = addDoctorDTO.PatientId,
-                    PatientAccountId = addDoctorDTO.PatientId,
-                    VaccinationCenterId = addDoctorDTO.VaccinationCenterId
+                    Id = addDoctorDTO.patientId,
+                    PatientAccountId = addDoctorDTO.patientId,
+                    VaccinationCenterId = addDoctorDTO.vaccinationCenterId
                 };
 
                 bool result = _vaccinationService.AddDoctor(doctorToAdd);
@@ -215,11 +215,11 @@ namespace VaccinationSystemApi.Controllers
                 {
                     var timeslotDto = new TimeslotDTO()
                     {
-                        Active = timeslot.Active,
-                        From = timeslot.From.ToString("dd-MM-yyyy HH:mm"),
-                        To = timeslot.To.ToString("dd-MM-yyyy HH:mm"),
-                        Id = timeslot.Id,
-                        IsFree = timeslot.IsFree,
+                        active = timeslot.Active,
+                        from = timeslot.From.ToString("dd-MM-yyyy HH:mm"),
+                        to = timeslot.To.ToString("dd-MM-yyyy HH:mm"),
+                        id = timeslot.Id,
+                        isFree = timeslot.IsFree,
                     };
 
                     timeslotsDtos.Add(timeslotDto);
@@ -245,7 +245,7 @@ namespace VaccinationSystemApi.Controllers
 
             foreach(var timeslot in timeslotsToDelete)
             {
-                timeslotIds.Add(timeslot.Id);
+                timeslotIds.Add(timeslot.id);
             }
 
             try
@@ -278,10 +278,10 @@ namespace VaccinationSystemApi.Controllers
                     {
                         var vaccineDto = new VaccineAdminDTO()
                         {
-                            CompanyName = vaccine.Company,
-                            Id = vaccine.Id,
-                            Name = vaccine.Name,
-                            Virus = vaccine.Virus_.Name,
+                            companyName = vaccine.Company,
+                            id = vaccine.Id,
+                            name = vaccine.Name,
+                            virus = vaccine.Virus_.Name,
                         };
                         vaccineDtos.Add(vaccineDto);
                     }
@@ -290,13 +290,13 @@ namespace VaccinationSystemApi.Controllers
                     vaccCentersDtos.Add(
                         new VaccinationCenterAdminDTO()
                         {
-                            Active = vc.Active,
-                            City = vc.City,
-                            Id = vc.Id,
-                            Name = vc.Name,
-                            Street = vc.Address,
-                            OpeningHoursDays = _timeHoursService.DTOToAdminDTO(openingHoursDto),
-                            Vaccines = vaccineDtos
+                            active = vc.Active,
+                            city = vc.City,
+                            id = vc.Id,
+                            name = vc.Name,
+                            street = vc.Address,
+                            openingHoursDays = _timeHoursService.DTOToAdminDTO(openingHoursDto),
+                            vaccines = vaccineDtos
                         });
                 }
 
@@ -362,16 +362,16 @@ namespace VaccinationSystemApi.Controllers
                 {
                     vaccinesDto.Add(new VaccineExtendedDTO()
                     {
-                        VaccineId = v.Id,
-                        Active = v.IsStillBeingUsed,
-                        Company = v.Company,
-                        MaxDaysBetweenDoses = v.MaxDaysBetweenDoses,
-                        MaxPatientAge = v.MaxPatientAge,
-                        MinDaysBetweenDoses = v.MinDaysBetweenDoses,
-                        MinPatientAge = v.MinPatientAge,
-                        Name = v.Name,
-                        NumberOfDoses = v.NumberOfDoses,
-                        Virus = v.Virus_.Name
+                        vaccineId = v.Id,
+                        active = v.IsStillBeingUsed,
+                        company = v.Company,
+                        maxDaysBetweenDoses = v.MaxDaysBetweenDoses,
+                        maxPatientAge = v.MaxPatientAge,
+                        minDaysBetweenDoses = v.MinDaysBetweenDoses,
+                        minPatientAge = v.MinPatientAge,
+                        name = v.Name,
+                        numberOfDoses = v.NumberOfDoses,
+                        virus = v.Virus_.Name
                     });
                 }
 
