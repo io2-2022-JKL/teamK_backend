@@ -43,6 +43,7 @@ namespace VaccinationSystemApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<JwtConfig>(Configuration.GetSection("JwtConfig"));
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "VaccinationSystemApi", Version = "v1" });
@@ -112,7 +113,7 @@ namespace VaccinationSystemApi
             services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
                         .AddEntityFrameworkStores<VaccinationContext>();
 
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(op => op.JsonSerializerOptions.PropertyNamingPolicy = null);
 
             services.AddCors(options =>
             {

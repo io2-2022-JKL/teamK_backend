@@ -5,11 +5,11 @@ namespace VaccinationSystemApi.Dtos.Admin
 {
     public class AddVaccinationCenterRequest
     {
-        public string Name { get; set; }
-        public string City { get; set; }
-        public string Street { get; set; }
-        public ICollection<Guid> VaccineIds { get; set; }
-        public ICollection<OpeningHoursAdminDTO> OpeningHoursDays { get; set; }
-        public bool Active { get; set; }
+        public string name { get; set; }
+        public string city { get; set; }
+        public string street { get; set; }
+        public ICollection<Guid> vaccineIds { get; set; }
+        public ICollection<OpeningHoursAdminDTO> openingHoursDays { get; set; }
+        public bool active { get; set; }
     }
 }

@@ -9,15 +9,14 @@ namespace VaccinationSystemApi.Dtos.Patients
 {
     public record BrowseVaccinationCentersResponse
     {
-        public Guid Id { get; init; }
-        public string Name { get; init; }
-        public string City { get; init; }
-        public string Address { get; init; }
-        public ICollection<Vaccine> AvailableVaccines { get; init; }
-
-        public TimeHours[] OpeningHours { get; init; }
-        public TimeHours[] ClosingHours { get; init; }
-        public ICollection<Doctor> Doctors { get; init; }
-        public bool Active { get; init; }
+        public Guid id { get; init; }
+        public string name { get; init; }
+        public string city { get; init; }
+        public string address { get; init; }
+        public ICollection<Vaccine> availableVaccines { get; init; }
+        public TimeHours[] openingHours { get; init; }
+        public TimeHours[] closingHours { get; init; }
+        public ICollection<Doctor> doctors { get; init; }
+        public bool active { get; init; }
     }
 }

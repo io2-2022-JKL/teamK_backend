@@ -7,12 +7,12 @@ namespace VaccinationSystemApi.Dtos.Admin
 {
     public class VaccinationCenterAdminDTO
     {
-        public Guid Id { get; set; }
-        public string Name { get; set; }
-        public string City { get; set; }
-        public string Street { get; set; }
-        public ICollection<VaccineAdminDTO> Vaccines { get; set; }
-        public ICollection<OpeningHoursAdminDTO> OpeningHoursDays { get; set; }
-        public bool Active { get; set; }
+        public Guid id { get; set; }
+        public string name { get; set; }
+        public string city { get; set; }
+        public string street { get; set; }
+        public ICollection<VaccineAdminDTO> vaccines { get; set; }
+        public ICollection<OpeningHoursAdminDTO> openingHoursDays { get; set; }
+        public bool active { get; set; }
     }
 }

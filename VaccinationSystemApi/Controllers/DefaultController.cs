@@ -29,7 +29,7 @@ namespace VaccinationSystemApi.Controllers
 
             foreach(var name in virusNames)
             {
-                virusDtos.Add(new VirusDTO() { Virus = name });
+                virusDtos.Add(new VirusDTO() { virus = name });
             }
             return Ok(virusDtos);
         }
@@ -42,7 +42,7 @@ namespace VaccinationSystemApi.Controllers
 
             foreach (var name in cityNames)
             {
-                cityDtos.Add(new CityDTO() { City = name });
+                cityDtos.Add(new CityDTO() { city = name });
             }
             return Ok(cityDtos);
         }
