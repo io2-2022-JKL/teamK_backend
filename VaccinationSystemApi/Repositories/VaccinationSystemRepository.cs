@@ -749,7 +749,7 @@ namespace VaccinationSystemApi.Repositories
             }
                 wasDoctorFound = true;
 
-            _dbContext.Doctors.Remove(doctorToRemove);
+            doctorToRemove.Active = false;
 
             int entitiesChanged = _dbContext.SaveChanges();
 
