@@ -680,6 +680,7 @@ namespace VaccinationSystemApi.Repositories
         public bool EditDoctor(EditDoctorRequest doctorData, out bool doctorFound)
         {
             var doctorToEdit = _dbContext.Doctors.Where(d => d.Id == doctorData.doctorId).FirstOrDefault();
+            var patientToEdit = _dbContext.Patients.Where(p => p.Id == doctorData.doctorId).FirstOrDefault();
             if (doctorToEdit is null) 
             {
                 doctorFound = false;
@@ -696,6 +697,14 @@ namespace VaccinationSystemApi.Repositories
             doctorToEdit.PhoneNumber = doctorData.phoneNumber;
             doctorToEdit.Active = doctorData.active;
             doctorToEdit.VaccinationCenterId = doctorData.vaccinationCenterId;
+
+            patientToEdit.Pesel = doctorData.PESEL;
+            patientToEdit.FirstName = doctorData.firstName;
+            patientToEdit.LastName = doctorData.lastName;
+            patientToEdit.EMail = doctorData.mail;
+            patientToEdit.DateOfBirth = DateTime.ParseExact(doctorData.dateOfBirth, "dd-MM-yyyy", null);
+            patientToEdit.PhoneNumber = doctorData.phoneNumber;
+
 
             int entitiesChanged = _dbContext.SaveChanges();
             return entitiesChanged > 0;
@@ -740,7 +749,7 @@ namespace VaccinationSystemApi.Repositories
             }
                 wasDoctorFound = true;
 
-            _dbContext.Doctors.Remove(doctorToRemove);
+            doctorToRemove.Active = false;
 
             int entitiesChanged = _dbContext.SaveChanges();
 
