@@ -81,14 +81,14 @@ namespace VaccinationSystemApi.Controllers
             return centers;
         }*/
 
-        [HttpGet("certificates/get-pdf/{patientId}")]
-        public FileContentResult GetChuj(Guid patientId)
+        [HttpGet("certificates/get-pdf/{patientId}/{appointmentId}")]
+        public FileContentResult GetChuj(Guid patientId, Guid appointmentId)
         {
             var patientFromDb = _vaccinationService.GetPatient(patientId);
             if (patientFromDb is null)
                 return null;
 
-            var app = _vaccinationService.GetAppointment(Guid.Parse("D713AEC6-2DFC-4A0C-88AA-016AC5310070"));
+            var app = _vaccinationService.GetAppointment(appointmentId);
             var fileBytes = _certificateGenerator.Generate(new List<Appointment>() { app });
             return File(fileBytes, "application/pdf");
         }
