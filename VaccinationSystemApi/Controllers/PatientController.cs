@@ -17,15 +17,17 @@ namespace VaccinationSystemApi.Controllers
 
     [ApiController]
     [Route("patient")]
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Patient")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Roles = "Patient")]
     public class PatientController : ControllerBase
     {
         private readonly IVaccinationSystemRepository _vaccinationService;
         private readonly TimeHoursService _timeHoursService;
+        private readonly ICertificateGeneratorService _certificateGenerator;
 
-        public PatientController(IVaccinationSystemRepository repo)
+        public PatientController(IVaccinationSystemRepository repo, ICertificateGeneratorService certificateGenerator)
         {
             _vaccinationService = repo;
+            _certificateGenerator = certificateGenerator;
             _timeHoursService = new TimeHoursService();
             
         }
@@ -78,6 +80,18 @@ namespace VaccinationSystemApi.Controllers
 
             return centers;
         }*/
+
+        [HttpGet("certificates/get-pdf/{patientId}")]
+        public FileContentResult GetChuj(Guid patientId)
+        {
+            var patientFromDb = _vaccinationService.GetPatient(patientId);
+            if (patientFromDb is null)
+                return null;
+
+            var app = _vaccinationService.GetAppointment(Guid.Parse("D713AEC6-2DFC-4A0C-88AA-016AC5310070"));
+            var fileBytes = _certificateGenerator.Generate(new List<Appointment>() { app });
+            return File(fileBytes, "application/pdf");
+        }
 
         [HttpGet("certificates/{patientId}")]
         public ActionResult<IEnumerable<BrowseCertificateResponse>> GetPatientCertificates(Guid patientId)
