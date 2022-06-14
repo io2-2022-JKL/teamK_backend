@@ -347,7 +347,7 @@ namespace VaccinationSystemApi.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 
@@ -371,7 +371,7 @@ namespace VaccinationSystemApi.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 
