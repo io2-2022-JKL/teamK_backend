@@ -342,7 +342,11 @@ namespace VaccinationSystemApi.Controllers
                     canCertify = isLastDose,
                 };
 
-                _mailService.SendConfirmVaccinationMail(appointmentFromDb.Patient_.EMail);
+                try
+                {
+                    _mailService.SendConfirmVaccinationMail(appointmentFromDb.Patient_.EMail);
+                }
+                catch (Exception ex) {}
                 return Ok(response);
             }
             catch (Exception ex)
@@ -366,7 +370,12 @@ namespace VaccinationSystemApi.Controllers
                     return Forbid("User forbidden to confirm vaccination");
 
                 _vaccinationService.CancelAppointment(appointmentId);
-                _mailService.SendCancelVaccinationMail(appointmentFromDb.Patient_.EMail);
+                try
+                {
+                    _mailService.SendCancelVaccinationMail(appointmentFromDb.Patient_.EMail);
+                }
+                catch(Exception ex) { }
+                
                 return Ok();
             }
             catch(Exception ex)
