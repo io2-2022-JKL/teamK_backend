@@ -150,8 +150,10 @@ namespace VaccinationSystemApi.Repositories
         {
             var slotFromDb = _dbContext.TimeSlots.Where(x => x.Id == id).SingleOrDefault();
             if (slotFromDb == null) return;
-
-            slotFromDb.IsFree = false;
+            if (!slotFromDb.IsFree)
+                return;
+            
+            slotFromDb.Active = false;
             _dbContext.SaveChanges();
         }
         public IEnumerable<TimeSlot> GetDoctorActiveSlots(Guid doctorId, DateTime date)
@@ -163,7 +165,7 @@ namespace VaccinationSystemApi.Repositories
 
         public IEnumerable<TimeSlot> GetDoctorTimeSlots(Guid doctorId)
         {
-            return _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId);
+            return _dbContext.TimeSlots.Where(x => x.AssignedDoctorId == doctorId).Where(ts => ts.Active);
         }
 
         public Doctor GetDoctorByTimeSlot(Guid id)

@@ -276,6 +276,7 @@ namespace VaccinationSystemApi.Controllers
                 {
                     if (_vaccinationService.GetDoctorByTimeSlot(slot.id).Id == doctorId)
                     {
+
                         _vaccinationService.DeleteTimeSlot(slot.id);
                     }
                 }
